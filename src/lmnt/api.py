@@ -22,6 +22,7 @@ _SYNTHESIZE_ENDPOINT = '/speech/beta/synthesize'
 _SYNTHESIZE_STREAMING_ENDPOINT = '/speech/beta/synthesize_streaming'
 _SAMPLES_PER_FRAME = 300
 
+
 class SpeechError(Exception):
   def __init__(self, status, error):
     self.status = status
@@ -48,7 +49,7 @@ class StreamingSynthesisConnection:
 
   async def append_text(self, text):
     msg = {
-      'text': text
+        'text': text
     }
     await self.socket.send_str(json.dumps(msg))
 
@@ -139,8 +140,8 @@ class Speech:
         response = await self._parse_multipart_alignment_response(resp)
         word_durations = self._transform_to_word_durations(response['duration'], response['phonemes'])
         return {
-          'durations': word_durations,
-          'audio': response['audio']
+            'durations': word_durations,
+            'audio': response['audio']
         }
 
       else:
@@ -191,10 +192,10 @@ class Speech:
 
   def _create_duration_entry(self, phonemes, durations, start, total_duration):
     return {
-      'phonemes': phonemes.copy(),
-      'phoneme_durations': durations.copy(),
-      'start': start,
-      'duration': total_duration
+        'phonemes': phonemes.copy(),
+        'phoneme_durations': durations.copy(),
+        'start': start,
+        'duration': total_duration
     }
 
   async def _get_next_content(self, reader):
@@ -210,16 +211,16 @@ class Speech:
     # 2. JSON of `phonemes`.
     # 3. Binary audio data.
     return {
-      'duration': await self._get_next_content(reader),
-      'phonemes': await self._get_next_content(reader),
-      'audio': await self._get_next_content(reader) }
+        'duration': await self._get_next_content(reader),
+        'phonemes': await self._get_next_content(reader),
+        'audio': await self._get_next_content(reader)}
 
   async def synthesize_streaming(self, voice):
     self._lazy_init()
 
     init_msg = {
-      'X-API-Key': self._api_key,
-      'voice': voice
+        'X-API-Key': self._api_key,
+        'voice': voice
     }
 
     ws = await self._session.ws_connect(f'{self._base_url}{_SYNTHESIZE_STREAMING_ENDPOINT}')
@@ -231,7 +232,7 @@ class Speech:
       self._session = aiohttp.ClientSession()
 
   def _build_headers(self):
-    return { 'X-API-Key': self._api_key }
+    return {'X-API-Key': self._api_key}
 
   async def _handle_response_errors(self, response):
     if response.status < 400:

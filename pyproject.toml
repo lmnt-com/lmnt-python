@@ -1,0 +1,3 @@
+[tool.autopep8]
+max-line-length = 160
+indent-size = 2
