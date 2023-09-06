@@ -16,15 +16,11 @@
 import aiohttp
 import json
 
-from loguru import logger
-
 _BASE_URL = 'https://api.lmnt.com'
 _VOICES_ENDPOINT = '/speech/beta/voices'
 _SYNTHESIZE_ENDPOINT = '/speech/beta/synthesize'
 _SYNTHESIZE_STREAMING_ENDPOINT = '/speech/beta/synthesize_streaming'
 _SAMPLES_PER_FRAME = 300
-
-logger.disable('lmnt')
 
 class SpeechError(Exception):
   def __init__(self, status, error):
@@ -98,7 +94,7 @@ class Speech:
     - `seed`: The random seed to use for synthesis. Defaults to 0.
     - `format`: The audio format to use for synthesis. Defaults to `wav`.
     - `speed`: The speed to use for synthesis. Defaults to 1.0.
-    - `durations`: If `True`, the response will include word durations. Defaults to `False`.
+    - `durations`: If `True`, the response will include word durations detail. Defaults to `False`.
 
     If `durations=True` is specified, the response will be a dictionary with the following keys:
     - `durations`: A list of dictionaries with keys as below.
@@ -130,8 +126,8 @@ class Speech:
     is_multipart_response = False
     extras = ''
 
-    has_duration = kwargs.get('durations', False)
-    if has_duration:
+    has_durations = kwargs.get('durations', False)
+    if has_durations:
       extras = 'alignment'
       is_multipart_response = True
 
@@ -153,32 +149,53 @@ class Speech:
 
   def _transform_to_word_durations(self, durations, phonemes):
     if not durations or not phonemes or len(durations) != len(phonemes):
-      raise ValueError("Invalid word transformation input data.")
+      raise ValueError("Invalid word durations input data.")
 
     result = []
-    temp_phonemes, temp_durations = [], []
+    acc_phonemes, acc_durations = [], []
     total_duration, start = 0, 0
 
-    for index, (dur, phon) in enumerate(zip(durations, phonemes)):
-      temp_phonemes.append(phon)
-      duration_samples = dur * _SAMPLES_PER_FRAME
-      temp_durations.append(duration_samples)
-      total_duration += duration_samples
+    for dur, phon in zip(durations, phonemes):
+      if phon == " ":
+        # Emit current accumulation if we have some.
+        if len(acc_phonemes) > 0:
+          result.append(self._create_duration_entry(
+              acc_phonemes, acc_durations, start, total_duration))
 
-      # Break words at any whitespace phoneme.
-      if phon == " " or ((index < len(durations) - 1) and phonemes[index + 1] == " "):
-        result.append({
-            'phonemes': temp_phonemes.copy(),
-            'phoneme_durations': temp_durations.copy(),
-            'start': start,
-            'duration': total_duration
-        })
+        # Reset accumulation.
         start += total_duration
-        temp_phonemes.clear()
-        temp_durations.clear()
+        acc_phonemes.clear()
+        acc_durations.clear()
+
+        # Emit the whitespace itself.
+        duration_samples = dur * _SAMPLES_PER_FRAME
+        total_duration = duration_samples
+        result.append(self._create_duration_entry(
+            [" "], [duration_samples], start, total_duration))
+        start += total_duration
         total_duration = 0
 
+      else:
+        # Accumulate the phoneme.
+        acc_phonemes.append(phon)
+        duration_samples = dur * _SAMPLES_PER_FRAME
+        acc_durations.append(duration_samples)
+        total_duration += duration_samples
+
+    # Emit any remaining accumulation.
+    if len(acc_phonemes) > 0:
+      result.append(self._create_duration_entry(
+          acc_phonemes, acc_durations, start, total_duration))
+
     return result
+
+  def _create_duration_entry(self, phonemes, durations, start, total_duration):
+    return {
+      'phonemes': phonemes.copy(),
+      'phoneme_durations': durations.copy(),
+      'start': start,
+      'duration': total_duration
+    }
 
   async def _get_next_content(self, reader):
     response = await reader.next()
