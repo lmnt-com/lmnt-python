@@ -28,5 +28,6 @@ setup(name='lmnt',
       package_dir={'': 'src'},
       install_requires=[
           'aiohttp ~= 3.8',
+          'loguru ~= 0.7.1'
       ],
       classifiers=CLASSIFIERS)
