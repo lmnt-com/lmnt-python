@@ -27,6 +27,6 @@ setup(name='lmnt',
       packages=find_namespace_packages('src'),
       package_dir={'': 'src'},
       install_requires=[
-          'aiohttp ~= 3.8',
+          'aiohttp ~= 3.8'
       ],
       classifiers=CLASSIFIERS)
