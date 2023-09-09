@@ -107,7 +107,7 @@ class Speech:
     - `start`: The starting duration of the word.
     - `duration`: The overall duration of the word.
 
-    The audio sample rate is 24 kHz.
+    The audio sample rate is 24 kHz. Duration units are given in sample counts at 24kHz.
     """
     assert text is not None, '[Speech.synthesize] `text` must not be None.'
     assert voice is not None, '[Speech.synthesize] `voice` must not be None.'
