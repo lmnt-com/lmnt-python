@@ -96,6 +96,7 @@ class Speech:
     - `format`: The audio format to use for synthesis. Defaults to `wav`.
     - `speed`: The speed to use for synthesis. Defaults to 1.0.
     - `durations`: If `True`, the response will include word durations detail. Defaults to `False`.
+    - `length`: The desired target length of the output speech in seconds. Defaults to `None`.
 
     If `durations=True` is specified, the response will be a dictionary with the following keys:
     - `durations`: A list of dictionaries with keys as below.
@@ -123,6 +124,9 @@ class Speech:
     form_data.add_field('seed', kwargs.get('seed', 0))
     form_data.add_field('format', kwargs.get('format', 'wav'))
     form_data.add_field('speed', kwargs.get('speed', 1.0))
+    length = kwargs.get('length', None)
+    if length is not None:
+      form_data.add_field('length', length)
 
     is_multipart_response = False
     extras = ''
