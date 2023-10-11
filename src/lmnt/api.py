@@ -121,7 +121,7 @@ class Speech:
     form_data = aiohttp.FormData()
     form_data.add_field('text', text)
     form_data.add_field('voice', voice)
-    form_data.add_field('seed', kwargs.get('seed', 0))
+    form_data.add_field('seed', kwargs.get('seed'))
     form_data.add_field('format', kwargs.get('format', 'wav'))
     form_data.add_field('speed', kwargs.get('speed', 1.0))
     length = kwargs.get('length', None)
