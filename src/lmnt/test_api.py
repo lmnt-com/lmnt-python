@@ -33,6 +33,21 @@ async def test_durations(api):
     result = await api.synthesize(text=text, voice=voice, durations=True)
     assert result is not None
     assert 'durations' in result
+    assert 'phonemes' not in result
     assert 'audio' in result
     assert len(result['durations']) > 0
     assert len(result['audio']) > 0
+
+@pytest.mark.asyncio
+async def test_synthesize_with_invalid_voice(api):
+    voice = 'invalid_voice'
+    text = 'Example Text'
+    with pytest.raises(Exception):
+        await api.synthesize(text=text, voice=voice)
+
+@pytest.mark.asyncio
+async def test_synthesize_with_empty_text(api):
+    voice = 'shanti'
+    text = ''
+    with pytest.raises(Exception):
+        await api.synthesize(text=text, voice=voice)
