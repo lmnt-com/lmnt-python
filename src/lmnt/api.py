@@ -15,9 +15,11 @@
 
 import aiohttp
 import json
+import os
 
 _BASE_URL = 'https://api.lmnt.com'
 _VOICES_ENDPOINT = '/speech/beta/voices'
+_CREATE_VOICE_ENDPOINT = '/voice/beta/clone'
 _SYNTHESIZE_ENDPOINT = '/speech/beta/synthesize'
 _SYNTHESIZE_STREAMING_ENDPOINT = '/speech/beta/synthesize_streaming'
 _SAMPLES_PER_FRAME = 300
@@ -82,6 +84,35 @@ class Speech:
     async with self._session.get(url, headers=self._build_headers()) as resp:
       await self._handle_response_errors(resp)
       return (await resp.json())['voices']
+
+  async def create_voice(self, name: str, accent: str, is_instant: bool, should_filter: bool, filenames: list[str]):
+    assert name is not None, '[Speech.create_voice] `name` must not be None.'
+    assert accent is not None, '[Speech.create_voice] `accent` must not be None.'
+    assert filenames is not None, '[Speech.create_voice] `filenames` must not be None.'
+    assert len(name) > 0, '[Speech.create_voice] `name` must be non-empty.'
+    assert len(accent) > 0, '[Speech.create_voice] `accent` must be non-empty.'
+    assert len(filenames) > 0, '[Speech.create_voice] `filenames` must be non-empty.'
+
+    metadata = json.dumps({
+        'name': name,
+        'accent': accent,
+        'quick': is_instant,
+        'filter': should_filter,
+    })
+    files = []
+    try:
+      with aiohttp.MultipartWriter() as mpwriter:
+        mpwriter.append(metadata, { 'Content-Type': 'application/json', 'Content-Disposition': 'form-data; name="metadata"'})
+        for filename in filenames:
+          f = open(filename, 'rb')
+          files.append(f)
+          part = mpwriter.append(f)
+          part.set_content_disposition('form-data', name='file_field', filename=os.path.basename(filename))
+      async with self._session.post(f'{self._base_url}{_CREATE_VOICE_ENDPOINT}', data=mpwriter, headers=self._build_headers()) as resp:
+        return await resp.json()
+    finally:
+      for file in files:
+        file.close()
 
   async def synthesize(self, text, voice, **kwargs):
     """
