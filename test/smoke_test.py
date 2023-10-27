@@ -1,7 +1,12 @@
 import pytest
-from api import Speech
+import os
+import sys
 
-X_API_KEY = ""
+sys.path.append(os.path.expandvars('$LMNT_ROOT/sdk/lmnt-python/src'))
+from lmnt.api import Speech # noqa
+
+# Set an API key in your environment to run these tests
+X_API_KEY = os.environ['X_API_KEY']
 STAGING_URL = 'https://api.staging.lmnt.com'
 PROD_URL = 'https://api.lmnt.com'
 

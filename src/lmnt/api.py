@@ -159,9 +159,9 @@ class Speech:
 
   async def _parse_multipart_alignment_response(self, response):
     reader = aiohttp.MultipartReader.from_response(response)
-    # Requesting alignment information returns a three-part multipart response:
+    # Requesting alignment information returns a two-part multipart response:
     # 1. JSON of `durations` in seconds.
-    # 3. Binary audio data.
+    # 2. Binary audio data.
     return {
         'durations': await self._get_next_content(reader),
         'audio': await self._get_next_content(reader)}
