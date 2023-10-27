@@ -18,11 +18,13 @@ import json
 import os
 
 _BASE_URL = 'https://api.lmnt.com'
-_VOICES_ENDPOINT = '/speech/beta/voices'
-_CREATE_VOICE_ENDPOINT = '/voice/beta/clone'
-_SYNTHESIZE_ENDPOINT = '/speech/beta/synthesize'
 _SYNTHESIZE_STREAMING_ENDPOINT = '/speech/beta/synthesize_streaming'
-_SAMPLES_PER_FRAME = 300
+
+_LIST_VOICES_ENDPOINT = '/v1/ai/voice/list'
+_VOICE_ENDPOINT = '/v1/ai/voice/{id}'
+_CREATE_VOICE_ENDPOINT = '/v1/ai/voice'
+_SPEECH_ENDPOINT = '/v1/ai/speech'
+_ACCOUNT_ENDPOINT = '/v1/account'
 
 
 class SpeechError(Exception):
@@ -77,27 +79,82 @@ class Speech:
       await self._session.close()
     self._session = None
 
-  async def list_voices(self):
+
+  async def list_voices(self, starred: bool = False, owner: str = 'all'):
+    """
+    Returns a list of voices available to you.
+
+    Optional parameters:
+    - `starred`: Show starred voices only. Defaults to `false`.
+    - `owner`: Comma-separated list of voice owners to specify which voices to return. Choose from `lmnt`, `me`, or `all`. Defaults to `all`.
+    """
+    if owner not in ['all', 'me']:
+      raise ValueError(f'Invalid owner: {owner}')
     self._lazy_init()
-    url = f'{self._base_url}{_VOICES_ENDPOINT}'
+    url = f'{self._base_url}{_LIST_VOICES_ENDPOINT}?starred={starred}&owner={owner}'
+    
+    async with self._session.get(url, headers=self._build_headers()) as resp:
+      await self._handle_response_errors(resp)
+      return await resp.json()
+    
+
+  async def voice_info(self, voice_id):
+    """
+    Returns details of a specific voice.
+
+    Required parameters:
+    - `voice_id`: The id of the voice to update. If you don't know the id, you can get it from `list_voices()`.
+    """
+    self._lazy_init()
+    url = f'{self._base_url}{_VOICE_ENDPOINT}'.format(id=voice_id)
 
     async with self._session.get(url, headers=self._build_headers()) as resp:
       await self._handle_response_errors(resp)
-      return (await resp.json())['voices']
+      return await resp.json()
 
-  async def create_voice(self, name: str, accent: str, is_instant: bool, should_filter: bool, filenames: list[str]):
-    assert name is not None, '[Speech.create_voice] `name` must not be None.'
-    assert accent is not None, '[Speech.create_voice] `accent` must not be None.'
-    assert filenames is not None, '[Speech.create_voice] `filenames` must not be None.'
-    assert len(name) > 0, '[Speech.create_voice] `name` must be non-empty.'
-    assert len(accent) > 0, '[Speech.create_voice] `accent` must be non-empty.'
-    assert len(filenames) > 0, '[Speech.create_voice] `filenames` must be non-empty.'
 
+  async def create_voice(self, name: str, enhance: bool, filenames: list[str], type: str = 'instant', gender: str = None, description: str = None):
+    """
+    Create a new voice from a set of audio files. Returns the voice metadata object.
+
+    Parameters:
+    - `name`: The name of the voice.
+    - `enhance`: Whether to enhance the audio files.
+    - `filenames`: A list of filenames to use for the voice.
+
+    Optional parameters:
+    - `type`: The type of voice to create. Must be one of `instant` or `professional`. Defaults to `instant`.
+    - `gender`: The gender of the voice. For categorization purposes. Defaults to `None`.
+    - `description`: A description of the voice. Defaults to `None`.
+
+    Returns the voice metadata object:
+    - `id`: The id of the voice (voice_id).
+    - `name`: The name of the voice.
+    - `owner`: The owner of the voice.
+    - `state`: The state of the voice, e.g. `ready`, `pending`, `broken`.
+    - `gender`: The gender of the voice, e.g. `male`, `female`.
+    - `type`: The type of voice, e.g. `instant`, `professional`.
+    - `description`: A description of the voice.
+    """
+    if type not in ['instant', 'professional']:
+      raise ValueError(f'[Speech.create_voice] Invalid type: {type}')
+    if name is None:
+      raise ValueError('[Speech.create_voice] Name must not be None.')
+    if len(name) == 0:
+      raise ValueError('[Speech.create_voice] Name must be non-empty.')
+    if filenames is None:
+      raise ValueError('[Speech.create_voice] Filenames must not be None.')
+    if len(filenames) == 0:
+      raise ValueError('[Speech.create_voice] Filenames must be non-empty.')
+    if enhance is None:
+      raise ValueError('[Speech.create_voice] Enhance must not be None.')
+    
     metadata = json.dumps({
         'name': name,
-        'accent': accent,
-        'quick': is_instant,
-        'filter': should_filter,
+        'enhance': enhance,
+        'type': type,
+        'gender': gender,
+        'description': description,
     })
     files = []
     try:
@@ -114,32 +171,73 @@ class Speech:
       for file in files:
         file.close()
 
+
+  async def update_voice(self, voice_id, **kwargs):
+    """
+    Updates metadata for a specific voice. A voice that is not owned by you can only have its `starred` field updated. 
+    Only provided fields will be changed.
+
+    Required parameters:
+    - `voice_id`: The id of the voice to update. If you don't know the id, you can get it from `list_voices()`.
+
+    Optional parameters:
+    - `name`: The name of the voice.
+    - `starred`: Whether the voice is starred.
+    - `gender`: The gender of the voice. For categorization purposes.
+    - `description`: A description of the voice.
+    """
+    self._lazy_init()
+    url = f'{self._base_url}{_VOICE_ENDPOINT}'.format(id=voice_id)
+
+    data = {
+        'name': kwargs.get('name', None),
+        'starred': kwargs.get('starred', None),
+        'gender': kwargs.get('gender', None),
+        'description': kwargs.get('description', None),
+    }
+    async with self._session.put(url, data=data, headers=self._build_headers()) as resp:
+      await self._handle_response_errors(resp)
+      return await resp.read()
+ 
+  
+  async def delete_voice(self, voice_id):
+    """
+    Deletes a voice and cancels any pending operations on it. The voice must be owned by you. Cannot be undone.
+
+    Required parameters:
+    - `voice_id`: The id of the voice to update. If you don't know the id, you can get it from `list_voices()`.
+    """
+    self._lazy_init()
+    url = f'{self._base_url}{_VOICE_ENDPOINT}'.format(id=voice_id)
+
+    async with self._session.delete(url, headers=self._build_headers()) as resp:
+      await self._handle_response_errors(resp)
+      return await resp.read()
+
   async def synthesize(self, text, voice, **kwargs):
     """
-    Synthesize speech from text. Returns the binary audio data unless otherwise specified below.
+    Synthesize speech from text. Returns an object that contains a base64-encoded audio file.
 
     Parameters:
     - `text`: The text to synthesize.
     - `voice`: The voice id to use for synthesis.
 
     Optional parameters:
-    - `seed`: The random seed to use for synthesis. Defaults to 0.
-    - `format`: The audio format to use for synthesis. Defaults to `wav`.
+    - `seed`: The seed used to specify a different take. Defaults to random.
+    - `format`: The audio format to use for synthesis. Defaults to `mp3`.
     - `speed`: The speed to use for synthesis. Defaults to 1.0.
-    - `durations`: If `True`, the response will include word durations detail. Defaults to `False`.
-    - `length`: The desired target length of the output speech in seconds. Defaults to `None`.
+    - `return_durations`: If `True`, the response will include word durations detail. Defaults to `False`.
+    - `length`: The desired target length of the output speech in seconds.
 
-    If `durations=True` is specified, the response will be a dictionary with the following keys:
-    - `durations`: A list of dictionaries with keys as below.
-    - `audio`: The binary audio data.
+    Returns:
+    - `audio`: The base64-encoded audio file.
+    - `durations`: The word durations detail. Only returned if `return_durations` is `True`.
+    - `seed`: The seed used for synthesis.
 
-    Each `durations` entry is a dictionary with the following keys:
-    - `phonemes`: A list of the phonemes comprising the word.
-    - `phoneme_durations`: A list of the durations of each phoneme.
-    - `start`: The starting duration of the word.
-    - `duration`: The overall duration of the word.
-
-    The audio sample rate is 24 kHz. Duration units are given in sample counts at 24kHz.
+    Each `durations` entry is a dictionary describing the duration of each word with the following keys:
+    - `text`: the word itself
+    - `start`: the time at which the word starts, in seconds
+    - `duration`: the overall duration of the word, in seconds
     """
     assert text is not None, '[Speech.synthesize] `text` must not be None.'
     assert voice is not None, '[Speech.synthesize] `voice` must not be None.'
@@ -147,109 +245,23 @@ class Speech:
     assert len(voice) > 0, '[Speech.synthesize] `voice` must be non-empty.'
 
     self._lazy_init()
-    url = f'{self._base_url}{_SYNTHESIZE_ENDPOINT}'
+    url = f'{self._base_url}{_SPEECH_ENDPOINT}'
 
     form_data = aiohttp.FormData()
     form_data.add_field('text', text)
     form_data.add_field('voice', voice)
-    if 'seed' in kwargs:
-      form_data.add_field('seed', kwargs.get('seed'))
+    form_data.add_field('seed', kwargs.get('seed', None))
     form_data.add_field('format', kwargs.get('format', 'wav'))
     form_data.add_field('speed', kwargs.get('speed', 1.0))
     length = kwargs.get('length', None)
     if length is not None:
       form_data.add_field('length', length)
-
-    is_multipart_response = False
-    extras = ''
-
-    has_durations = kwargs.get('durations', False)
-    if has_durations:
-      extras = 'alignment'
-      is_multipart_response = True
-
-    if extras:
-      form_data.add_field('extras', extras)
+    form_data.add_field('return_durations', kwargs.get('return_durations', False))
 
     async with self._session.post(url, data=form_data, headers=self._build_headers()) as resp:
-      if is_multipart_response:
-        response = await self._parse_multipart_alignment_response(resp)
-        word_durations = self._transform_to_word_durations(response['duration'], response['phonemes'])
-        return {
-            'durations': word_durations,
-            'audio': response['audio']
-        }
+      await self._handle_response_errors(resp)
+      return await resp.read()
 
-      else:
-        await self._handle_response_errors(resp)
-        return await resp.read()
-
-  def _transform_to_word_durations(self, durations, phonemes):
-    if not durations or not phonemes or len(durations) != len(phonemes):
-      raise ValueError("Invalid word durations input data.")
-
-    result = []
-    acc_phonemes, acc_durations = [], []
-    total_duration, start = 0, 0
-
-    for dur, phon in zip(durations, phonemes):
-      if phon == " ":
-        # Emit current accumulation if we have some.
-        if len(acc_phonemes) > 0:
-          result.append(self._create_duration_entry(
-              acc_phonemes, acc_durations, start, total_duration))
-
-        # Reset accumulation.
-        start += total_duration
-        acc_phonemes.clear()
-        acc_durations.clear()
-
-        # Emit the whitespace itself.
-        duration_samples = dur * _SAMPLES_PER_FRAME
-        total_duration = duration_samples
-        result.append(self._create_duration_entry(
-            [" "], [duration_samples], start, total_duration))
-        start += total_duration
-        total_duration = 0
-
-      else:
-        # Accumulate the phoneme.
-        acc_phonemes.append(phon)
-        duration_samples = dur * _SAMPLES_PER_FRAME
-        acc_durations.append(duration_samples)
-        total_duration += duration_samples
-
-    # Emit any remaining accumulation.
-    if len(acc_phonemes) > 0:
-      result.append(self._create_duration_entry(
-          acc_phonemes, acc_durations, start, total_duration))
-
-    return result
-
-  def _create_duration_entry(self, phonemes, durations, start, total_duration):
-    return {
-        'phonemes': phonemes.copy(),
-        'phoneme_durations': durations.copy(),
-        'start': start,
-        'duration': total_duration
-    }
-
-  async def _get_next_content(self, reader):
-    response = await reader.next()
-    content_type = response.headers.get('Content-Type', '')
-    # Note there are also `text` and `form` content types, but we don't need to handle those for now.
-    return await response.json() if 'json' in content_type else await response.read()
-
-  async def _parse_multipart_alignment_response(self, response):
-    reader = aiohttp.MultipartReader.from_response(response)
-    # Requesting alignment information returns a three-part multipart response:
-    # 1. JSON of `duration` in frames.
-    # 2. JSON of `phonemes`.
-    # 3. Binary audio data.
-    return {
-        'duration': await self._get_next_content(reader),
-        'phonemes': await self._get_next_content(reader),
-        'audio': await self._get_next_content(reader)}
 
   async def synthesize_streaming(self, voice):
     self._lazy_init()
@@ -263,12 +275,27 @@ class Speech:
     await ws.send_str(json.dumps(init_msg))
     return StreamingSynthesisConnection(ws)
 
+
+  async def account_info(self):
+    """
+    Returns details about your account.
+    """
+    self._lazy_init()
+    url = f'{self._base_url}{_ACCOUNT_ENDPOINT}'
+
+    async with self._session.get(url, headers=self._build_headers()) as resp:
+      await self._handle_response_errors(resp)
+      return await resp.json()
+
+
   def _lazy_init(self):
     if self._session is None:
       self._session = aiohttp.ClientSession()
 
+
   def _build_headers(self):
     return {'X-API-Key': self._api_key}
+
 
   async def _handle_response_errors(self, response):
     if response.status < 400:
