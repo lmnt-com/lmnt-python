@@ -165,7 +165,7 @@ class Speech:
 
     has_durations = kwargs.get('durations', False)
     if has_durations:
-      extras = 'alignment'
+      extras = 'durations'
       is_multipart_response = True
 
     if extras:
@@ -174,65 +174,14 @@ class Speech:
     async with self._session.post(url, data=form_data, headers=self._build_headers()) as resp:
       if is_multipart_response:
         response = await self._parse_multipart_alignment_response(resp)
-        word_durations = self._transform_to_word_durations(response['duration'], response['phonemes'])
         return {
-            'durations': word_durations,
+            'durations': response['durations'],
             'audio': response['audio']
         }
 
       else:
         await self._handle_response_errors(resp)
         return await resp.read()
-
-  def _transform_to_word_durations(self, durations, phonemes):
-    if not durations or not phonemes or len(durations) != len(phonemes):
-      raise ValueError("Invalid word durations input data.")
-
-    result = []
-    acc_phonemes, acc_durations = [], []
-    total_duration, start = 0, 0
-
-    for dur, phon in zip(durations, phonemes):
-      if phon == " ":
-        # Emit current accumulation if we have some.
-        if len(acc_phonemes) > 0:
-          result.append(self._create_duration_entry(
-              acc_phonemes, acc_durations, start, total_duration))
-
-        # Reset accumulation.
-        start += total_duration
-        acc_phonemes.clear()
-        acc_durations.clear()
-
-        # Emit the whitespace itself.
-        duration_samples = dur * _SAMPLES_PER_FRAME
-        total_duration = duration_samples
-        result.append(self._create_duration_entry(
-            [" "], [duration_samples], start, total_duration))
-        start += total_duration
-        total_duration = 0
-
-      else:
-        # Accumulate the phoneme.
-        acc_phonemes.append(phon)
-        duration_samples = dur * _SAMPLES_PER_FRAME
-        acc_durations.append(duration_samples)
-        total_duration += duration_samples
-
-    # Emit any remaining accumulation.
-    if len(acc_phonemes) > 0:
-      result.append(self._create_duration_entry(
-          acc_phonemes, acc_durations, start, total_duration))
-
-    return result
-
-  def _create_duration_entry(self, phonemes, durations, start, total_duration):
-    return {
-        'phonemes': phonemes.copy(),
-        'phoneme_durations': durations.copy(),
-        'start': start,
-        'duration': total_duration
-    }
 
   async def _get_next_content(self, reader):
     response = await reader.next()
@@ -242,13 +191,11 @@ class Speech:
 
   async def _parse_multipart_alignment_response(self, response):
     reader = aiohttp.MultipartReader.from_response(response)
-    # Requesting alignment information returns a three-part multipart response:
-    # 1. JSON of `duration` in frames.
-    # 2. JSON of `phonemes`.
-    # 3. Binary audio data.
+    # Requesting alignment information returns a two-part multipart response:
+    # 1. JSON of `durations` in seconds.
+    # 2. Binary audio data.
     return {
-        'duration': await self._get_next_content(reader),
-        'phonemes': await self._get_next_content(reader),
+        'durations': await self._get_next_content(reader),
         'audio': await self._get_next_content(reader)}
 
   async def synthesize_streaming(self, voice):
