@@ -13,6 +13,7 @@
 # limitations under the License.
 # ==============================================================================
 
+import base64
 import aiohttp
 import json
 import os
@@ -195,9 +196,10 @@ class Speech:
         'gender': kwargs.get('gender', None),
         'description': kwargs.get('description', None),
     }
-    async with self._session.put(url, data=data, headers=self._build_headers()) as resp:
+    data = json.dumps({k: v for k, v in data.items() if v is not None})
+    async with self._session.put(url, data=data, headers=self._build_headers(type='application/json')) as resp:
       await self._handle_response_errors(resp)
-      return await resp.read()
+      return await resp.json()
  
   
   async def delete_voice(self, voice_id):
@@ -212,7 +214,8 @@ class Speech:
 
     async with self._session.delete(url, headers=self._build_headers()) as resp:
       await self._handle_response_errors(resp)
-      return await resp.read()
+      return await resp.json()
+
 
   async def synthesize(self, text, voice, **kwargs):
     """
@@ -229,8 +232,8 @@ class Speech:
     - `return_durations`: If `True`, the response will include word durations detail. Defaults to `False`.
     - `length`: The desired target length of the output speech in seconds.
 
-    Returns:
-    - `audio`: The base64-encoded audio file.
+    Returns an object with the following keys:
+    - `audio`: The base64-encoded audio file. To decode, call base64.b64decode(audio).
     - `durations`: The word durations detail. Only returned if `return_durations` is `True`.
     - `seed`: The seed used for synthesis.
 
@@ -256,12 +259,16 @@ class Speech:
     length = kwargs.get('length', None)
     if length is not None:
       form_data.add_field('length', length)
-    form_data.add_field('return_durations', kwargs.get('return_durations', False))
+    return_durations = kwargs.get('return_durations', False)
+    if return_durations is True:
+      form_data.add_field('return_durations', 'true')
 
     async with self._session.post(url, data=form_data, headers=self._build_headers()) as resp:
       await self._handle_response_errors(resp)
-      return await resp.read()
-
+      response_json = await resp.json()
+      if 'audio' in response_json:
+        response_json['audio'] = base64.b64decode(response_json['audio'])
+      return response_json
 
   async def synthesize_streaming(self, voice):
     self._lazy_init()
@@ -293,7 +300,12 @@ class Speech:
       self._session = aiohttp.ClientSession()
 
 
-  def _build_headers(self):
+  def _build_headers(self, type=None):
+    if type is not None:
+      return {
+        'X-API-Key': self._api_key,
+        'Content-Type': type
+      }    
     return {'X-API-Key': self._api_key}
 
 
