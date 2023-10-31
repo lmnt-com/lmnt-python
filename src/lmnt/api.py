@@ -19,6 +19,7 @@ import json
 import os
 
 _BASE_URL = 'https://api.lmnt.com'
+
 _SYNTHESIZE_STREAMING_ENDPOINT = '/speech/beta/synthesize_streaming'
 
 _LIST_VOICES_ENDPOINT = '/v1/ai/voice/list'
@@ -217,6 +218,35 @@ class Speech:
       return await resp.json()
 
 
+  async def create_voice(self, name: str, accent: str, is_instant: bool, should_filter: bool, filenames: list[str]):
+    assert name is not None, '[Speech.create_voice] `name` must not be None.'
+    assert accent is not None, '[Speech.create_voice] `accent` must not be None.'
+    assert filenames is not None, '[Speech.create_voice] `filenames` must not be None.'
+    assert len(name) > 0, '[Speech.create_voice] `name` must be non-empty.'
+    assert len(accent) > 0, '[Speech.create_voice] `accent` must be non-empty.'
+    assert len(filenames) > 0, '[Speech.create_voice] `filenames` must be non-empty.'
+
+    metadata = json.dumps({
+        'name': name,
+        'accent': accent,
+        'quick': is_instant,
+        'filter': should_filter,
+    })
+    files = []
+    try:
+      with aiohttp.MultipartWriter() as mpwriter:
+        mpwriter.append(metadata, { 'Content-Type': 'application/json', 'Content-Disposition': 'form-data; name="metadata"'})
+        for filename in filenames:
+          f = open(filename, 'rb')
+          files.append(f)
+          part = mpwriter.append(f)
+          part.set_content_disposition('form-data', name='file_field', filename=os.path.basename(filename))
+      async with self._session.post(f'{self._base_url}{_CREATE_VOICE_ENDPOINT}', data=mpwriter, headers=self._build_headers()) as resp:
+        return await resp.json()
+    finally:
+      for file in files:
+        file.close()
+
   async def synthesize(self, text, voice, **kwargs):
     """
     Synthesize speech from text. Returns an object that contains a base64-encoded audio file.
@@ -253,7 +283,8 @@ class Speech:
     form_data = aiohttp.FormData()
     form_data.add_field('text', text)
     form_data.add_field('voice', voice)
-    form_data.add_field('seed', kwargs.get('seed', None))
+    if 'seed' in kwargs:
+      form_data.add_field('seed', kwargs.get('seed'))
     form_data.add_field('format', kwargs.get('format', 'wav'))
     form_data.add_field('speed', kwargs.get('speed', 1.0))
     length = kwargs.get('length', None)
