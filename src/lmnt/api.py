@@ -17,11 +17,10 @@ import base64
 import aiohttp
 import json
 import os
+from aiohttp import WSMsgType
 
 _BASE_URL = 'https://api.lmnt.com'
-
-_SYNTHESIZE_STREAMING_ENDPOINT = '/speech/beta/synthesize_streaming'
-
+_SYNTHESIZE_STREAMING_ENDPOINT = '/v1/ai/speech/stream'
 _LIST_VOICES_ENDPOINT = '/v1/ai/voice/list'
 _VOICE_ENDPOINT = '/v1/ai/voice/{id}'
 _CREATE_VOICE_ENDPOINT = '/v1/ai/voice'
@@ -44,13 +43,27 @@ class SpeechError(Exception):
 
 
 class StreamingSynthesisConnection:
-  def __init__(self, socket):
+  def __init__(self, socket, return_extras):
     self.socket = socket
+    self.return_extras = return_extras
 
   def __aiter__(self):
     return self.socket.__aiter__()
 
   async def __anext__(self):
+    if self.return_extras:
+      msg1 = self.socket.__anext__()
+      if msg1 == WSMsgType.CLOSE:
+        return msg1
+      # After eof:true has been sent, the server will send a single message with the audio at the end.
+      if type(msg1) == bytes:
+        data = {'durations': {}, 'audio': msg1}
+      else:
+        msg2 = self.socket.__anext__()
+        if type(msg2) != bytes:
+          raise Exception('Unexpected message type received from server.')
+        data = {'durations': json.loads(msg1), 'audio': msg2}
+      return data
     return self.socket.__anext__()
 
   async def append_text(self, text):
@@ -90,7 +103,7 @@ class Speech:
     - `starred`: Show starred voices only. Defaults to `false`.
     - `owner`: Comma-separated list of voice owners to specify which voices to return. Choose from `lmnt`, `me`, or `all`. Defaults to `all`.
     """
-    if owner not in ['all', 'me']:
+    if owner not in ['all', 'lmnt', 'me']:
       raise ValueError(f'Invalid owner: {owner}')
     self._lazy_init()
     url = f'{self._base_url}{_LIST_VOICES_ENDPOINT}?starred={starred}&owner={owner}'
@@ -121,7 +134,7 @@ class Speech:
 
     Parameters:
     - `name`: The name of the voice.
-    - `enhance`: Whether to enhance the audio files.
+    - `enhance`: For unclean audio with background noise, applies processing to attempt to improve quality. Not on by default as it can also degrade quality in some circumstances.
     - `filenames`: A list of filenames to use for the voice.
 
     Optional parameters:
@@ -130,7 +143,7 @@ class Speech:
     - `description`: A description of the voice. Defaults to `None`.
 
     Returns the voice metadata object:
-    - `id`: The id of the voice (voice_id).
+    - `id`: The id of the voice (`voice_id`).
     - `name`: The name of the voice.
     - `owner`: The owner of the voice.
     - `state`: The state of the voice, e.g. `ready`, `pending`, `broken`.
@@ -260,10 +273,14 @@ class Speech:
     - `format`: The audio format to use for synthesis. Defaults to `mp3`.
     - `speed`: The speed to use for synthesis. Defaults to 1.0.
     - `return_durations`: If `True`, the response will include word durations detail. Defaults to `False`.
+    - `return_seed`: If `True`, the response will include the seed used for synthesis. Defaults to `False`.
     - `length`: The desired target length of the output speech in seconds.
 
+    Deprecated parameters:
+    - `durations`: If `True`, the response will include word durations detail. Defaults to `False`. Deprecated in favor of `return_durations`.
+
     Returns an object with the following keys:
-    - `audio`: The base64-encoded audio file. To decode, call base64.b64decode(audio).
+    - `audio`: The base64-encoded audio file. To decode, call `base64.b64decode(audio)`.
     - `durations`: The word durations detail. Only returned if `return_durations` is `True`.
     - `seed`: The seed used for synthesis.
 
@@ -290,28 +307,52 @@ class Speech:
     length = kwargs.get('length', None)
     if length is not None:
       form_data.add_field('length', length)
-    return_durations = kwargs.get('return_durations', False)
+    return_durations = kwargs.get('durations', False)
+    if 'return_durations' in kwargs: # return_durations takes precedence over durations
+      return_durations = kwargs['return_durations']
     if return_durations is True:
       form_data.add_field('return_durations', 'true')
+    return_seed = kwargs.get('return_seed', False)
 
     async with self._session.post(url, data=form_data, headers=self._build_headers()) as resp:
       await self._handle_response_errors(resp)
-      response_json = await resp.json()
-      if 'audio' in response_json:
-        response_json['audio'] = base64.b64decode(response_json['audio'])
-      return response_json
+      response_data = await resp.json()
+      if not return_seed and not return_durations:
+        return base64.b64decode(response_data['audio']) # backwards compatibility
+      synthesis_result = {}
+      synthesis_result['audio'] = base64.b64decode(response_data['audio'])
+      if return_durations:
+        synthesis_result['durations'] = response_data['durations']
+      if return_seed:
+        synthesis_result['seed'] = response_data['seed']
+      return synthesis_result
+    
 
-  async def synthesize_streaming(self, voice):
+  async def synthesize_streaming(self, voice, return_extras: bool = False, **kwargs):
+    """
+    Initiates a full-duplex streaming connection with the server that allows you to send text and receive audio in real-time.
+
+    Parameters:
+    - `voice`: The voice id to use for this connection.
+    - `X-API-Key`: The API key to use for authentication.
+    - `speed`: The speed to use for synthesis. Defaults to 1.0.
+    - `return_extras`: If `True`, the response will include word durations detail. Defaults to `False`.
+    """
     self._lazy_init()
 
     init_msg = {
         'X-API-Key': self._api_key,
         'voice': voice
     }
+    if 'speed' in kwargs:
+      init_msg['speed'] = kwargs['speed']
+    if 'expressive' in kwargs:
+      init_msg['expressive'] = kwargs['expressive']
+    init_msg['return_extras'] = return_extras
 
     ws = await self._session.ws_connect(f'{self._base_url}{_SYNTHESIZE_STREAMING_ENDPOINT}')
     await ws.send_str(json.dumps(init_msg))
-    return StreamingSynthesisConnection(ws)
+    return StreamingSynthesisConnection(ws, return_extras)
 
 
   async def account_info(self):
