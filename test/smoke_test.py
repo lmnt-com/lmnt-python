@@ -1,9 +1,11 @@
+from aiohttp import WSMsgType
 import pytest
 import os
 import sys
+import asyncio
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'src', 'lmnt')))
-from api import Speech # noqa
+from api import Speech, StreamingSynthesisConnection # noqa
 
 # Set an API key in your environment to run these tests
 X_API_KEY = os.environ['X_API_KEY']
@@ -19,11 +21,42 @@ async def api():
 async def test_init(api: Speech):
     assert api is not None
 
+async def reader_task_binary(connection):
+    async for msg in connection:
+        assert msg is not None
+        assert msg.type == WSMsgType.BINARY
+
 @pytest.mark.asyncio
 async def test_synthesize_streaming(api: Speech):
     voice = 'shanti'
-    result = await api.synthesize_streaming(voice)
-    assert result is not None
+    connection = await api.synthesize_streaming(voice)
+    assert connection is not None
+    assert isinstance(connection, StreamingSynthesisConnection)
+    reader = asyncio.create_task(reader_task_binary(connection))
+    await connection.append_text('One, Hello, world!')
+    await connection.append_text('Two, Hello, world!')
+    await connection.append_text('Three, Hello, world!')
+    await connection.finish()
+    await reader
+
+async def reader_task_str(connection):
+    async for msg in connection:
+        assert msg is not None
+        assert 'audio' in msg
+        assert 'durations' in msg
+
+@pytest.mark.asyncio
+async def test_synthesize_streaming_return_extras(api: Speech):
+    voice = 'shanti'
+    connection = await api.synthesize_streaming(voice, return_extras=True)
+    assert connection is not None
+    assert isinstance(connection, StreamingSynthesisConnection)
+    reader = asyncio.create_task(reader_task_str(connection))
+    await connection.append_text('One, Hello, world!')
+    await connection.append_text('Two, Hello, world!')
+    await connection.append_text('Three, Hello, world!')
+    await connection.finish()
+    await reader
 
 @pytest.mark.asyncio
 async def test_durations(api: Speech):
@@ -58,9 +91,7 @@ async def test_synthesize(api: Speech):
     text = 'Example Text'
     result = await api.synthesize(text=text, voice=voice)
     assert result is not None
-    assert 'durations' not in result
-    assert 'audio' in result
-    assert len(result['audio']) > 0
+    assert type(result) == bytes
 
 @pytest.mark.asyncio
 async def test_synthesize_with_empty_voice(api: Speech):
@@ -183,4 +214,5 @@ async def test_update_owned_voice(api: Speech):
 
 @pytest.mark.asyncio
 async def test_get_account_info(api):
-    await api.account_info()
+    response = await api.account_info()
+    assert type(response) == dict

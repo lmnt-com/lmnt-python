@@ -41,36 +41,48 @@ class SpeechError(Exception):
   def __str__(self):
     return f'SpeechError [status={self.status}] {self.message}'
 
+class StreamingSynthesisDoubleIterator:
+  def __init__(self, original_iterator):
+    self.original_iterator = original_iterator
 
+  async def __anext__(self):
+    msg1 = await self.original_iterator.__anext__()
+    if msg1.type == WSMsgType.CLOSE:
+      return msg1
+    if msg1.type != WSMsgType.TEXT:
+      raise Exception('Unexpected message type received from server.')
+    else:
+      msg2 = await self.original_iterator.__anext__()
+      if msg2.type != WSMsgType.BINARY:
+        raise Exception('Unexpected message type received from server.')
+      msg1_json = json.loads(msg1.data)
+      data = {'audio': msg2.data, 'durations': msg1_json['durations']}
+      if 'warning' in msg1_json:
+        data['warning'] = msg1_json['warning']
+      return data
+  
 class StreamingSynthesisConnection:
-  def __init__(self, socket, return_extras):
+  def __init__(self, socket, return_extras: bool):
     self.socket = socket
     self.return_extras = return_extras
 
   def __aiter__(self):
-    return self.socket.__aiter__()
-
-  async def __anext__(self):
     if self.return_extras:
-      msg1 = self.socket.__anext__()
-      if msg1 == WSMsgType.CLOSE:
-        return msg1
-      # After eof:true has been sent, the server will send a single message with the audio at the end.
-      if type(msg1) == bytes:
-        data = {'durations': {}, 'audio': msg1}
-      else:
-        msg2 = self.socket.__anext__()
-        if type(msg2) != bytes:
-          raise Exception('Unexpected message type received from server.')
-        data = {'durations': json.loads(msg1), 'audio': msg2}
-      return data
+      return StreamingSynthesisDoubleIterator(self.socket.__aiter__())
+    else:
+      return self.socket.__aiter__()
+  
+  async def __anext__(self):
     return self.socket.__anext__()
 
-  async def append_text(self, text):
+  async def append_text(self, text: str):
     msg = {
         'text': text
     }
     await self.socket.send_str(json.dumps(msg))
+
+  async def flush(self):
+    await self.socket.send_str('{"flush": true}')
 
   async def finish(self):
     await self.socket.send_str('{"eof": true}')
@@ -105,6 +117,8 @@ class Speech:
     """
     if owner not in ['all', 'lmnt', 'me']:
       raise ValueError(f'Invalid owner: {owner}')
+    if type(starred) != bool:
+      raise ValueError(f'Invalid starred: {starred}')
     self._lazy_init()
     url = f'{self._base_url}{_LIST_VOICES_ENDPOINT}?starred={starred}&owner={owner}'
     
@@ -113,7 +127,7 @@ class Speech:
       return await resp.json()
     
 
-  async def voice_info(self, voice_id):
+  async def voice_info(self, voice_id: str):
     """
     Returns details of a specific voice.
 
@@ -187,19 +201,19 @@ class Speech:
         file.close()
 
 
-  async def update_voice(self, voice_id, **kwargs):
+  async def update_voice(self, voice_id: str, **kwargs):
     """
     Updates metadata for a specific voice. A voice that is not owned by you can only have its `starred` field updated. 
     Only provided fields will be changed.
 
     Required parameters:
-    - `voice_id`: The id of the voice to update. If you don't know the id, you can get it from `list_voices()`.
+    - `voice_id` (str): The id of the voice to update. If you don't know the id, you can get it from `list_voices()`.
 
     Optional parameters:
-    - `name`: The name of the voice.
-    - `starred`: Whether the voice is starred.
-    - `gender`: The gender of the voice. For categorization purposes.
-    - `description`: A description of the voice.
+    - `name` (str): The name of the voice.
+    - `starred` (bool): Whether the voice is starred.
+    - `gender` (str): The gender of the voice. For categorization purposes.
+    - `description` (str): A description of the voice.
     """
     self._lazy_init()
     url = f'{self._base_url}{_VOICE_ENDPOINT}'.format(id=voice_id)
@@ -216,12 +230,12 @@ class Speech:
       return await resp.json()
  
   
-  async def delete_voice(self, voice_id):
+  async def delete_voice(self, voice_id: str):
     """
     Deletes a voice and cancels any pending operations on it. The voice must be owned by you. Cannot be undone.
 
     Required parameters:
-    - `voice_id`: The id of the voice to update. If you don't know the id, you can get it from `list_voices()`.
+    - `voice_id` (str): The id of the voice to update. If you don't know the id, you can get it from `list_voices()`.
     """
     self._lazy_init()
     url = f'{self._base_url}{_VOICE_ENDPOINT}'.format(id=voice_id)
@@ -229,60 +243,31 @@ class Speech:
     async with self._session.delete(url, headers=self._build_headers()) as resp:
       await self._handle_response_errors(resp)
       return await resp.json()
+  
 
-
-  async def create_voice(self, name: str, accent: str, is_instant: bool, should_filter: bool, filenames: list[str]):
-    assert name is not None, '[Speech.create_voice] `name` must not be None.'
-    assert accent is not None, '[Speech.create_voice] `accent` must not be None.'
-    assert filenames is not None, '[Speech.create_voice] `filenames` must not be None.'
-    assert len(name) > 0, '[Speech.create_voice] `name` must be non-empty.'
-    assert len(accent) > 0, '[Speech.create_voice] `accent` must be non-empty.'
-    assert len(filenames) > 0, '[Speech.create_voice] `filenames` must be non-empty.'
-
-    metadata = json.dumps({
-        'name': name,
-        'accent': accent,
-        'quick': is_instant,
-        'filter': should_filter,
-    })
-    files = []
-    try:
-      with aiohttp.MultipartWriter() as mpwriter:
-        mpwriter.append(metadata, { 'Content-Type': 'application/json', 'Content-Disposition': 'form-data; name="metadata"'})
-        for filename in filenames:
-          f = open(filename, 'rb')
-          files.append(f)
-          part = mpwriter.append(f)
-          part.set_content_disposition('form-data', name='file_field', filename=os.path.basename(filename))
-      async with self._session.post(f'{self._base_url}{_CREATE_VOICE_ENDPOINT}', data=mpwriter, headers=self._build_headers()) as resp:
-        return await resp.json()
-    finally:
-      for file in files:
-        file.close()
-
-  async def synthesize(self, text, voice, **kwargs):
+  async def synthesize(self, text: str, voice: str, **kwargs):
     """
-    Synthesize speech from text. Returns an object that contains a base64-encoded audio file.
+    Synthesize speech from text. Returns a binary audio file unless otherwise stated.
 
     Parameters:
-    - `text`: The text to synthesize.
-    - `voice`: The voice id to use for synthesis.
+    - `text` (str): The text to synthesize.
+    - `voice` (str): The voice id to use for synthesis.
 
     Optional parameters:
-    - `seed`: The seed used to specify a different take. Defaults to random.
-    - `format`: The audio format to use for synthesis. Defaults to `mp3`.
-    - `speed`: The speed to use for synthesis. Defaults to 1.0.
-    - `return_durations`: If `True`, the response will include word durations detail. Defaults to `False`.
-    - `return_seed`: If `True`, the response will include the seed used for synthesis. Defaults to `False`.
-    - `length`: The desired target length of the output speech in seconds.
+    - `seed` (int): The seed used to specify a different take. Defaults to random.
+    - `format` (str): The audio format to use for synthesis. Defaults to `wav`.
+    - `speed` (float): The speed to use for synthesis. Defaults to 1.0.
+    - `return_durations` (bool): If `True`, the response will include word durations detail. Defaults to `False`.
+    - `return_seed` (bool): If `True`, the response will include the seed used for synthesis. Defaults to `False`.
+    - `length` (int): The desired target length of the output speech in seconds.
 
     Deprecated parameters:
-    - `durations`: If `True`, the response will include word durations detail. Defaults to `False`. Deprecated in favor of `return_durations`.
+    - `durations` (bool): If `True`, the response will include word durations detail. Defaults to `False`. Deprecated in favor of `return_durations`.
 
-    Returns an object with the following keys:
+    If `return_durations` or `return_seed` is true, returns an object with the following keys:
     - `audio`: The base64-encoded audio file. To decode, call `base64.b64decode(audio)`.
     - `durations`: The word durations detail. Only returned if `return_durations` is `True`.
-    - `seed`: The seed used for synthesis.
+    - `seed`: The seed used for synthesis. Only returned if `return_seed` is `True`.
 
     Each `durations` entry is a dictionary describing the duration of each word with the following keys:
     - `text`: the word itself
@@ -328,16 +313,21 @@ class Speech:
       return synthesis_result
     
 
-  async def synthesize_streaming(self, voice, return_extras: bool = False, **kwargs):
+  async def synthesize_streaming(self, voice: str, return_extras: bool = False, **kwargs):
     """
     Initiates a full-duplex streaming connection with the server that allows you to send text and receive audio in real-time.
 
     Parameters:
-    - `voice`: The voice id to use for this connection.
-    - `X-API-Key`: The API key to use for authentication.
-    - `speed`: The speed to use for synthesis. Defaults to 1.0.
-    - `return_extras`: If `True`, the response will include word durations detail. Defaults to `False`.
+    - `voice` (str): The voice id to use for this connection.
+    - `speed` (float): The speed to use for synthesis. Defaults to 1.0.
+    - `return_extras` (bool): If `True`, the response will include word durations detail. Defaults to `False`.
+
+    Returns:
+    - `StreamingSynthesisConnection`: The streaming connection object.
     """
+    if not voice:
+      raise ValueError('[Speech.synthesize_streaming] `voice` must not be None.')
+    
     self._lazy_init()
 
     init_msg = {
@@ -348,8 +338,7 @@ class Speech:
       init_msg['speed'] = kwargs['speed']
     if 'expressive' in kwargs:
       init_msg['expressive'] = kwargs['expressive']
-    init_msg['return_extras'] = return_extras
-
+    init_msg['send_extras'] = return_extras
     ws = await self._session.ws_connect(f'{self._base_url}{_SYNTHESIZE_STREAMING_ENDPOINT}')
     await ws.send_str(json.dumps(init_msg))
     return StreamingSynthesisConnection(ws, return_extras)
@@ -372,7 +361,7 @@ class Speech:
       self._session = aiohttp.ClientSession()
 
 
-  def _build_headers(self, type=None):
+  def _build_headers(self, type: str = None):
     if type is not None:
       return {
         'X-API-Key': self._api_key,
