@@ -41,7 +41,10 @@ class SpeechError(Exception):
   def __str__(self):
     return f'SpeechError [status={self.status}] {self.message}'
 
-class StreamingSynthesisDoubleIterator:
+class _StreamingSynthesisExtraDataIterator:
+  """
+  A wrapper around the original aiohttp.ClientSession iterator that returns a dictionary with audio and durations data.
+  """
   def __init__(self, original_iterator):
     self.original_iterator = original_iterator
 
@@ -50,16 +53,15 @@ class StreamingSynthesisDoubleIterator:
     if msg1.type == WSMsgType.CLOSE:
       return msg1
     if msg1.type != WSMsgType.TEXT:
-      raise Exception('Unexpected message type received from server.')
-    else:
-      msg2 = await self.original_iterator.__anext__()
-      if msg2.type != WSMsgType.BINARY:
-        raise Exception('Unexpected message type received from server.')
-      msg1_json = json.loads(msg1.data)
-      data = {'audio': msg2.data, 'durations': msg1_json['durations']}
-      if 'warning' in msg1_json:
-        data['warning'] = msg1_json['warning']
-      return data
+      raise RuntimeError('Unexpected message type received from server.')
+    msg2 = await self.original_iterator.__anext__()
+    if msg2.type != WSMsgType.BINARY:
+      raise RuntimeError('Unexpected message type received from server.')
+    msg1_json = json.loads(msg1.data)
+    data = {'audio': msg2.data, 'durations': msg1_json['durations']}
+    if 'warning' in msg1_json:
+      data['warning'] = msg1_json['warning']
+    return data
   
 class StreamingSynthesisConnection:
   def __init__(self, socket, return_extras: bool):
@@ -67,8 +69,12 @@ class StreamingSynthesisConnection:
     self.return_extras = return_extras
 
   def __aiter__(self):
+    """
+    Returns a streaming iterator that yields audio data as it is received from the server.
+    If extras are requested, a wrapper iterator is returned since messages of two different types are sent from the server.
+    """
     if self.return_extras:
-      return StreamingSynthesisDoubleIterator(self.socket.__aiter__())
+      return _StreamingSynthesisExtraDataIterator(self.socket.__aiter__())
     else:
       return self.socket.__aiter__()
   
@@ -255,7 +261,7 @@ class Speech:
 
     Optional parameters:
     - `seed` (int): The seed used to specify a different take. Defaults to random.
-    - `format` (str): The audio format to use for synthesis. Defaults to `wav`.
+    - `format` (str): The audio format to use for synthesis. Defaults to `mp3`.
     - `speed` (float): The speed to use for synthesis. Defaults to 1.0.
     - `return_durations` (bool): If `True`, the response will include word durations detail. Defaults to `False`.
     - `return_seed` (bool): If `True`, the response will include the seed used for synthesis. Defaults to `False`.
@@ -287,7 +293,7 @@ class Speech:
     form_data.add_field('voice', voice)
     if 'seed' in kwargs:
       form_data.add_field('seed', kwargs.get('seed'))
-    form_data.add_field('format', kwargs.get('format', 'wav'))
+    form_data.add_field('format', kwargs.get('format', 'mp3'))
     form_data.add_field('speed', kwargs.get('speed', 1.0))
     length = kwargs.get('length', None)
     if length is not None:
@@ -362,12 +368,10 @@ class Speech:
 
 
   def _build_headers(self, type: str = None):
+    headers = {'X-API-Key': self._api_key}
     if type is not None:
-      return {
-        'X-API-Key': self._api_key,
-        'Content-Type': type
-      }    
-    return {'X-API-Key': self._api_key}
+      headers['Content-Type'] = type
+    return headers
 
 
   async def _handle_response_errors(self, response):
