@@ -24,7 +24,8 @@ async def test_init(api: Speech):
 async def reader_task_binary(connection):
     async for msg in connection:
         assert msg is not None
-        assert msg.type == WSMsgType.BINARY
+        assert 'audio' in msg
+        assert 'durations' not in msg
 
 @pytest.mark.asyncio
 async def test_synthesize_streaming(api: Speech):

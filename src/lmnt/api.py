@@ -41,26 +41,32 @@ class SpeechError(Exception):
   def __str__(self):
     return f'SpeechError [status={self.status}] {self.message}'
 
-class _StreamingSynthesisExtraDataIterator:
-  """
-  A wrapper around the original aiohttp.ClientSession iterator that returns a dictionary with audio and durations data.
-  """
-  def __init__(self, original_iterator):
+class _StreamingSynthesisIterator:
+  def __init__(self, original_iterator, return_extras: bool):
     self.original_iterator = original_iterator
+    self.return_extras = return_extras
 
   async def __anext__(self):
     msg1 = await self.original_iterator.__anext__()
     if msg1.type == WSMsgType.CLOSE:
-      return msg1
-    if msg1.type != WSMsgType.TEXT:
-      raise RuntimeError('Unexpected message type received from server.')
-    msg2 = await self.original_iterator.__anext__()
-    if msg2.type != WSMsgType.BINARY:
-      raise RuntimeError('Unexpected message type received from server.')
-    msg1_json = json.loads(msg1.data)
-    data = {'audio': msg2.data, 'durations': msg1_json['durations']}
-    if 'warning' in msg1_json:
-      data['warning'] = msg1_json['warning']
+      return # Equivalent to raising a StopAsyncIteration exception, will cleanly stop async for loop
+    data = {}
+
+    if self.return_extras:
+      if msg1.type != WSMsgType.TEXT:
+        raise RuntimeError('Unexpected message type received from server.')
+      msg2 = await self.original_iterator.__anext__()
+      if msg2.type != WSMsgType.BINARY:
+        raise RuntimeError('Unexpected message type received from server.')
+      msg1_json = json.loads(msg1.data)
+      data = {'audio': msg2.data, 'durations': msg1_json['durations']}
+      if 'warning' in msg1_json:
+        data['warning'] = msg1_json['warning']
+    else:
+      if msg1.type != WSMsgType.BINARY:
+        raise RuntimeError('Unexpected message type received from server.')
+      data = {'audio': msg1.data}
+
     return data
   
 class StreamingSynthesisConnection:
@@ -70,13 +76,9 @@ class StreamingSynthesisConnection:
 
   def __aiter__(self):
     """
-    Returns a streaming iterator that yields audio data as it is received from the server.
-    If extras are requested, a wrapper iterator is returned since messages of two different types are sent from the server.
+    Returns a streaming iterator that yields an object containing binary audio data (and optionally other data) as it is received from the server.
     """
-    if self.return_extras:
-      return _StreamingSynthesisExtraDataIterator(self.socket.__aiter__())
-    else:
-      return self.socket.__aiter__()
+    return _StreamingSynthesisIterator(self.socket.__aiter__(), self.return_extras)
   
   async def __anext__(self):
     return self.socket.__anext__()
