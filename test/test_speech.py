@@ -29,7 +29,7 @@ async def test_synthesize(api):
     api._session.post.return_value.__aenter__.return_value.status = 200
 
     synthesis_result = await api.synthesize(text, voice)
-    assert synthesis_result == base64.b64decode(mock_response['audio'])
+    assert synthesis_result == {'audio': base64.b64decode(mock_response['audio'])}
 
 @pytest.mark.asyncio
 async def test_synthesize_return_durations(api):

@@ -161,7 +161,7 @@ class Speech:
 
     Optional parameters:
     - `type`: The type of voice to create. Must be one of `instant` or `professional`. Defaults to `instant`.
-    - `gender`: The gender of the voice. For categorization purposes. Defaults to `None`.
+    - `gender`: The gender of the voice, e.g. `male`, `female`, `nonbinary`. For categorization purposes. Defaults to `None`.
     - `description`: A description of the voice. Defaults to `None`.
 
     Returns the voice metadata object:
@@ -169,7 +169,7 @@ class Speech:
     - `name`: The name of the voice.
     - `owner`: The owner of the voice.
     - `state`: The state of the voice, e.g. `ready`, `pending`, `broken`.
-    - `gender`: The gender of the voice, e.g. `male`, `female`.
+    - `gender`: The gender of the voice, e.g. `male`, `female`, `nonbinary`.
     - `type`: The type of voice, e.g. `instant`, `professional`.
     - `description`: A description of the voice.
     """
@@ -220,7 +220,7 @@ class Speech:
     Optional parameters:
     - `name` (str): The name of the voice.
     - `starred` (bool): Whether the voice is starred.
-    - `gender` (str): The gender of the voice. For categorization purposes.
+    - `gender` (str):  The gender of the voice, e.g. `male`, `female`, `nonbinary`. For categorization purposes.
     - `description` (str): A description of the voice.
     """
     self._lazy_init()
@@ -310,8 +310,6 @@ class Speech:
     async with self._session.post(url, data=form_data, headers=self._build_headers()) as resp:
       await self._handle_response_errors(resp)
       response_data = await resp.json()
-      if not return_seed and not return_durations:
-        return base64.b64decode(response_data['audio']) # backwards compatibility
       synthesis_result = {}
       synthesis_result['audio'] = base64.b64decode(response_data['audio'])
       if return_durations:

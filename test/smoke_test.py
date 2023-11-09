@@ -92,7 +92,11 @@ async def test_synthesize(api: Speech):
     text = 'Example Text'
     result = await api.synthesize(text=text, voice=voice)
     assert result is not None
-    assert type(result) == bytes
+    assert 'audio' in result
+    assert 'durations' not in result
+    assert 'seed' not in result
+    assert len(result['audio']) > 0
+    assert type(result['audio']) == bytes
 
 @pytest.mark.asyncio
 async def test_synthesize_with_empty_voice(api: Speech):
