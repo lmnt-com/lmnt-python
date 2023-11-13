@@ -185,6 +185,8 @@ class Speech:
       raise ValueError('[Speech.create_voice] Filenames must be non-empty.')
     if enhance is None:
       raise ValueError('[Speech.create_voice] Enhance must not be None.')
+
+    self._lazy_init()
     
     metadata = json.dumps({
         'name': name,
