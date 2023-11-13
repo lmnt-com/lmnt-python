@@ -29,14 +29,17 @@ _ACCOUNT_ENDPOINT = '/v1/account'
 
 
 class SpeechError(Exception):
-  def __init__(self, status, error):
+  def __init__(self, status, error, caller):
+    self.message = ''
+    if caller:
+      self.message = f'[{caller}]: '
     self.status = status
     if 'error' in error:
-      self.message = error['error']
+      self.message += error['error']
     elif 'message' in error:
-      self.message = error['message']
+      self.message += error['message']
     else:
-      'Unknown error; see status code for hints on what went wrong.'
+      self.message += 'Unknown error; see status code for hints on what went wrong.'
 
   def __str__(self):
     return f'SpeechError [status={self.status}] {self.message}'
@@ -131,7 +134,7 @@ class Speech:
     url = f'{self._base_url}{_LIST_VOICES_ENDPOINT}?starred={starred}&owner={owner}'
     
     async with self._session.get(url, headers=self._build_headers()) as resp:
-      await self._handle_response_errors(resp)
+      await self._handle_response_errors(resp, 'Speech.list_voices')
       return await resp.json()
     
 
@@ -146,7 +149,7 @@ class Speech:
     url = f'{self._base_url}{_VOICE_ENDPOINT}'.format(id=voice_id)
 
     async with self._session.get(url, headers=self._build_headers()) as resp:
-      await self._handle_response_errors(resp)
+      await self._handle_response_errors(resp, 'Speech.voice_info')
       return await resp.json()
 
 
@@ -205,6 +208,7 @@ class Speech:
           part = mpwriter.append(f)
           part.set_content_disposition('form-data', name='file_field', filename=os.path.basename(filename))
       async with self._session.post(f'{self._base_url}{_CREATE_VOICE_ENDPOINT}', data=mpwriter, headers=self._build_headers()) as resp:
+        await self._handle_response_errors(resp, 'Speech.create_voice')
         return await resp.json()
     finally:
       for file in files:
@@ -236,7 +240,7 @@ class Speech:
     }
     data = json.dumps({k: v for k, v in data.items() if v is not None})
     async with self._session.put(url, data=data, headers=self._build_headers(type='application/json')) as resp:
-      await self._handle_response_errors(resp)
+      await self._handle_response_errors(resp, 'Speech.update_voice')
       return await resp.json()
  
   
@@ -251,7 +255,7 @@ class Speech:
     url = f'{self._base_url}{_VOICE_ENDPOINT}'.format(id=voice_id)
 
     async with self._session.delete(url, headers=self._build_headers()) as resp:
-      await self._handle_response_errors(resp)
+      await self._handle_response_errors(resp, 'Speech.delete_voice')
       return await resp.json()
   
 
@@ -310,7 +314,7 @@ class Speech:
     return_seed = kwargs.get('return_seed', False)
 
     async with self._session.post(url, data=form_data, headers=self._build_headers()) as resp:
-      await self._handle_response_errors(resp)
+      await self._handle_response_errors(resp, 'Speech.synthesize')
       response_data = await resp.json()
       synthesis_result = {}
       synthesis_result['audio'] = base64.b64decode(response_data['audio'])
@@ -360,7 +364,7 @@ class Speech:
     url = f'{self._base_url}{_ACCOUNT_ENDPOINT}'
 
     async with self._session.get(url, headers=self._build_headers()) as resp:
-      await self._handle_response_errors(resp)
+      await self._handle_response_errors(resp, 'Speech.account_info')
       return await resp.json()
 
 
@@ -376,7 +380,7 @@ class Speech:
     return headers
 
 
-  async def _handle_response_errors(self, response):
+  async def _handle_response_errors(self, response, caller=None):
     if response.status < 400:
       return
-    raise SpeechError(response.status, await response.json())
+    raise SpeechError(response.status, await response.json(), caller)
