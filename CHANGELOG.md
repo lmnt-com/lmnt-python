@@ -1,3 +1,13 @@
+# 1.0.0
+Nov 14, 2023
+- Uses the stable v1 LMNT REST API.
+- **BREAKING CHANGES**: please update your code to use the new behavior or pin to a previous version if preferred.
+    - Default audio encoding format in `synthesize` is now `mp3` (previously `wav`). Format can be specified by adding `format='wav'` or `format='mp3'` to the `synthesize` call.
+    - `list_voices` now returns a list of voice dictionaries for simplicity of return values and ease of use. Previously it returned a dictionary with key `voices` which contained a dictionary of voice dictionaries keyed by their voice id.
+    - `synthesize` no longer returns just the binary audio data. It instead always returns a dictionary with keys `audio`, `durations` (optional), and `seed` (optional).
+    - `synthesize_streaming` no longer returns an `aiohttp WSMessage`. It instead returns a dictionary with keys `audio`, `durations` (optional), and `seed` (optional).
+- Adds support for creating, updating, and deleting voices as well as getting account details.
+
 # 0.2.1
 
 Oct 12, 2023
