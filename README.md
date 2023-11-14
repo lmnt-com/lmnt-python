@@ -27,10 +27,14 @@ from lmnt.api import Speech
 LMNT_API_KEY = ...  # fill in your API key here
 
 async with Speech(LMNT_API_KEY) as speech:
-  wav_file = await speech.synthesize('Hello, world.', voice='4e95c4a7-95aa-4b1d-bc23-00f7d1d484ea')
+  synthesis = await speech.synthesize('Hello, world.', voice='4e95c4a7-95aa-4b1d-bc23-00f7d1d484ea', format='wav')
   with open('output.wav', 'wb') as f:
-    f.write(wav_file)
+    f.write(synthesis['audio'])
 ```
+
+## More examples
+
+You can find more examples in the [demo](demo) directory.
 
 ## License
 [Apache 2.0](LICENSE)
