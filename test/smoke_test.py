@@ -9,12 +9,11 @@ from api import Speech, StreamingSynthesisConnection # noqa
 
 # Set an API key in your environment to run these tests
 X_API_KEY = os.environ['X_API_KEY']
-STAGING_URL = 'https://api.staging.lmnt.com'
-PROD_URL = 'https://api.lmnt.com'
+_BASE_URL = 'https://api.lmnt.com'
 
 @pytest.fixture
 async def api():
-    async with Speech(X_API_KEY, base_url=STAGING_URL) as speech:
+    async with Speech(X_API_KEY, base_url=_BASE_URL) as speech:
         yield speech
 
 @pytest.mark.asyncio
@@ -123,9 +122,9 @@ async def test_list_voices_owned(api: Speech):
 
 @pytest.mark.asyncio
 async def test_get_voice(api: Speech):
-    voice = await api.voice_info('shanti')
+    voice = await api.voice_info('curtis')
     assert isinstance(voice, dict)
-    assert voice['name'] == 'Shanti'
+    assert voice['name'] == 'Curtis'
 
 @pytest.mark.asyncio
 async def test_get_voice_with_invalid_voice(api: Speech):
@@ -134,11 +133,11 @@ async def test_get_voice_with_invalid_voice(api: Speech):
 
 @pytest.mark.asyncio
 async def test_update_voice_star(api: Speech):
-    await api.update_voice('shanti', starred=True)
-    voice = await api.voice_info('shanti')
+    await api.update_voice('curtis', starred=True)
+    voice = await api.voice_info('curtis')
     assert voice.get('starred') is True
-    await api.update_voice('shanti', starred=False)
-    voice = await api.voice_info('shanti')
+    await api.update_voice('curtis', starred=False)
+    voice = await api.voice_info('curtis')
     assert voice.get('starred') is False
 
 @pytest.mark.asyncio
@@ -173,15 +172,15 @@ async def test_create_voice_basic_invalid_filenames(api: Speech):
 
 @pytest.mark.asyncio
 async def test_create_voice_advanced(api: Speech):
-    voice = await api.create_voice(name='test_voice8', enhance=True, filenames=['filename.wav'], description='test description', gender='male', type='professional')
+    voice = await api.create_voice(name='test_voice', enhance=True, filenames=['filename.wav'], description='test description', gender='male', type='instant')
     voice_id = voice['id']
     stored_voice = await api.voice_info(voice_id)
     await api.delete_voice(voice_id)
     voice = voice['voice']
-    assert voice['name'] == 'test_voice8'
+    assert voice['name'] == 'test_voice'
     assert voice['owner'] == 'me'
     assert voice['state'] == 'preparing'
-    assert voice['type'] == 'professional'
+    assert voice['type'] == 'instant'
     stored_voice.pop('starred')
     assert voice == stored_voice
     with pytest.raises(Exception):
@@ -189,7 +188,7 @@ async def test_create_voice_advanced(api: Speech):
 
 @pytest.mark.asyncio
 async def test_update_owned_voice(api: Speech):
-    original_voice = await api.create_voice(name='test_voice_update', enhance=True, filenames=['filename.wav'], description='test description', gender='male', type='professional')
+    original_voice = await api.create_voice(name='test_voice_update', enhance=True, filenames=['filename.wav'], description='test description', gender='male', type='instant')
     voice_id = original_voice['id']
     original_stored_voice = await api.voice_info(voice_id)
     updated_voice = await api.update_voice(voice_id, description='my new description', gender='female', name='new_name', starred=False)
@@ -202,7 +201,7 @@ async def test_update_owned_voice(api: Speech):
     assert original_voice['name'] == 'test_voice_update'
     assert original_voice['owner'] == 'me'
     assert original_voice['state'] == 'preparing'
-    assert original_voice['type'] == 'professional'
+    assert original_voice['type'] == 'instant'
     assert original_voice['description'] == 'test description'
     assert original_voice['gender'] == 'male'
     assert original_voice == original_stored_voice
@@ -210,7 +209,7 @@ async def test_update_owned_voice(api: Speech):
     assert updated_voice['name'] == 'new_name'
     assert updated_voice['owner'] == 'me'
     assert updated_voice['state'] == 'preparing'
-    assert updated_voice['type'] == 'professional'
+    assert updated_voice['type'] == 'instant'
     assert updated_voice['description'] == 'my new description'
     assert updated_voice['gender'] == 'female'
     assert updated_voice == updated_stored_voice
