@@ -2,7 +2,7 @@ from unittest.mock import AsyncMock, patch, MagicMock
 import os
 import pytest
 import sys
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'src', 'lmnt')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'src', 'lmnt')))
 from api import Speech, _LIST_VOICES_ENDPOINT, _VOICE_ENDPOINT # noqa
 
 def test_lazy_init():
@@ -106,12 +106,12 @@ async def test_create_voice(api):
 @pytest.mark.asyncio
 async def test_create_voice_invalid_type(api):
     with pytest.raises(ValueError):
-        await api.create_voice('Voice1', False, ['file1.wav', 'file2.wav'], type='invalid')
+        await api.create_voice('Voice1', False, ['filename.wav', 'filename.wav'], type='invalid')
 
 @pytest.mark.asyncio
 async def test_create_voice_no_name(api):
     with pytest.raises(ValueError):
-        await api.create_voice(None, False, ['file1.wav', 'file2.wav'])
+        await api.create_voice(None, False, ['filename.wav', 'filename.wav'])
 
 @pytest.mark.asyncio
 async def test_create_voice_no_files(api):

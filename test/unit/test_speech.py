@@ -4,7 +4,7 @@ import os
 import pytest
 import sys
 import json
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'src', 'lmnt')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'src', 'lmnt')))
 from api import Speech, StreamingSynthesisConnection, _SYNTHESIZE_STREAMING_ENDPOINT  # noqa
 
 

@@ -4,7 +4,7 @@ import os
 import sys
 import asyncio
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'src', 'lmnt')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'src', 'lmnt')))
 from api import Speech, StreamingSynthesisConnection # noqa
 
 # Set an API key in your environment to run these tests
