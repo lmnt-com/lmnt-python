@@ -124,7 +124,9 @@ class Speech:
 
     Optional parameters:
     - `starred`: Show starred voices only. Defaults to `false`.
-    - `owner`: Comma-separated list of voice owners to specify which voices to return. Choose from `lmnt`, `me`, or `all`. Defaults to `all`.
+    - `owner`: Specify which voices to return. Choose from `lmnt`, `me`, or `all`. Defaults to `all`.
+
+    Returns a list of dictionaries containing details of each voice.
     """
     if owner not in ['all', 'lmnt', 'me']:
       raise ValueError(f'Invalid owner: {owner}')
@@ -144,6 +146,8 @@ class Speech:
 
     Required parameters:
     - `voice_id`: The id of the voice to update. If you don't know the id, you can get it from `list_voices()`.
+    
+    Returns a dictionary containing details of the voice.
     """
     self._lazy_init()
     url = f'{self._base_url}{_VOICE_ENDPOINT}'.format(id=voice_id)
@@ -155,7 +159,7 @@ class Speech:
 
   async def create_voice(self, name: str, enhance: bool, filenames: list[str], type: str = 'instant', gender: str = None, description: str = None):
     """
-    Create a new voice from a set of audio files. Returns the voice metadata object.
+    Creates a new voice from a set of audio files. Returns the voice metadata object.
 
     Parameters:
     - `name`: The name of the voice.
@@ -225,7 +229,7 @@ class Speech:
 
     Optional parameters:
     - `name` (str): The name of the voice.
-    - `starred` (bool): Whether the voice is starred.
+    - `starred` (bool): Whether the voice is starred by you
     - `gender` (str):  The gender of the voice, e.g. `male`, `female`, `nonbinary`. For categorization purposes.
     - `description` (str): A description of the voice.
     """
@@ -249,7 +253,7 @@ class Speech:
     Deletes a voice and cancels any pending operations on it. The voice must be owned by you. Cannot be undone.
 
     Required parameters:
-    - `voice_id` (str): The id of the voice to update. If you don't know the id, you can get it from `list_voices()`.
+    - `voice_id` (str): The id of the voice to delete. If you don't know the id, you can get it from `list_voices()`.
     """
     self._lazy_init()
     url = f'{self._base_url}{_VOICE_ENDPOINT}'.format(id=voice_id)
@@ -261,7 +265,7 @@ class Speech:
 
   async def synthesize(self, text: str, voice: str, **kwargs):
     """
-    Synthesize speech from text. Returns a binary audio file unless otherwise stated.
+    Synthesize speech from text.
 
     Parameters:
     - `text` (str): The text to synthesize.
@@ -270,16 +274,16 @@ class Speech:
     Optional parameters:
     - `seed` (int): The seed used to specify a different take. Defaults to random.
     - `format` (str): The audio format to use for synthesis. Defaults to `mp3`.
-    - `speed` (float): The speed to use for synthesis. Defaults to 1.0.
+    - `speed` (float): Floating point value between 0.25 (slow) and 2.0 (fast); Defaults to 1.0
     - `return_durations` (bool): If `True`, the response will include word durations detail. Defaults to `False`.
     - `return_seed` (bool): If `True`, the response will include the seed used for synthesis. Defaults to `False`.
-    - `length` (int): The desired target length of the output speech in seconds.
+    - `length` (int): The desired target length of the output speech in seconds. Maximum 300.0 (5 minutes)
 
     Deprecated parameters:
     - `durations` (bool): If `True`, the response will include word durations detail. Defaults to `False`. Deprecated in favor of `return_durations`.
 
-    If `return_durations` or `return_seed` is true, returns an object with the following keys:
-    - `audio`: The base64-encoded audio file. To decode, call `base64.b64decode(audio)`.
+    Returns an object with the following keys:
+    - `audio`: The binary audio file.
     - `durations`: The word durations detail. Only returned if `return_durations` is `True`.
     - `seed`: The seed used for synthesis. Only returned if `return_seed` is `True`.
 
@@ -306,6 +310,8 @@ class Speech:
     length = kwargs.get('length', None)
     if length is not None:
       form_data.add_field('length', length)
+    if 'quality' in kwargs:
+      form_data.add_field('quality', kwargs.get('quality'))
     return_durations = kwargs.get('durations', False)
     if 'return_durations' in kwargs: # return_durations takes precedence over durations
       return_durations = kwargs['return_durations']
