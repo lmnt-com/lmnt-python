@@ -124,11 +124,11 @@ class Speech:
 
     Optional parameters:
     - `starred`: Show starred voices only. Defaults to `false`.
-    - `owner`: Specify which voices to return. Choose from `lmnt`, `me`, or `all`. Defaults to `all`.
+    - `owner`: Specify which voices to return. Choose from `system`, `me`, or `all`. Defaults to `all`.
 
     Returns a list of dictionaries containing details of each voice.
     """
-    if owner not in ['all', 'lmnt', 'me']:
+    if owner not in ['all', 'system', 'me']:
       raise ValueError(f'Invalid owner: {owner}')
     if type(starred) != bool:
       raise ValueError(f'Invalid starred: {starred}')

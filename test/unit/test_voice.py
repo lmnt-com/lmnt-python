@@ -55,6 +55,18 @@ async def test_list_voices_with_params(api, mock_response):
         assert result == mock_response
 
 @pytest.mark.asyncio
+async def test_list_voices_with_params_system(api, mock_response):
+    with patch('aiohttp.ClientSession', new=MagicMock()):
+        api._session.get.return_value.__aenter__.return_value.json = AsyncMock(return_value=mock_response)
+        api._session.get.return_value.__aenter__.return_value.status = 200
+        result = await api.list_voices(starred=True, owner='system')
+        api._session.get.assert_called_once_with(
+            f'{api._base_url}{_LIST_VOICES_ENDPOINT}?starred=True&owner=system',
+            headers=api._build_headers()
+        )
+        assert result == mock_response
+
+@pytest.mark.asyncio
 async def test_list_voices_invalid_owner(api):
     with pytest.raises(ValueError):
         await api.list_voices(owner='invalid')
