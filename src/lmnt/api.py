@@ -45,6 +45,7 @@ class SpeechError(Exception):
   def __str__(self):
     return f'SpeechError [status={self.status}] {self.message}'
 
+
 class _StreamingSynthesisIterator:
   def __init__(self, original_iterator, return_extras: bool):
     self.original_iterator = original_iterator
@@ -53,7 +54,7 @@ class _StreamingSynthesisIterator:
   async def __anext__(self):
     msg1 = await self.original_iterator.__anext__()
     if msg1.type == WSMsgType.CLOSE:
-      return # Equivalent to raising a StopAsyncIteration exception, will cleanly stop async for loop
+      return  # Equivalent to raising a StopAsyncIteration exception, will cleanly stop async for loop
     data = {}
 
     if self.return_extras:
@@ -72,7 +73,8 @@ class _StreamingSynthesisIterator:
       data = {'audio': msg1.data}
 
     return data
-  
+
+
 class StreamingSynthesisConnection:
   def __init__(self, socket, return_extras: bool):
     self.socket = socket
@@ -83,7 +85,7 @@ class StreamingSynthesisConnection:
     Returns a streaming iterator that yields an object containing binary audio data (and optionally other data) as it is received from the server.
     """
     return _StreamingSynthesisIterator(self.socket.__aiter__(), self.return_extras)
-  
+
   async def __anext__(self):
     return self.socket.__anext__()
 
@@ -118,7 +120,6 @@ class Speech:
       await self._session.close()
     self._session = None
 
-
   async def list_voices(self, starred: bool = False, owner: str = 'all'):
     """
     Returns a list of voices available to you.
@@ -131,15 +132,14 @@ class Speech:
     """
     if owner not in ['all', 'system', 'me']:
       raise ValueError(f'Invalid owner: {owner}')
-    if type(starred) != bool:
+    if not isinstance(starred, bool):
       raise ValueError(f'Invalid starred: {starred}')
     self._lazy_init()
     url = f'{self._base_url}{_LIST_VOICES_ENDPOINT}?starred={starred}&owner={owner}'
-    
+
     async with self._session.get(url, headers=self._build_headers()) as resp:
       await self._handle_response_errors(resp, 'Speech.list_voices')
       return await resp.json()
-    
 
   async def voice_info(self, voice_id: str):
     """
@@ -147,7 +147,7 @@ class Speech:
 
     Required parameters:
     - `voice_id`: The id of the voice to update. If you don't know the id, you can get it from `list_voices()`.
-    
+
     Returns a dictionary containing details of the voice.
     """
     self._lazy_init()
@@ -156,7 +156,6 @@ class Speech:
     async with self._session.get(url, headers=self._build_headers()) as resp:
       await self._handle_response_errors(resp, 'Speech.voice_info')
       return await resp.json()
-
 
   async def create_voice(self, name: str, enhance: bool, filenames: List[str], type: str = 'instant', gender: str = None, description: str = None):
     """
@@ -195,7 +194,7 @@ class Speech:
       raise ValueError('[Speech.create_voice] Enhance must not be None.')
 
     self._lazy_init()
-    
+
     metadata = json.dumps({
         'name': name,
         'enhance': enhance,
@@ -206,7 +205,7 @@ class Speech:
     files = []
     try:
       with aiohttp.MultipartWriter() as mpwriter:
-        mpwriter.append(metadata, { 'Content-Type': 'application/json', 'Content-Disposition': 'form-data; name="metadata"'})
+        mpwriter.append(metadata, {'Content-Type': 'application/json', 'Content-Disposition': 'form-data; name="metadata"'})
         for filename in filenames:
           f = open(filename, 'rb')
           files.append(f)
@@ -219,10 +218,9 @@ class Speech:
       for file in files:
         file.close()
 
-
   async def update_voice(self, voice_id: str, **kwargs):
     """
-    Updates metadata for a specific voice. A voice that is not owned by you can only have its `starred` field updated. 
+    Updates metadata for a specific voice. A voice that is not owned by you can only have its `starred` field updated.
     Only provided fields will be changed.
 
     Required parameters:
@@ -247,8 +245,7 @@ class Speech:
     async with self._session.put(url, data=data, headers=self._build_headers(type='application/json')) as resp:
       await self._handle_response_errors(resp, 'Speech.update_voice')
       return await resp.json()
- 
-  
+
   async def delete_voice(self, voice_id: str):
     """
     Deletes a voice and cancels any pending operations on it. The voice must be owned by you. Cannot be undone.
@@ -262,7 +259,6 @@ class Speech:
     async with self._session.delete(url, headers=self._build_headers()) as resp:
       await self._handle_response_errors(resp, 'Speech.delete_voice')
       return await resp.json()
-  
 
   async def synthesize(self, text: str, voice: str, **kwargs):
     """
@@ -314,7 +310,7 @@ class Speech:
     if 'quality' in kwargs:
       form_data.add_field('quality', kwargs.get('quality'))
     return_durations = kwargs.get('durations', False)
-    if 'return_durations' in kwargs: # return_durations takes precedence over durations
+    if 'return_durations' in kwargs:  # return_durations takes precedence over durations
       return_durations = kwargs['return_durations']
     if return_durations is True:
       form_data.add_field('return_durations', 'true')
@@ -330,7 +326,6 @@ class Speech:
       if return_seed:
         synthesis_result['seed'] = response_data['seed']
       return synthesis_result
-    
 
   async def synthesize_streaming(self, voice: str, return_extras: bool = False, **kwargs):
     """
@@ -346,7 +341,7 @@ class Speech:
     """
     if not voice:
       raise ValueError('[Speech.synthesize_streaming] `voice` must not be None.')
-    
+
     self._lazy_init()
 
     init_msg = {
@@ -362,7 +357,6 @@ class Speech:
     await ws.send_str(json.dumps(init_msg))
     return StreamingSynthesisConnection(ws, return_extras)
 
-
   async def account_info(self):
     """
     Returns details about your account.
@@ -374,18 +368,15 @@ class Speech:
       await self._handle_response_errors(resp, 'Speech.account_info')
       return await resp.json()
 
-
   def _lazy_init(self):
     if self._session is None:
       self._session = aiohttp.ClientSession()
-
 
   def _build_headers(self, type: str = None):
     headers = {'X-API-Key': self._api_key}
     if type is not None:
       headers['Content-Type'] = type
     return headers
-
 
   async def _handle_response_errors(self, response, caller=None):
     if response.status < 400:
