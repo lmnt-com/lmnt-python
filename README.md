@@ -1,7 +1,7 @@
 # LMNT Python Library
 The LMNT Python library provides convenient access to the LMNT API from applications written in the Python language.
 
-[[Documentation]](https://www.lmnt.com/docs/python)
+[[Documentation]](https://docs.lmnt.com/sdk/python/introduction)
 
 ## Installation
 Installing from PyPI is the quickest way to get started:
@@ -19,7 +19,7 @@ python setup.py install
 ## Getting started
 
 The most common operation you'll perform is a `synthesize` request. Given some text and a voice, it will return an audio
-file that you can play back. Take a look at our [documentation](https://www.lmnt.com/docs/python) for a deeper dive into the SDK.
+file that you can play back. Take a look at our [documentation](https://docs.lmnt.com/sdk/python/introduction) for a deeper dive into the SDK.
 
 ```python
 from lmnt.api import Speech
