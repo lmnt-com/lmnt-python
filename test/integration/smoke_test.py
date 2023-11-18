@@ -121,6 +121,11 @@ async def test_list_voices_owned(api: Speech):
     assert isinstance(voices, list)
 
 @pytest.mark.asyncio
+async def test_list_voices_owned_system(api: Speech):
+    voices = await api.list_voices(owner='system')
+    assert isinstance(voices, list)
+
+@pytest.mark.asyncio
 async def test_get_voice(api: Speech):
     voice = await api.voice_info('curtis')
     assert isinstance(voice, dict)
