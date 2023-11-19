@@ -1,3 +1,7 @@
+# 1.0.1
+Nov 18, 2023
+- Changes the owner type in `list_voices` from 'lmnt' to 'system' to match the LMNT REST API.
+
 # 1.0.0
 Nov 14, 2023
 - Uses the stable v1 LMNT REST API.
