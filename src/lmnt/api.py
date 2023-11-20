@@ -18,6 +18,7 @@ import aiohttp
 import json
 import os
 from aiohttp import WSMsgType
+from typing import List
 
 _BASE_URL = 'https://api.lmnt.com'
 _SYNTHESIZE_STREAMING_ENDPOINT = '/v1/ai/speech/stream'
@@ -157,7 +158,7 @@ class Speech:
       return await resp.json()
 
 
-  async def create_voice(self, name: str, enhance: bool, filenames: list[str], type: str = 'instant', gender: str = None, description: str = None):
+  async def create_voice(self, name: str, enhance: bool, filenames: List[str], type: str = 'instant', gender: str = None, description: str = None):
     """
     Creates a new voice from a set of audio files. Returns the voice metadata object.
 
