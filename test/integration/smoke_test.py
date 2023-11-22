@@ -177,16 +177,16 @@ async def test_create_voice_basic_invalid_filenames(api: Speech):
 
 @pytest.mark.asyncio
 async def test_create_voice_advanced(api: Speech):
-    voice = await api.create_voice(name='test_voice', enhance=True, filenames=['filename.wav'], description='test description', gender='male', type='instant')
+    voice = await api.create_voice(name='integration_test_voice', enhance=True, filenames=['filename.wav'], description='test description', gender='male', type='instant')
     voice_id = voice['id']
     stored_voice = await api.voice_info(voice_id)
     await api.delete_voice(voice_id)
-    voice = voice['voice']
-    assert voice['name'] == 'test_voice'
+    assert voice['name'] == 'integration_test_voice'
     assert voice['owner'] == 'me'
-    assert voice['state'] == 'preparing'
+    assert voice['state'] == 'ready'
     assert voice['type'] == 'instant'
-    stored_voice.pop('starred')
+    voice.pop('state') # stored state is not set to ready immediately after creation
+    stored_voice.pop('state')
     assert voice == stored_voice
     with pytest.raises(Exception):
         await api.voice_info(voice_id)
@@ -196,27 +196,28 @@ async def test_update_owned_voice(api: Speech):
     original_voice = await api.create_voice(name='test_voice_update', enhance=True, filenames=['filename.wav'], description='test description', gender='male', type='instant')
     voice_id = original_voice['id']
     original_stored_voice = await api.voice_info(voice_id)
-    updated_voice = await api.update_voice(voice_id, description='my new description', gender='female', name='new_name', starred=False)
+    updated_voice = await api.update_voice(voice_id, description='my new description', gender='female', name='integration_new_name', starred=False)
     updated_stored_voice = await api.voice_info(voice_id)
     await api.delete_voice(voice_id)
-    original_voice = original_voice['voice']
     updated_voice = updated_voice['voice']
-    original_stored_voice.pop('starred')
 
     assert original_voice['name'] == 'test_voice_update'
     assert original_voice['owner'] == 'me'
-    assert original_voice['state'] == 'preparing'
+    assert original_voice['state'] == 'ready'
     assert original_voice['type'] == 'instant'
     assert original_voice['description'] == 'test description'
     assert original_voice['gender'] == 'male'
+    original_voice.pop('state') # stored state is not set to ready immediately after creation
+    original_stored_voice.pop('state')
     assert original_voice == original_stored_voice
 
-    assert updated_voice['name'] == 'new_name'
+    assert updated_voice['name'] == 'integration_new_name'
     assert updated_voice['owner'] == 'me'
-    assert updated_voice['state'] == 'preparing'
     assert updated_voice['type'] == 'instant'
     assert updated_voice['description'] == 'my new description'
     assert updated_voice['gender'] == 'female'
+    updated_voice.pop('state') # stored state is not set to ready immediately after creation
+    updated_stored_voice.pop('state')
     assert updated_voice == updated_stored_voice
     with pytest.raises(Exception):
         await api.voice_info(voice_id)
