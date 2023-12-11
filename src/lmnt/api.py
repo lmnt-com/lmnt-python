@@ -67,6 +67,8 @@ class _StreamingSynthesisIterator:
       data = {'audio': msg2.data, 'durations': msg1_json['durations']}
       if 'warning' in msg1_json:
         data['warning'] = msg1_json['warning']
+      if 'buffer_empty' in msg1_json:
+        data['buffer_empty'] = msg1_json['buffer_empty']
     else:
       if msg1.type != WSMsgType.BINARY:
         raise RuntimeError('Unexpected message type received from server.')
