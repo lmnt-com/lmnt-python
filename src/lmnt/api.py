@@ -109,6 +109,7 @@ class Speech:
     self._session = None
     self._api_key = api_key
     self._base_url = kwargs.get('base_url', _BASE_URL)
+    self._connector = kwargs.get('connector', None)
 
   async def __aenter__(self):
     self._lazy_init()
@@ -372,7 +373,7 @@ class Speech:
 
   def _lazy_init(self):
     if self._session is None:
-      self._session = aiohttp.ClientSession()
+      self._session = aiohttp.ClientSession(connector=self._connector)
 
   def _build_headers(self, type: str = None):
     headers = {'X-API-Key': self._api_key}
