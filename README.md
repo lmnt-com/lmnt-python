@@ -22,14 +22,22 @@ The most common operation you'll perform is a `synthesize` request. Given some t
 file that you can play back. Take a look at our [documentation](https://docs.lmnt.com/sdk/python/introduction) for a deeper dive into the SDK.
 
 ```python
+import asyncio
+
 from lmnt.api import Speech
+
 
 LMNT_API_KEY = ...  # fill in your API key here
 
-async with Speech(LMNT_API_KEY) as speech:
-  synthesis = await speech.synthesize('Hello, world.', voice='4e95c4a7-95aa-4b1d-bc23-00f7d1d484ea', format='wav')
-  with open('output.wav', 'wb') as f:
-    f.write(synthesis['audio'])
+
+async def main():
+  async with Speech(LMNT_API_KEY) as speech:
+    synthesis = await speech.synthesize('Hello, world.', voice='4e95c4a7-95aa-4b1d-bc23-00f7d1d484ea', format='wav')
+    with open('output.wav', 'wb') as f:
+      f.write(synthesis['audio'])
+
+
+asyncio.run(main())
 ```
 
 ## More examples
