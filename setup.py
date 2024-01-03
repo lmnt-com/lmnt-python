@@ -1,7 +1,7 @@
 from setuptools import find_namespace_packages, setup
 
 
-VERSION = '1.0.2'
+VERSION = '1.1.0'
 DESCRIPTION = 'Python client library for the LMNT API'
 AUTHOR = 'LMNT, Inc.'
 AUTHOR_EMAIL = 'feedback@lmnt.com'
