@@ -1,3 +1,8 @@
+# 1.1.0
+Jan 3, 2024
+- `synthesize_streaming` will now return a `buffer_empty` boolean when extras are requested. This can be used to determine when the server has no more audio to send after the client has sent a `flush` message.
+- A bug that caused `create_voice` to fail in Python 3.8 and earlier has been fixed.
+
 # 1.0.1
 Nov 18, 2023
 - Changes the owner type in `list_voices` from 'lmnt' to 'system' to match the LMNT REST API.
