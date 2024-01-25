@@ -149,7 +149,7 @@ class Speech:
     Returns details of a specific voice.
 
     Required parameters:
-    - `voice_id`: The id of the voice to update. If you don't know the id, you can get it from `list_voices()`.
+    - `voice_id`: The id of the voice to get info on. If you don't know the id, you can get it from `list_voices()`.
 
     Returns a dictionary containing details of the voice.
     """
@@ -247,6 +247,27 @@ class Speech:
     data = json.dumps({k: v for k, v in data.items() if v is not None})
     async with self._session.put(url, data=data, headers=self._build_headers(type='application/json')) as resp:
       await self._handle_response_errors(resp, 'Speech.update_voice')
+      return await resp.json()
+
+  async def unfreeze_voice(self, voice_id: str):
+    """
+    Unfreezes a professional voice clone owned by you.
+
+    We are constantly improving and releasing our speech models. Voices that are not being used will not be
+    upgraded automatically and will enter a frozen state.
+
+    Do not worry though. If your voice is frozen, call this method to upgrade it to the latest model.
+
+    Instant voices always use the latest model and are never frozen.
+    """
+    self._lazy_init()
+    url = f'{self._base_url}{_VOICE_ENDPOINT}'.format(id=voice_id)
+    data = {
+        'unfreeze': True
+    }
+    data = json.dumps({k: v for k, v in data.items() if v is not None})
+    async with self._session.put(url, data=data, headers=self._build_headers(type='application/json')) as resp:
+      await self._handle_response_errors(resp, 'Speech.unfreeze_voice')
       return await resp.json()
 
   async def delete_voice(self, voice_id: str):
