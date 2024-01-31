@@ -1,7 +1,6 @@
 from setuptools import find_namespace_packages, setup
 
 
-VERSION = '1.1.0'
 DESCRIPTION = 'Python client library for the LMNT API'
 AUTHOR = 'LMNT, Inc.'
 AUTHOR_EMAIL = 'feedback@lmnt.com'
@@ -15,7 +14,6 @@ CLASSIFIERS = [
 ]
 
 setup(name='lmnt',
-      version=VERSION,
       description=DESCRIPTION,
       long_description=open('README.md', 'r').read(),
       long_description_content_type='text/markdown',
