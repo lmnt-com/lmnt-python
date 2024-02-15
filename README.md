@@ -32,7 +32,7 @@ LMNT_API_KEY = ...  # fill in your API key here
 
 async def main():
   async with Speech(LMNT_API_KEY) as speech:
-    synthesis = await speech.synthesize('Hello, world.', voice='4e95c4a7-95aa-4b1d-bc23-00f7d1d484ea', format='wav')
+    synthesis = await speech.synthesize('Hello, world.', voice='lily', format='wav')
     with open('output.wav', 'wb') as f:
       f.write(synthesis['audio'])
 

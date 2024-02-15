@@ -31,7 +31,7 @@ async def reader_task_binary(connection):
 
 @pytest.mark.asyncio
 async def test_synthesize_streaming(api: Speech):
-  voice = 'shanti'
+  voice = 'lily'
   connection = await api.synthesize_streaming(voice)
   assert connection is not None
   assert isinstance(connection, StreamingSynthesisConnection)
@@ -52,7 +52,7 @@ async def reader_task_str(connection):
 
 @pytest.mark.asyncio
 async def test_synthesize_streaming_return_extras(api: Speech):
-  voice = 'shanti'
+  voice = 'lily'
   connection = await api.synthesize_streaming(voice, return_extras=True)
   assert connection is not None
   assert isinstance(connection, StreamingSynthesisConnection)
@@ -66,7 +66,7 @@ async def test_synthesize_streaming_return_extras(api: Speech):
 
 @pytest.mark.asyncio
 async def test_durations(api: Speech):
-  voice = 'shanti'
+  voice = 'lily'
   text = 'Example Text'
   result = await api.synthesize(text=text, voice=voice, return_durations=True)
   assert result is not None
@@ -88,7 +88,7 @@ async def test_synthesize_with_invalid_voice(api: Speech):
 
 @pytest.mark.asyncio
 async def test_synthesize_with_empty_text(api: Speech):
-  voice = 'shanti'
+  voice = 'lily'
   text = ''
   with pytest.raises(Exception):
     await api.synthesize(text=text, voice=voice)
@@ -96,7 +96,7 @@ async def test_synthesize_with_empty_text(api: Speech):
 
 @pytest.mark.asyncio
 async def test_synthesize(api: Speech):
-  voice = 'shanti'
+  voice = 'lily'
   text = 'Example Text'
   result = await api.synthesize(text=text, voice=voice)
   assert result is not None
@@ -142,9 +142,9 @@ async def test_list_voices_owned_system(api: Speech):
 
 @pytest.mark.asyncio
 async def test_get_voice(api: Speech):
-  voice = await api.voice_info('curtis')
+  voice = await api.voice_info('lily')
   assert isinstance(voice, dict)
-  assert voice['name'] == 'Curtis'
+  assert voice['name'] == 'Lily'
 
 
 @pytest.mark.asyncio
@@ -155,11 +155,11 @@ async def test_get_voice_with_invalid_voice(api: Speech):
 
 @pytest.mark.asyncio
 async def test_update_voice_star(api: Speech):
-  await api.update_voice('curtis', starred=True)
-  voice = await api.voice_info('curtis')
+  await api.update_voice('lily', starred=True)
+  voice = await api.voice_info('lily')
   assert voice.get('starred') is True
-  await api.update_voice('curtis', starred=False)
-  voice = await api.voice_info('curtis')
+  await api.update_voice('lily', starred=False)
+  voice = await api.voice_info('lily')
   assert voice.get('starred') is False
 
 
