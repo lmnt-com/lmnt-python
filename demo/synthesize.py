@@ -26,6 +26,6 @@ async def main(args):
 if __name__ == '__main__':
   parser = argparse.ArgumentParser(description='Synthesize text to speech using LMNT API')
   parser.add_argument('-t', '--text', required=False, default='This is a test of the LMNT API.', help='Text to synthesize')
-  parser.add_argument('-v', '--voice', required=False, default='curtis', help='Voice to use')
+  parser.add_argument('-v', '--voice', required=False, default='lily', help='Voice to use')
   args = parser.parse_args()
   asyncio.run(main(args))

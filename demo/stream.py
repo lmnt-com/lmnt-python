@@ -9,7 +9,7 @@ load_dotenv()  # Don't forget to add your LMNT and OpenAI API keys to .env.
 
 MODEL = 'gpt-3.5-turbo'
 DEFAULT_PROMPT = 'Tell me an interesting fact about the universe.'
-VOICE_ID = 'mara-wilson'
+VOICE_ID = 'lily'
 
 
 async def reader_task(conn):
