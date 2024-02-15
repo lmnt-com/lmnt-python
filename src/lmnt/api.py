@@ -372,6 +372,8 @@ class Speech:
     Initiates a full-duplex streaming connection with the server that allows you to send text and receive audio in real-time.
 
     Parameters:
+    - `format` (str): `mp3`, `raw`, or `ulaw` – the desired output format. Defaults to `mp3`.
+    - `sample_rate` (int): 8000, 16000, or 24000 – the desired output sample rate. Defaults to 24000.
     - `voice` (str): The voice id to use for this connection.
     - `speed` (float): The speed to use for synthesis. Defaults to 1.0.
     - `return_extras` (bool): If `True`, the response will include word durations detail. Defaults to `False`.
@@ -388,6 +390,10 @@ class Speech:
         'X-API-Key': self._api_key,
         'voice': voice
     }
+    if 'format' in kwargs:
+      init_msg['format'] = kwargs['format']
+    if 'sample_rate' in kwargs:
+      init_msg['sample_rate'] = kwargs['sample_rate']
     if 'speed' in kwargs:
       init_msg['speed'] = kwargs['speed']
     if 'expressive' in kwargs:
