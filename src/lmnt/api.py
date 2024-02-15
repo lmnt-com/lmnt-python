@@ -13,12 +13,14 @@
 # limitations under the License.
 # ==============================================================================
 
-import base64
+from aiohttp import WSMsgType
+from typing import List, Optional
+
 import aiohttp
+import base64
 import json
 import os
-from aiohttp import WSMsgType
-from typing import List
+
 
 _BASE_URL = 'https://api.lmnt.com'
 _SYNTHESIZE_STREAMING_ENDPOINT = '/v1/ai/speech/stream'
@@ -121,11 +123,13 @@ class StreamingSynthesisConnection:
 
 
 class Speech:
-  def __init__(self, api_key: str, **kwargs):
+  def __init__(self, api_key: Optional[str] = None, **kwargs):
     self._session = None
-    self._api_key = api_key
+    self._api_key = api_key or os.environ.get('LMNT_API_KEY')
     self._base_url = kwargs.get('base_url', _BASE_URL)
     self._connector = kwargs.get('connector', None)
+    if not self._api_key:
+      raise ValueError('Please set the `LMNT_API_KEY` environment variable or pass it in to the Speech constructor.')
 
   async def __aenter__(self):
     self._lazy_init()

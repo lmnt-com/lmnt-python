@@ -40,6 +40,8 @@ async def main():
 asyncio.run(main())
 ```
 
+While you can provide an `api_key` argument, we recommend using `python-dotenv` to add `LMNT_API_KEY="My API Key"` to your `.env` file so that your API key is not stored in source control.
+
 ## More examples
 
 You can find more examples in the [demo](demo) directory.
