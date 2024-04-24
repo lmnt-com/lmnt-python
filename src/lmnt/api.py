@@ -315,6 +315,7 @@ class Speech:
     Optional parameters:
     - `seed` (int): The seed used to specify a different take. Defaults to random.
     - `format` (str): The audio format to use for synthesis. Defaults to `mp3`.
+    - `sample_rate` (int): 8000, 16000, or 24000 – the desired output sample rate. Defaults to 24000 for all formats except `mulaw` which defaults to 8000.
     - `speed` (float): Floating point value between 0.25 (slow) and 2.0 (fast); Defaults to 1.0
     - `return_durations` (bool): If `True`, the response will include word durations detail. Defaults to `False`.
     - `return_seed` (bool): If `True`, the response will include the seed used for synthesis. Defaults to `False`.
@@ -351,6 +352,8 @@ class Speech:
     length = kwargs.get('length', None)
     if length is not None:
       form_data.add_field('length', length)
+    if 'sample_rate' in kwargs:
+      form_data.add_field('sample_rate', kwargs.get('sample_rate'))
     if 'quality' in kwargs:
       form_data.add_field('quality', kwargs.get('quality'))
     return_durations = kwargs.get('durations', False)
