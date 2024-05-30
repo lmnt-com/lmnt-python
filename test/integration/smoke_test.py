@@ -108,6 +108,20 @@ async def test_synthesize(api: Speech):
 
 
 @pytest.mark.asyncio
+async def test_synthesize__non_en_language(api: Speech):
+  voice = 'lily'
+  text = 'Example Text'
+  language = 'pt'
+  result = await api.synthesize(text=text, voice=voice, language=language)
+  assert result is not None
+  assert 'audio' in result
+  assert 'durations' not in result
+  assert 'seed' not in result
+  assert len(result['audio']) > 0
+  assert isinstance(result['audio'], bytes)
+
+
+@pytest.mark.asyncio
 async def test_synthesize_with_empty_voice(api: Speech):
   voice = ''
   text = 'Example Text'

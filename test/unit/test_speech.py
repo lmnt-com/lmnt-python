@@ -72,6 +72,19 @@ async def test_synthesize_return_durations_and_seed(api):
 
 
 @pytest.mark.asyncio
+async def test_synthesize__non_en_language(api):
+  text = 'Hello, world!'
+  voice = 'Voice1'
+  language = 'pt'
+  mock_response = {'audio': MOCK_AUDIO, 'durations': [], 'seed': 'random_seed'}
+  api._session.post.return_value.__aenter__.return_value.json = AsyncMock(return_value=mock_response)
+  api._session.post.return_value.__aenter__.return_value.status = 200
+
+  synthesis_result = await api.synthesize(text, voice, language=language)
+  assert synthesis_result == {'audio': base64.b64decode(mock_response['audio'])}
+
+
+@pytest.mark.asyncio
 async def test_synthesize_no_text(api):
   with pytest.raises(AssertionError):
     await api.synthesize(None, 'Voice1')
@@ -113,12 +126,13 @@ async def test_synthesize_streaming(api):
   speed = 1.5
   expressive = 0.8
   return_extras = True
+  language = 'pt'
 
   mock_ws = AsyncMock()
   api._session = AsyncMock()
   api._session.ws_connect.return_value = mock_ws
 
-  connection = await api.synthesize_streaming(voice, return_extras=return_extras, speed=speed, expressive=expressive)
+  connection = await api.synthesize_streaming(voice, return_extras=return_extras, speed=speed, expressive=expressive, language=language)
 
   assert isinstance(connection, StreamingSynthesisConnection)
   api._session.ws_connect.assert_called_once_with(f'{api._base_url}{_SYNTHESIZE_STREAMING_ENDPOINT}')
@@ -127,7 +141,8 @@ async def test_synthesize_streaming(api):
       'voice': voice,
       'speed': speed,
       'expressive': expressive,
-      'send_extras': return_extras
+      'send_extras': return_extras,
+      'language': language
   }))
 
 
