@@ -38,7 +38,7 @@ async def writer_task(conn, prompt):
 
 async def main(args):
   speech = Speech(os.getenv('LMNT_API_KEY'))
-  conn = await speech.synthesize_streaming(VOICE_ID, return_extras=False)
+  conn = await speech.synthesize_streaming(VOICE_ID, return_extras=False, language=args.language)
 
   t1 = asyncio.create_task(reader_task(conn))
   t2 = asyncio.create_task(writer_task(conn, args.prompt))
@@ -51,4 +51,5 @@ async def main(args):
 if __name__ == '__main__':
   parser = ArgumentParser()
   parser.add_argument('prompt', default=DEFAULT_PROMPT, nargs='?')
+  parser.add_argument('-l', '--language', required=False, default='en', help='Language code')
   asyncio.run(main(parser.parse_args()))
