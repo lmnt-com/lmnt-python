@@ -320,6 +320,7 @@ class Speech:
     - `return_durations` (bool): If `True`, the response will include word durations detail. Defaults to `False`.
     - `return_seed` (bool): If `True`, the response will include the seed used for synthesis. Defaults to `False`.
     - `language` (str): The desired language of the synthesized speech. Two letter ISO 639-1 code. Defaults to `en`.
+    - `conversational` (bool): If `True`, the synthesized speech will be more conversational. Defaults to `False`.
     - `length` (int): The desired target length of the output speech in seconds. Maximum 300.0 (5 minutes)
 
     Deprecated parameters:
@@ -365,6 +366,8 @@ class Speech:
     return_seed = kwargs.get('return_seed', False)
     if 'language' in kwargs:
       form_data.add_field('language', kwargs.get('language'))
+    if 'conversational' in kwargs:
+      form_data.add_field('conversational', kwargs.get('conversational'))
     async with self._session.post(url, data=form_data, headers=self._build_headers()) as resp:
       await self._handle_response_errors(resp, 'Speech.synthesize')
       response_data = await resp.json()
@@ -387,6 +390,7 @@ class Speech:
     - `speed` (float): The speed to use for synthesis. Defaults to 1.0.
     - `return_extras` (bool): If `True`, the response will include word durations detail. Defaults to `False`.
     - `language` (str): The desired language of the synthesized speech. Two letter ISO 639-1 code. Defaults to `en`.
+    - `conversational` (bool): If `True`, the synthesized speech will be more conversational. Defaults to `False`.
 
     Returns:
     - `StreamingSynthesisConnection`: The streaming connection object.
@@ -411,6 +415,8 @@ class Speech:
     init_msg['send_extras'] = return_extras
     if 'language' in kwargs:
       init_msg['language'] = kwargs['language']
+    if 'conversational' in kwargs:
+      init_msg['conversational'] = kwargs['conversational']
     ws = await self._session.ws_connect(f'{self._base_url}{_SYNTHESIZE_STREAMING_ENDPOINT}')
     await ws.send_str(json.dumps(init_msg))
     return StreamingSynthesisConnection(ws, return_extras)
