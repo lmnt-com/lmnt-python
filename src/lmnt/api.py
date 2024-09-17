@@ -52,29 +52,36 @@ class _StreamingSynthesisIterator:
     self.return_extras = return_extras
 
   async def __anext__(self):
-    msg1 = await self.original_iterator.__anext__()
-    if msg1.type == WSMsgType.CLOSE:
-      return  # Equivalent to raising a StopAsyncIteration exception, will cleanly stop async for loop
-    data = {}
+    msg = await self.original_iterator.__anext__()
 
-    if self.return_extras:
-      if msg1.type != WSMsgType.TEXT:
-        raise RuntimeError('Unexpected message type received from server.')
-      msg2 = await self.original_iterator.__anext__()
-      if msg2.type != WSMsgType.BINARY:
-        raise RuntimeError('Unexpected message type received from server.')
-      msg1_json = json.loads(msg1.data)
-      data = {'audio': msg2.data, 'durations': msg1_json['durations']}
-      if 'warning' in msg1_json:
-        data['warning'] = msg1_json['warning']
-      if 'buffer_empty' in msg1_json:
-        data['buffer_empty'] = msg1_json['buffer_empty']
+    if msg.type == WSMsgType.CLOSE:
+      return  # Equivalent to raising a StopAsyncIteration exception, will cleanly stop the async-for loop
+    if msg.type == WSMsgType.TEXT:
+      data = json.loads(msg.data)
+      if 'error' in data:
+        raise RuntimeError(f"[Speech.synthesize_streaming] {data['error']}")
+
+      if self.return_extras:
+        msg2 = await self.original_iterator.__anext__()
+        if msg2.type != WSMsgType.BINARY:
+          raise RuntimeError('Unexpected message type received from server.')
+        return {
+            'audio': msg2.data,
+            'durations': data.get('durations'),
+            'warning': data.get('warning'),
+            'buffer_empty': data.get('buffer_empty')
+        }
+      else:
+        raise RuntimeError('Unexpected TEXT message when return_extras is False.')
+
+    elif msg.type == WSMsgType.BINARY:
+      if not self.return_extras:
+        return {'audio': msg.data}
+      else:
+        raise RuntimeError('Unexpected BINARY message when return_extras is True.')
+
     else:
-      if msg1.type != WSMsgType.BINARY:
-        raise RuntimeError('Unexpected message type received from server.')
-      data = {'audio': msg1.data}
-
-    return data
+      raise RuntimeError(f'Unexpected message type received from server: {msg.type}')
 
 
 class StreamingSynthesisConnection:
