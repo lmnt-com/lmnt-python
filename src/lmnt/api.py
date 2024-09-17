@@ -62,37 +62,35 @@ class _StreamingSynthesisIterator:
     self.return_extras = return_extras
 
   async def __anext__(self):
-    msg1 = await self.original_iterator.__anext__()
-    if msg1.type == WSMsgType.CLOSE:
+    msg: aiohttp.WSMessage = await self.original_iterator.__anext__()
+    if msg.type == WSMsgType.CLOSE:
       return  # Equivalent to raising a StopAsyncIteration exception, will cleanly stop async for loop
-    data = {}
-
-    if self.return_extras:
-      msg1_json = self._parse_and_check_errors(msg1, require_error=False)
-      msg2 = await self.original_iterator.__anext__()
-      if msg2.type != WSMsgType.BINARY:
-        self._parse_and_check_errors(msg2)
-      data = {'audio': msg2.data, 'durations': msg1_json['durations']}
-      if 'warning' in msg1_json:
-        data['warning'] = msg1_json['warning']
-      if 'buffer_empty' in msg1_json:
-        data['buffer_empty'] = msg1_json['buffer_empty']
+    if msg.type == WSMsgType.TEXT:
+      msg_json = json.loads(msg.data)
+      if 'error' in msg_json:
+        raise StreamError(msg_json['error'])
+      if self.return_extras:
+        msg2: aiohttp.WSMessage = await self.original_iterator.__anext__()
+        if msg2.type != WSMsgType.BINARY:
+          raise StreamError('Unexpected message type received from server.')
+        data = {
+            'audio': msg2.data,
+            'durations': msg_json['durations'],
+        }
+        if 'warning' in msg_json:
+          data['warning'] = msg_json['warning']
+        if 'buffer_empty' in msg_json:
+          data['buffer_empty'] = msg_json['buffer_empty']
+        return data
+      else:
+        raise StreamError('Unexpected TEXT message when return_extras is False.')
+    elif msg.type == WSMsgType.BINARY:
+      if not self.return_extras:
+        return {'audio': msg.data}
+      else:
+        raise StreamError('Unexpected BINARY message when return_extras is True.')
     else:
-      if msg1.type != WSMsgType.BINARY:
-        self._parse_and_check_errors(msg1)
-      data = {'audio': msg1.data}
-
-    return data
-
-  def _parse_and_check_errors(self, msg, require_error=True):
-    if msg.type != WSMsgType.TEXT:
       raise StreamError('Unexpected message type received from server.')
-    msg_json = json.loads(msg.data)
-    if 'error' in msg_json:
-      raise StreamError(msg_json['error'])
-    if require_error:
-      raise StreamError('Unexpected message type received from server.')
-    return msg_json
 
 
 class StreamingSynthesisConnection:
