@@ -313,9 +313,10 @@ class Speech:
     - `voice` (str): The voice id to use for synthesis.
 
     Optional parameters:
+    - `model` (str): The name of the model to use. Defaults to `aurora`.
     - `seed` (int): The seed used to specify a different take. Defaults to random.
     - `format` (str): The audio format to use for synthesis. Defaults to `mp3`.
-    - `sample_rate` (int): 8000, 16000, or 24000 – the desired output sample rate. Defaults to 24000 for all formats except `mulaw` which defaults to 8000.
+    - `sample_rate` (int): 8000, 16000, or 24000 - the desired output sample rate. Defaults to 24000 for all formats except `mulaw` which defaults to 8000.
     - `speed` (float): Floating point value between 0.25 (slow) and 2.0 (fast); Defaults to 1.0
     - `return_durations` (bool): If `True`, the response will include word durations detail. Defaults to `False`.
     - `return_seed` (bool): If `True`, the response will include the seed used for synthesis. Defaults to `False`.
@@ -351,6 +352,7 @@ class Speech:
       form_data.add_field('seed', kwargs.get('seed'))
     form_data.add_field('format', kwargs.get('format', 'mp3'))
     form_data.add_field('speed', kwargs.get('speed', 1.0))
+    form_data.add_field('model', kwargs.get('model', 'aurora'))
     length = kwargs.get('length', None)
     if length is not None:
       form_data.add_field('length', length)
@@ -368,6 +370,7 @@ class Speech:
       form_data.add_field('language', kwargs.get('language'))
     if 'conversational' in kwargs:
       form_data.add_field('conversational', kwargs.get('conversational'))
+
     async with self._session.post(url, data=form_data, headers=self._build_headers()) as resp:
       await self._handle_response_errors(resp, 'Speech.synthesize')
       response_data = await resp.json()
