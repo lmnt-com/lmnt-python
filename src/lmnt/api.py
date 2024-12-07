@@ -345,16 +345,18 @@ class Speech:
     self._lazy_init()
     url = f'{self._base_url}{_SPEECH_ENDPOINT}'
 
+    model = kwargs.get('model', 'aurora')
     form_data = aiohttp.FormData()
     form_data.add_field('text', text)
     form_data.add_field('voice', voice)
     if 'seed' in kwargs:
       form_data.add_field('seed', kwargs.get('seed'))
     form_data.add_field('format', kwargs.get('format', 'mp3'))
-    form_data.add_field('speed', kwargs.get('speed', 1.0))
-    form_data.add_field('model', kwargs.get('model', 'aurora'))
+    if model == 'aurora'
+      form_data.add_field('speed', kwargs.get('speed', 1.0))
+    form_data.add_field('model', model)
     length = kwargs.get('length', None)
-    if length is not None:
+    if length is not None and model == 'aurora':
       form_data.add_field('length', length)
     if 'sample_rate' in kwargs:
       form_data.add_field('sample_rate', kwargs.get('sample_rate'))
