@@ -352,7 +352,7 @@ class Speech:
     if 'seed' in kwargs:
       form_data.add_field('seed', kwargs.get('seed'))
     form_data.add_field('format', kwargs.get('format', 'mp3'))
-    if model == 'aurora'
+    if model == 'aurora':
       form_data.add_field('speed', kwargs.get('speed', 1.0))
     form_data.add_field('model', model)
     length = kwargs.get('length', None)
