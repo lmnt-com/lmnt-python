@@ -1,0 +1,15 @@
+lmnt_api:
+  api_key: "" # API key for the LMNT API, Recommend setting this in the environment variable LMNT_API_KEY e.g. export LMNT_API_KEY = "your_api_key"
+  default_voice: "lily"
+  model: "aurora" # 'aurora' for low latency. 'blizzard' for high quality. Note that streaming is only supported for 'aurora' model. 
+
+whisper:
+  enabled: true  # Whisper is enabled to process input audio
+  model: "base" # {'base', 'small', 'medium', 'large'}
+
+llm:
+  enabled: true  # Pass input text / transcribed text to the LLM model
+  api_key: "" # API key for the LLM model, Recommend setting this in the environment variable e.g. export MISTRAL_API_KEY = "your_api
+  model: "mistral-tiny" # {'mistral': ['mistral-tiny', 'mistral-large-latest']}
+  prompt: "" # Optional prompt to be passed to initialize the LLM stream
+  provider: "mistral" # Supported providers: "mistral"
