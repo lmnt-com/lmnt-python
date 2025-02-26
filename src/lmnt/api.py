@@ -28,6 +28,7 @@ _LIST_VOICES_ENDPOINT = '/v1/ai/voice/list'
 _VOICE_ENDPOINT = '/v1/ai/voice/{id}'
 _CREATE_VOICE_ENDPOINT = '/v1/ai/voice'
 _SPEECH_ENDPOINT = '/v1/ai/speech'
+_CONVERT_ENDPOINT = '/v1/ai/speech/convert'
 _ACCOUNT_ENDPOINT = '/v1/account'
 
 
@@ -158,6 +159,7 @@ class Speech:
     if not isinstance(starred, bool):
       raise ValueError(f'Invalid starred: {starred}')
     self._lazy_init()
+    assert self._session is not None, 'Session was not initialized'
     url = f'{self._base_url}{_LIST_VOICES_ENDPOINT}?starred={starred}&owner={owner}'
 
     async with self._session.get(url, headers=self._build_headers()) as resp:
@@ -174,13 +176,14 @@ class Speech:
     Returns a dictionary containing details of the voice.
     """
     self._lazy_init()
+    assert self._session is not None, 'Session was not initialized'
     url = f'{self._base_url}{_VOICE_ENDPOINT}'.format(id=voice_id)
 
     async with self._session.get(url, headers=self._build_headers()) as resp:
       await self._handle_response_errors(resp, 'Speech.voice_info')
       return await resp.json()
 
-  async def create_voice(self, name: str, enhance: bool, filenames: List[str], type: str = 'instant', gender: str = None, description: str = None):
+  async def create_voice(self, name: str, enhance: bool, filenames: List[str], type: str = 'instant', gender: Optional[str] = None, description: Optional[str] = None):
     """
     Creates a new voice from a set of audio files. Returns the voice metadata object.
 
@@ -217,6 +220,7 @@ class Speech:
       raise ValueError('[Speech.create_voice] Enhance must not be None.')
 
     self._lazy_init()
+    assert self._session is not None, 'Session was not initialized'
 
     metadata = json.dumps({
         'name': name,
@@ -256,6 +260,7 @@ class Speech:
     - `description` (str): A description of the voice.
     """
     self._lazy_init()
+    assert self._session is not None, 'Session was not initialized'
     url = f'{self._base_url}{_VOICE_ENDPOINT}'.format(id=voice_id)
 
     data = {
@@ -298,6 +303,7 @@ class Speech:
     - `voice_id` (str): The id of the voice to delete. If you don't know the id, you can get it from `list_voices()`.
     """
     self._lazy_init()
+    assert self._session is not None, 'Session was not initialized'
     url = f'{self._base_url}{_VOICE_ENDPOINT}'.format(id=voice_id)
 
     async with self._session.delete(url, headers=self._build_headers()) as resp:
@@ -343,6 +349,7 @@ class Speech:
     assert len(voice) > 0, '[Speech.synthesize] `voice` must be non-empty.'
 
     self._lazy_init()
+    assert self._session is not None, 'Session was not initialized'
     url = f'{self._base_url}{_SPEECH_ENDPOINT}'
 
     model = kwargs.get('model', 'aurora')
@@ -384,13 +391,53 @@ class Speech:
         synthesis_result['seed'] = response_data['seed']
       return synthesis_result
 
+  async def convert(self, audio: bytes, voice: str, **kwargs) -> bytes:
+    """
+    Converts speech from one voice to another.
+
+    Required parameters:
+    - `audio` (bytes): The audio file to be converted into a new voice. Max file size: 1 MB.
+    - `voice` (str): The voice id to convert the speech into. Voice ids can be retrieved from `list_voices()` or `voice_info()`.
+
+    Optional parameters:
+    - `format` (str): The audio format to use for conversion. Defaults to `mp3`.
+    - `sample_rate` (int): 8000, 16000, or 24000 - the desired output sample rate. Defaults to 24000.
+    - `language` (str): The language of the source audio. Two letter ISO 639-1 code. Defaults to `en`.
+
+    Returns:
+    - bytes: The binary audio data of the converted speech.
+    """
+    assert audio is not None, '[Speech.convert] `audio` must not be None.'
+    assert len(audio) > 0, '[Speech.convert] `audio` must be non-empty.'
+    assert voice is not None, '[Speech.convert] `voice` must not be None.'
+    assert len(voice) > 0, '[Speech.convert] `voice` must be non-empty.'
+
+    self._lazy_init()
+    assert self._session is not None, 'Session was not initialized'
+    url = f'{self._base_url}{_CONVERT_ENDPOINT}'
+
+    form_data = aiohttp.FormData()
+    form_data.add_field('audio', audio)
+    form_data.add_field('voice', voice)
+
+    if 'format' in kwargs:
+      form_data.add_field('format', kwargs['format'])
+    if 'sample_rate' in kwargs:
+      form_data.add_field('sample_rate', kwargs['sample_rate'])
+    if 'language' in kwargs:
+      form_data.add_field('language', kwargs['language'])
+
+    async with self._session.post(url, data=form_data, headers=self._build_headers()) as resp:
+      await self._handle_response_errors(resp, 'Speech.convert')
+      return await resp.read()
+
   async def synthesize_streaming(self, voice: str, return_extras: bool = False, **kwargs):
     """
     Initiates a full-duplex streaming connection with the server that allows you to send text and receive audio in real-time.
 
     Parameters:
-    - `format` (str): `mp3`, `raw`, or `ulaw` – the desired output format. Defaults to `mp3`.
-    - `sample_rate` (int): 8000, 16000, or 24000 – the desired output sample rate. Defaults to 24000.
+    - `format` (str): `mp3`, `raw`, or `ulaw` - the desired output format. Defaults to `mp3`.
+    - `sample_rate` (int): 8000, 16000, or 24000 - the desired output sample rate. Defaults to 24000.
     - `voice` (str): The voice id to use for this connection.
     - `speed` (float): The speed to use for synthesis. Defaults to 1.0.
     - `return_extras` (bool): If `True`, the response will include word durations detail. Defaults to `False`.
@@ -404,6 +451,7 @@ class Speech:
       raise ValueError('[Speech.synthesize_streaming] `voice` must not be None.')
 
     self._lazy_init()
+    assert self._session is not None, 'Session was not initialized'
 
     init_msg = {
         'X-API-Key': self._api_key,
@@ -431,6 +479,7 @@ class Speech:
     Returns details about your account.
     """
     self._lazy_init()
+    assert self._session is not None, 'Session was not initialized'
     url = f'{self._base_url}{_ACCOUNT_ENDPOINT}'
 
     async with self._session.get(url, headers=self._build_headers()) as resp:
@@ -441,7 +490,7 @@ class Speech:
     if self._session is None:
       self._session = aiohttp.ClientSession(connector=self._connector)
 
-  def _build_headers(self, type: str = None):
+  def _build_headers(self, type: Optional[str] = None):
     headers = {'X-API-Key': self._api_key}
     if type is not None:
       headers['Content-Type'] = type
