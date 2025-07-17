@@ -1,4 +1,4 @@
-# Migrating from lmnt-python to lmnt-com-python
+# Migrating from v1 to v2
 
 This guide helps you migrate from the legacy v1 SDK to the new v2 SDK. The new SDK provides more streaming functionality, a more modern, type-safe interface with better error handling, and improved performance.
 
@@ -17,7 +17,7 @@ pip install lmnt
 ### Client Initialization
 
 ```python
-# Old SDK (lmnt-python)
+# Old SDK (v1)
 import asyncio
 from lmnt.api import Speech
 
@@ -26,7 +26,7 @@ async def main():
         # Use speech client
         pass
 
-# New SDK (lmnt-com-python)
+# New SDK (v2)
 from lmnt import Lmnt, AsyncLmnt
 
 # Synchronous client
