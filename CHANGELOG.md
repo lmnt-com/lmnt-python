@@ -1,3 +1,7 @@
+# 2.0.0
+July 17, 2025
+- **BREAKING CHANGES**: The new v2 SDK provides more streaming functionality, a more modern, type-safe interface with better error handling, and improved performance. To migrate from the legacy v1 SDK, please update your code to use the new behavior or pin to a previous version if preferred. More details in the [migration guide](./MIGRATING.md).
+
 # 1.1.0
 Jan 3, 2024
 - `synthesize_streaming` will now return a `buffer_empty` boolean when extras are requested. This can be used to determine when the server has no more audio to send after the client has sent a `flush` message.
