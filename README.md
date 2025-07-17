@@ -19,11 +19,9 @@ The REST API documentation can be found on [docs.lmnt.com](https://docs.lmnt.com
 ## Installation
 
 ```sh
+# install from PyPI
 pip install lmnt
 ```
-
-> [!NOTE]
-> Once this package is [published to PyPI](https://www.stainless.com/docs/guides/publish), this will become: `pip install --pre lmnt`
 
 ## Usage
 
@@ -39,7 +37,7 @@ client = Lmnt(
 
 response = client.speech.generate(
     text="hello world.",
-    voice="ava",
+    voice="leah",
 )
 ```
 
@@ -65,7 +63,7 @@ client = AsyncLmnt(
 async def main() -> None:
     response = await client.speech.generate(
         text="hello world.",
-        voice="ava",
+        voice="leah",
     )
 
 
@@ -99,7 +97,7 @@ async def main() -> None:
     ) as client:
         response = await client.speech.generate(
             text="hello world.",
-            voice="ava",
+            voice="leah",
         )
 
 
@@ -125,9 +123,10 @@ from lmnt import Lmnt
 
 client = Lmnt()
 
-client.speech.convert(
-    audio=Path("/path/to/file"),
-    voice="ava",
+client.voices.create(
+    name="My Voice",
+    files=[Path("sample1.wav"), Path("sample2.wav")],
+    enhance=False,
 )
 ```
 
@@ -151,7 +150,7 @@ client = Lmnt()
 try:
     client.speech.generate(
         text="hello world.",
-        voice="ava",
+        voice="leah",
     )
 except lmnt.APIConnectionError as e:
     print("The server could not be reached")
@@ -197,7 +196,7 @@ client = Lmnt(
 # Or, configure per-request:
 client.with_options(max_retries=5).speech.generate(
     text="hello world.",
-    voice="ava",
+    voice="leah",
 )
 ```
 
@@ -223,7 +222,7 @@ client = Lmnt(
 # Override per-request:
 client.with_options(timeout=5.0).speech.generate(
     text="hello world.",
-    voice="ava",
+    voice="leah",
 )
 ```
 
@@ -267,7 +266,7 @@ from lmnt import Lmnt
 client = Lmnt()
 response = client.speech.with_raw_response.generate(
     text="hello world.",
-    voice="ava",
+    voice="leah",
 )
 print(response.headers.get('X-My-Header'))
 
@@ -288,7 +287,7 @@ To stream the response body, use `.with_streaming_response` instead, which requi
 ```python
 with client.speech.with_streaming_response.generate(
     text="hello world.",
-    voice="ava",
+    voice="leah",
 ) as response:
     print(response.headers.get("X-My-Header"))
 
