@@ -1,0 +1,38 @@
+name: Clean up next branch after merge
+
+on:
+  pull_request:
+    types: [closed]
+    branches:
+      - master
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    # Only run if PR was merged (not just closed) and it was from next branch
+    if: github.event.pull_request.merged == true && github.event.pull_request.head.ref == 'next'
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - name: Setup Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Reset next branch to master
+        run: |
+          git checkout -B next origin/master
+
+      - name: Push updated next branch
+        run: |
+          git push --force-with-lease origin next
+
+      - name: Summary
+        run: |
+          echo "::notice::Post-merge cleanup completed"
