@@ -40,6 +40,7 @@ class SpeechGenerateParams(TypedDict, total=False):
 
     language: Literal[
         "auto",
+        "ar",
         "de",
         "en",
         "es",
@@ -57,6 +58,7 @@ class SpeechGenerateParams(TypedDict, total=False):
         "th",
         "tr",
         "uk",
+        "ur",
         "vi",
         "zh",
     ]
