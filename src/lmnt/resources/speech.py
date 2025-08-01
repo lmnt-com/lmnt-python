@@ -61,6 +61,7 @@ class SpeechResource(SyncAPIResource):
         format: Literal["aac", "mp3", "raw", "ulaw", "wav", "webm"] | NotGiven = NOT_GIVEN,
         language: Literal[
             "auto",
+            "ar",
             "de",
             "en",
             "es",
@@ -78,6 +79,7 @@ class SpeechResource(SyncAPIResource):
             "th",
             "tr",
             "uk",
+            "ur",
             "vi",
             "zh",
         ]
@@ -163,6 +165,7 @@ class SpeechResource(SyncAPIResource):
         format: Literal["aac", "mp3", "raw", "ulaw", "wav", "webm"] | NotGiven = NOT_GIVEN,
         language: Literal[
             "auto",
+            "ar",
             "de",
             "en",
             "es",
@@ -180,6 +183,7 @@ class SpeechResource(SyncAPIResource):
             "th",
             "tr",
             "uk",
+            "ur",
             "vi",
             "zh",
         ]
@@ -286,6 +290,7 @@ class SpeechResource(SyncAPIResource):
         format: Literal["aac", "mp3", "raw", "ulaw", "wav", "webm"] | NotGiven = NOT_GIVEN,
         language: Literal[
             "auto",
+            "ar",
             "de",
             "en",
             "es",
@@ -303,6 +308,7 @@ class SpeechResource(SyncAPIResource):
             "th",
             "tr",
             "uk",
+            "ur",
             "vi",
             "zh",
         ]
@@ -435,6 +441,7 @@ class AsyncSpeechResource(AsyncAPIResource):
         format: Literal["aac", "mp3", "raw", "ulaw", "wav", "webm"] | NotGiven = NOT_GIVEN,
         language: Literal[
             "auto",
+            "ar",
             "de",
             "en",
             "es",
@@ -452,6 +459,7 @@ class AsyncSpeechResource(AsyncAPIResource):
             "th",
             "tr",
             "uk",
+            "ur",
             "vi",
             "zh",
         ]
@@ -537,6 +545,7 @@ class AsyncSpeechResource(AsyncAPIResource):
         format: Literal["aac", "mp3", "raw", "ulaw", "wav", "webm"] | NotGiven = NOT_GIVEN,
         language: Literal[
             "auto",
+            "ar",
             "de",
             "en",
             "es",
@@ -554,6 +563,7 @@ class AsyncSpeechResource(AsyncAPIResource):
             "th",
             "tr",
             "uk",
+            "ur",
             "vi",
             "zh",
         ]
@@ -660,6 +670,7 @@ class AsyncSpeechResource(AsyncAPIResource):
         format: Literal["aac", "mp3", "raw", "ulaw", "wav", "webm"] | NotGiven = NOT_GIVEN,
         language: Literal[
             "auto",
+            "ar",
             "de",
             "en",
             "es",
@@ -677,6 +688,7 @@ class AsyncSpeechResource(AsyncAPIResource):
             "th",
             "tr",
             "uk",
+            "ur",
             "vi",
             "zh",
         ]

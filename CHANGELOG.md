@@ -1,4 +1,15 @@
 # 2.0.0
+
+## v2.1.0 (2025-07-30)
+
+Full Changelog: [v2.0.0...v2.1.0](https://github.com/lmnt-com/lmnt-python/compare/v2.0.0...v2.1.0)
+
+        ### Other Changes
+        * fix(parsing): ignore empty metadata ([2671330](https://github.com/lmnt-com/lmnt-python/commit/267133097ede5f0980c2479f41d2b1627baa9205))
+      * fix(parsing): parse extra field types ([e652a62](https://github.com/lmnt-com/lmnt-python/commit/e652a624a99ba3c5c198aa00a198b6d0a4f69283))
+      * chore(project): add settings file for vscode ([9d450b1](https://github.com/lmnt-com/lmnt-python/commit/9d450b1915dbb53698e1aec84b8fee4d485fee86))
+      * feat(api): api update ([f0ef880](https://github.com/lmnt-com/lmnt-python/commit/f0ef8801046aa0ccad2eb44e67a6a44541d3f09b))
+      
 July 17, 2025
 - **BREAKING CHANGES**: The new v2 SDK provides more streaming functionality, a more modern, type-safe interface with better error handling, and improved performance. To migrate from the legacy v1 SDK, please update your code to use the new behavior or pin to a previous version if preferred. More details in the [migration guide](./MIGRATING.md).
 

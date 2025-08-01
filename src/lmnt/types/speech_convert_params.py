@@ -46,6 +46,7 @@ class SpeechConvertParams(TypedDict, total=False):
 
     language: Literal[
         "auto",
+        "ar",
         "de",
         "en",
         "es",
@@ -63,6 +64,7 @@ class SpeechConvertParams(TypedDict, total=False):
         "th",
         "tr",
         "uk",
+        "ur",
         "vi",
         "zh",
     ]
