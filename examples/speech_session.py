@@ -9,7 +9,7 @@ async def main() -> None:
     lmnt = AsyncLmnt()
 
     # Construct the streaming connection with our desired voice
-    session = await lmnt.speech.sessions.create(voice="leah", return_extras=True)
+    session = await lmnt.speech.sessions.create(voice="leah")
     write_task = asyncio.create_task(write_messages(session))
     read_task = asyncio.create_task(read_messages(session))
 
@@ -31,10 +31,10 @@ async def write_messages(session: SpeechSession) -> None:
 async def read_messages(session: SpeechSession) -> None:
     with open("stream-output.mp3", "wb") as audio_file:
         async for message in session:
-            audio_bytes = len(message.audio)
-            print(f" ** Received from LMNT -- {audio_bytes} bytes ** ")
-            print(f" ** Durations: {message.durations} ** ")
-            audio_file.write(message.audio)
+            if message.type == "audio":
+                audio_bytes = len(message.audio)
+                print(f" ** Received from LMNT -- {audio_bytes} bytes ** ")
+                audio_file.write(message.audio)
 
 
 if __name__ == "__main__":
