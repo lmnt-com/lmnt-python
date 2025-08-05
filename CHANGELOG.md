@@ -1,5 +1,10 @@
 # 2.0.0
 
+## v2.2.0 (2025-08-05)
+
+Full Changelog: [v2.1.0...v2.2.0](https://github.com/lmnt-com/lmnt-python/compare/v2.1.0...v2.2.0)
+
+
 ## v2.1.0 (2025-07-30)
 
 Full Changelog: [v2.0.0...v2.1.0](https://github.com/lmnt-com/lmnt-python/compare/v2.0.0...v2.1.0)
