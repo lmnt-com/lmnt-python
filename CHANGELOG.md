@@ -1,5 +1,14 @@
 # Changelog
 
+## v2.2.1 (2025-08-21)
+
+Full Changelog: [v2.2.0...v2.2.1](https://github.com/lmnt-com/lmnt-python/compare/v2.2.0...v2.2.1)
+
+- chore(internal): fix ruff target version ([08c3067](https://github.com/lmnt-com/lmnt-python/commit/08c3067ada19ee943719e77bbbc9f25c3da32eef))
+- chore: update @stainless-api/prism-cli to v5.15.0 ([1634751](https://github.com/lmnt-com/lmnt-python/commit/16347518c7eae85d6524e8b35c5203a238b1ef5e))
+- chore(internal): update comment in script ([6649334](https://github.com/lmnt-com/lmnt-python/commit/6649334778e2cd8e3a433ca6182c11a44a4ce484))
+      
+
 ## v2.2.0 (2025-08-05)
 
 Full Changelog: [v2.1.0...v2.2.0](https://github.com/lmnt-com/lmnt-python/compare/v2.1.0...v2.2.0)
