@@ -699,7 +699,7 @@ class TestLmnt:
         respx_mock.post("/v1/ai/speech/bytes").mock(side_effect=httpx.TimeoutException("Test timeout error"))
 
         with pytest.raises(APITimeoutError):
-            client.speech.with_streaming_response.generate(text="hello world.", voice="ava").__enter__()
+            client.speech.with_streaming_response.generate(text="hello world.", voice="leah").__enter__()
 
         assert _get_open_connections(self.client) == 0
 
@@ -709,7 +709,7 @@ class TestLmnt:
         respx_mock.post("/v1/ai/speech/bytes").mock(return_value=httpx.Response(500))
 
         with pytest.raises(APIStatusError):
-            client.speech.with_streaming_response.generate(text="hello world.", voice="ava").__enter__()
+            client.speech.with_streaming_response.generate(text="hello world.", voice="leah").__enter__()
         assert _get_open_connections(self.client) == 0
 
     @pytest.mark.parametrize("failures_before_success", [0, 2, 4])
@@ -738,7 +738,7 @@ class TestLmnt:
 
         respx_mock.post("/v1/ai/speech/bytes").mock(side_effect=retry_handler)
 
-        response = client.speech.with_raw_response.generate(text="hello world.", voice="ava")
+        response = client.speech.with_raw_response.generate(text="hello world.", voice="leah")
 
         assert response.retries_taken == failures_before_success
         assert int(response.http_request.headers.get("x-stainless-retry-count")) == failures_before_success
@@ -761,7 +761,7 @@ class TestLmnt:
         respx_mock.post("/v1/ai/speech/bytes").mock(side_effect=retry_handler)
 
         response = client.speech.with_raw_response.generate(
-            text="hello world.", voice="ava", extra_headers={"x-stainless-retry-count": Omit()}
+            text="hello world.", voice="leah", extra_headers={"x-stainless-retry-count": Omit()}
         )
 
         assert len(response.http_request.headers.get_list("x-stainless-retry-count")) == 0
@@ -786,7 +786,7 @@ class TestLmnt:
         respx_mock.post("/v1/ai/speech/bytes").mock(side_effect=retry_handler)
 
         response = client.speech.with_raw_response.generate(
-            text="hello world.", voice="ava", extra_headers={"x-stainless-retry-count": "42"}
+            text="hello world.", voice="leah", extra_headers={"x-stainless-retry-count": "42"}
         )
 
         assert response.http_request.headers.get("x-stainless-retry-count") == "42"
@@ -1496,7 +1496,7 @@ class TestAsyncLmnt:
         respx_mock.post("/v1/ai/speech/bytes").mock(side_effect=httpx.TimeoutException("Test timeout error"))
 
         with pytest.raises(APITimeoutError):
-            await async_client.speech.with_streaming_response.generate(text="hello world.", voice="ava").__aenter__()
+            await async_client.speech.with_streaming_response.generate(text="hello world.", voice="leah").__aenter__()
 
         assert _get_open_connections(self.client) == 0
 
@@ -1506,7 +1506,7 @@ class TestAsyncLmnt:
         respx_mock.post("/v1/ai/speech/bytes").mock(return_value=httpx.Response(500))
 
         with pytest.raises(APIStatusError):
-            await async_client.speech.with_streaming_response.generate(text="hello world.", voice="ava").__aenter__()
+            await async_client.speech.with_streaming_response.generate(text="hello world.", voice="leah").__aenter__()
         assert _get_open_connections(self.client) == 0
 
     @pytest.mark.parametrize("failures_before_success", [0, 2, 4])
@@ -1536,7 +1536,7 @@ class TestAsyncLmnt:
 
         respx_mock.post("/v1/ai/speech/bytes").mock(side_effect=retry_handler)
 
-        response = await client.speech.with_raw_response.generate(text="hello world.", voice="ava")
+        response = await client.speech.with_raw_response.generate(text="hello world.", voice="leah")
 
         assert response.retries_taken == failures_before_success
         assert int(response.http_request.headers.get("x-stainless-retry-count")) == failures_before_success
@@ -1562,7 +1562,7 @@ class TestAsyncLmnt:
         respx_mock.post("/v1/ai/speech/bytes").mock(side_effect=retry_handler)
 
         response = await client.speech.with_raw_response.generate(
-            text="hello world.", voice="ava", extra_headers={"x-stainless-retry-count": Omit()}
+            text="hello world.", voice="leah", extra_headers={"x-stainless-retry-count": Omit()}
         )
 
         assert len(response.http_request.headers.get_list("x-stainless-retry-count")) == 0
@@ -1588,7 +1588,7 @@ class TestAsyncLmnt:
         respx_mock.post("/v1/ai/speech/bytes").mock(side_effect=retry_handler)
 
         response = await client.speech.with_raw_response.generate(
-            text="hello world.", voice="ava", extra_headers={"x-stainless-retry-count": "42"}
+            text="hello world.", voice="leah", extra_headers={"x-stainless-retry-count": "42"}
         )
 
         assert response.http_request.headers.get("x-stainless-retry-count") == "42"
