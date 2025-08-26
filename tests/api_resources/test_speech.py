@@ -33,7 +33,7 @@ class TestSpeech:
         respx_mock.post("/v1/ai/speech/convert").mock(return_value=httpx.Response(200, json={"foo": "bar"}))
         speech = client.speech.convert(
             audio=b"raw file contents",
-            voice="ava",
+            voice="leah",
         )
         assert speech.is_closed
         assert speech.json() == {"foo": "bar"}
@@ -46,7 +46,7 @@ class TestSpeech:
         respx_mock.post("/v1/ai/speech/convert").mock(return_value=httpx.Response(200, json={"foo": "bar"}))
         speech = client.speech.convert(
             audio=b"raw file contents",
-            voice="ava",
+            voice="leah",
             format="aac",
             language="auto",
             sample_rate=8000,
@@ -63,7 +63,7 @@ class TestSpeech:
 
         speech = client.speech.with_raw_response.convert(
             audio=b"raw file contents",
-            voice="ava",
+            voice="leah",
         )
 
         assert speech.is_closed is True
@@ -77,7 +77,7 @@ class TestSpeech:
         respx_mock.post("/v1/ai/speech/convert").mock(return_value=httpx.Response(200, json={"foo": "bar"}))
         with client.speech.with_streaming_response.convert(
             audio=b"raw file contents",
-            voice="ava",
+            voice="leah",
         ) as speech:
             assert not speech.is_closed
             assert speech.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -94,7 +94,7 @@ class TestSpeech:
         respx_mock.post("/v1/ai/speech/bytes").mock(return_value=httpx.Response(200, json={"foo": "bar"}))
         speech = client.speech.generate(
             text="hello world.",
-            voice="ava",
+            voice="leah",
         )
         assert speech.is_closed
         assert speech.json() == {"foo": "bar"}
@@ -107,7 +107,7 @@ class TestSpeech:
         respx_mock.post("/v1/ai/speech/bytes").mock(return_value=httpx.Response(200, json={"foo": "bar"}))
         speech = client.speech.generate(
             text="hello world.",
-            voice="ava",
+            voice="leah",
             format="aac",
             language="auto",
             model="blizzard",
@@ -128,7 +128,7 @@ class TestSpeech:
 
         speech = client.speech.with_raw_response.generate(
             text="hello world.",
-            voice="ava",
+            voice="leah",
         )
 
         assert speech.is_closed is True
@@ -142,7 +142,7 @@ class TestSpeech:
         respx_mock.post("/v1/ai/speech/bytes").mock(return_value=httpx.Response(200, json={"foo": "bar"}))
         with client.speech.with_streaming_response.generate(
             text="hello world.",
-            voice="ava",
+            voice="leah",
         ) as speech:
             assert not speech.is_closed
             assert speech.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -157,7 +157,7 @@ class TestSpeech:
     def test_method_generate_detailed(self, client: Lmnt) -> None:
         speech = client.speech.generate_detailed(
             text="hello world.",
-            voice="ava",
+            voice="leah",
         )
         assert_matches_type(SpeechGenerateDetailedResponse, speech, path=["response"])
 
@@ -165,7 +165,7 @@ class TestSpeech:
     def test_method_generate_detailed_with_all_params(self, client: Lmnt) -> None:
         speech = client.speech.generate_detailed(
             text="hello world.",
-            voice="ava",
+            voice="leah",
             format="aac",
             language="auto",
             model="blizzard",
@@ -181,7 +181,7 @@ class TestSpeech:
     def test_raw_response_generate_detailed(self, client: Lmnt) -> None:
         response = client.speech.with_raw_response.generate_detailed(
             text="hello world.",
-            voice="ava",
+            voice="leah",
         )
 
         assert response.is_closed is True
@@ -193,7 +193,7 @@ class TestSpeech:
     def test_streaming_response_generate_detailed(self, client: Lmnt) -> None:
         with client.speech.with_streaming_response.generate_detailed(
             text="hello world.",
-            voice="ava",
+            voice="leah",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -215,7 +215,7 @@ class TestAsyncSpeech:
         respx_mock.post("/v1/ai/speech/convert").mock(return_value=httpx.Response(200, json={"foo": "bar"}))
         speech = await async_client.speech.convert(
             audio=b"raw file contents",
-            voice="ava",
+            voice="leah",
         )
         assert speech.is_closed
         assert await speech.json() == {"foo": "bar"}
@@ -228,7 +228,7 @@ class TestAsyncSpeech:
         respx_mock.post("/v1/ai/speech/convert").mock(return_value=httpx.Response(200, json={"foo": "bar"}))
         speech = await async_client.speech.convert(
             audio=b"raw file contents",
-            voice="ava",
+            voice="leah",
             format="aac",
             language="auto",
             sample_rate=8000,
@@ -245,7 +245,7 @@ class TestAsyncSpeech:
 
         speech = await async_client.speech.with_raw_response.convert(
             audio=b"raw file contents",
-            voice="ava",
+            voice="leah",
         )
 
         assert speech.is_closed is True
@@ -259,7 +259,7 @@ class TestAsyncSpeech:
         respx_mock.post("/v1/ai/speech/convert").mock(return_value=httpx.Response(200, json={"foo": "bar"}))
         async with async_client.speech.with_streaming_response.convert(
             audio=b"raw file contents",
-            voice="ava",
+            voice="leah",
         ) as speech:
             assert not speech.is_closed
             assert speech.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -276,7 +276,7 @@ class TestAsyncSpeech:
         respx_mock.post("/v1/ai/speech/bytes").mock(return_value=httpx.Response(200, json={"foo": "bar"}))
         speech = await async_client.speech.generate(
             text="hello world.",
-            voice="ava",
+            voice="leah",
         )
         assert speech.is_closed
         assert await speech.json() == {"foo": "bar"}
@@ -289,7 +289,7 @@ class TestAsyncSpeech:
         respx_mock.post("/v1/ai/speech/bytes").mock(return_value=httpx.Response(200, json={"foo": "bar"}))
         speech = await async_client.speech.generate(
             text="hello world.",
-            voice="ava",
+            voice="leah",
             format="aac",
             language="auto",
             model="blizzard",
@@ -310,7 +310,7 @@ class TestAsyncSpeech:
 
         speech = await async_client.speech.with_raw_response.generate(
             text="hello world.",
-            voice="ava",
+            voice="leah",
         )
 
         assert speech.is_closed is True
@@ -324,7 +324,7 @@ class TestAsyncSpeech:
         respx_mock.post("/v1/ai/speech/bytes").mock(return_value=httpx.Response(200, json={"foo": "bar"}))
         async with async_client.speech.with_streaming_response.generate(
             text="hello world.",
-            voice="ava",
+            voice="leah",
         ) as speech:
             assert not speech.is_closed
             assert speech.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -339,7 +339,7 @@ class TestAsyncSpeech:
     async def test_method_generate_detailed(self, async_client: AsyncLmnt) -> None:
         speech = await async_client.speech.generate_detailed(
             text="hello world.",
-            voice="ava",
+            voice="leah",
         )
         assert_matches_type(SpeechGenerateDetailedResponse, speech, path=["response"])
 
@@ -347,7 +347,7 @@ class TestAsyncSpeech:
     async def test_method_generate_detailed_with_all_params(self, async_client: AsyncLmnt) -> None:
         speech = await async_client.speech.generate_detailed(
             text="hello world.",
-            voice="ava",
+            voice="leah",
             format="aac",
             language="auto",
             model="blizzard",
@@ -363,7 +363,7 @@ class TestAsyncSpeech:
     async def test_raw_response_generate_detailed(self, async_client: AsyncLmnt) -> None:
         response = await async_client.speech.with_raw_response.generate_detailed(
             text="hello world.",
-            voice="ava",
+            voice="leah",
         )
 
         assert response.is_closed is True
@@ -375,7 +375,7 @@ class TestAsyncSpeech:
     async def test_streaming_response_generate_detailed(self, async_client: AsyncLmnt) -> None:
         async with async_client.speech.with_streaming_response.generate_detailed(
             text="hello world.",
-            voice="ava",
+            voice="leah",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"

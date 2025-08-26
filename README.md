@@ -123,10 +123,16 @@ from lmnt import Lmnt
 
 client = Lmnt()
 
+<<<<<<< HEAD
 client.voices.create(
     name="My Voice",
     files=[Path("sample1.wav"), Path("sample2.wav")],
     enhance=False,
+=======
+client.speech.convert(
+    audio=Path("/path/to/file"),
+    voice="leah",
+>>>>>>> 032105e (feat(api): api update)
 )
 ```
 
