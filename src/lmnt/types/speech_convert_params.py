@@ -23,7 +23,7 @@ class SpeechConvertParams(TypedDict, total=False):
     Voice ids can be retrieved by calls to `List voices` or `Voice info`.
     """
 
-    format: Literal["aac", "mp3", "raw", "ulaw", "wav", "webm"]
+    format: Literal["aac", "mp3", "ulaw", "wav", "webm", "pcm_s16le", "pcm_f32le"]
     """The desired output format of the audio.
 
     If you are using a streaming endpoint, you'll generate audio faster by selecting
@@ -34,12 +34,11 @@ class SpeechConvertParams(TypedDict, total=False):
     Streamable formats:
 
     - `mp3`: 96kbps MP3 audio.
-    - `raw`: 32-bit floating point raw audio.
     - `ulaw`: 8-bit G711 µ-law audio with a WAV header.
     - `webm`: WebM format with Opus audio codec.
-
-    Non-streamable formats:
-
+    - `pcm_s16le`: PCM signed 16-bit little-endian audio.
+    - `pcm_f32le`: PCM 32-bit floating-point little-endian audio. Non-streamable
+      formats:
     - `aac`: AAC audio codec.
     - `wav`: 16-bit PCM audio in WAV container.
     """
