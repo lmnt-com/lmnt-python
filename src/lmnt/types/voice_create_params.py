@@ -2,10 +2,9 @@
 
 from __future__ import annotations
 
-from typing import List
 from typing_extensions import Required, TypedDict
 
-from .._types import FileTypes
+from .._types import FileTypes, SequenceNotStr
 
 __all__ = ["VoiceCreateParams"]
 
@@ -18,7 +17,7 @@ class VoiceCreateParams(TypedDict, total=False):
     circumstances.
     """
 
-    files: Required[List[FileTypes]]
+    files: Required[SequenceNotStr[FileTypes]]
     """
     One or more input audio files to train the voice in the form of binary `wav`,
     `mp3`, `mp4`, `m4a`, or `webm` attachments.
