@@ -113,8 +113,10 @@ class SpeechResource(SyncAPIResource):
               - `ulaw`: 8-bit G711 µ-law audio with a WAV header.
               - `webm`: WebM format with Opus audio codec.
               - `pcm_s16le`: PCM signed 16-bit little-endian audio.
-              - `pcm_f32le`: PCM 32-bit floating-point little-endian audio. Non-streamable
-                formats:
+              - `pcm_f32le`: PCM 32-bit floating-point little-endian audio.
+
+              Non-streamable formats:
+
               - `aac`: AAC audio codec.
               - `wav`: 16-bit PCM audio in WAV container.
 
@@ -224,8 +226,10 @@ class SpeechResource(SyncAPIResource):
               - `ulaw`: 8-bit G711 µ-law audio with a WAV header.
               - `webm`: WebM format with Opus audio codec.
               - `pcm_s16le`: PCM signed 16-bit little-endian audio.
-              - `pcm_f32le`: PCM 32-bit floating-point little-endian audio. Non-streamable
-                formats:
+              - `pcm_f32le`: PCM 32-bit floating-point little-endian audio.
+
+              Non-streamable formats:
+
               - `aac`: AAC audio codec.
               - `wav`: 16-bit PCM audio in WAV container.
 
@@ -347,8 +351,10 @@ class SpeechResource(SyncAPIResource):
               - `ulaw`: 8-bit G711 µ-law audio with a WAV header.
               - `webm`: WebM format with Opus audio codec.
               - `pcm_s16le`: PCM signed 16-bit little-endian audio.
-              - `pcm_f32le`: PCM 32-bit floating-point little-endian audio. Non-streamable
-                formats:
+              - `pcm_f32le`: PCM 32-bit floating-point little-endian audio.
+
+              Non-streamable formats:
+
               - `aac`: AAC audio codec.
               - `wav`: 16-bit PCM audio in WAV container.
 
@@ -490,8 +496,10 @@ class AsyncSpeechResource(AsyncAPIResource):
               - `ulaw`: 8-bit G711 µ-law audio with a WAV header.
               - `webm`: WebM format with Opus audio codec.
               - `pcm_s16le`: PCM signed 16-bit little-endian audio.
-              - `pcm_f32le`: PCM 32-bit floating-point little-endian audio. Non-streamable
-                formats:
+              - `pcm_f32le`: PCM 32-bit floating-point little-endian audio.
+
+              Non-streamable formats:
+
               - `aac`: AAC audio codec.
               - `wav`: 16-bit PCM audio in WAV container.
 
@@ -601,8 +609,10 @@ class AsyncSpeechResource(AsyncAPIResource):
               - `ulaw`: 8-bit G711 µ-law audio with a WAV header.
               - `webm`: WebM format with Opus audio codec.
               - `pcm_s16le`: PCM signed 16-bit little-endian audio.
-              - `pcm_f32le`: PCM 32-bit floating-point little-endian audio. Non-streamable
-                formats:
+              - `pcm_f32le`: PCM 32-bit floating-point little-endian audio.
+
+              Non-streamable formats:
+
               - `aac`: AAC audio codec.
               - `wav`: 16-bit PCM audio in WAV container.
 
@@ -724,8 +734,10 @@ class AsyncSpeechResource(AsyncAPIResource):
               - `ulaw`: 8-bit G711 µ-law audio with a WAV header.
               - `webm`: WebM format with Opus audio codec.
               - `pcm_s16le`: PCM signed 16-bit little-endian audio.
-              - `pcm_f32le`: PCM 32-bit floating-point little-endian audio. Non-streamable
-                formats:
+              - `pcm_f32le`: PCM 32-bit floating-point little-endian audio.
+
+              Non-streamable formats:
+
               - `aac`: AAC audio codec.
               - `wav`: 16-bit PCM audio in WAV container.
 
