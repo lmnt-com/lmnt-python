@@ -234,7 +234,7 @@ class SpeechResource(SyncAPIResource):
               - `wav`: 16-bit PCM audio in WAV container.
 
           language: The desired language. Two letter ISO 639-1 code. Defaults to auto language
-              detection.
+              detection, but specifying the language is recommended for faster generation.
 
           model: The model to use for synthesis. Learn more about models
               [here](https://docs.lmnt.com/guides/models).
@@ -359,7 +359,7 @@ class SpeechResource(SyncAPIResource):
               - `wav`: 16-bit PCM audio in WAV container.
 
           language: The desired language. Two letter ISO 639-1 code. Defaults to auto language
-              detection.
+              detection, but specifying the language is recommended for faster generation.
 
           model: The model to use for synthesis. Learn more about models
               [here](https://docs.lmnt.com/guides/models).
@@ -617,7 +617,7 @@ class AsyncSpeechResource(AsyncAPIResource):
               - `wav`: 16-bit PCM audio in WAV container.
 
           language: The desired language. Two letter ISO 639-1 code. Defaults to auto language
-              detection.
+              detection, but specifying the language is recommended for faster generation.
 
           model: The model to use for synthesis. Learn more about models
               [here](https://docs.lmnt.com/guides/models).
@@ -742,7 +742,7 @@ class AsyncSpeechResource(AsyncAPIResource):
               - `wav`: 16-bit PCM audio in WAV container.
 
           language: The desired language. Two letter ISO 639-1 code. Defaults to auto language
-              detection.
+              detection, but specifying the language is recommended for faster generation.
 
           model: The model to use for synthesis. Learn more about models
               [here](https://docs.lmnt.com/guides/models).
