@@ -65,7 +65,8 @@ class SpeechGenerateParams(TypedDict, total=False):
     ]
     """The desired language.
 
-    Two letter ISO 639-1 code. Defaults to auto language detection.
+    Two letter ISO 639-1 code. Defaults to auto language detection, but specifying
+    the language is recommended for faster generation.
     """
 
     model: Literal["blizzard"]
