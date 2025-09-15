@@ -163,6 +163,7 @@ class SpeechResource(SyncAPIResource):
         *,
         text: str,
         voice: str,
+        debug: bool | NotGiven = NOT_GIVEN,
         format: Literal["aac", "mp3", "ulaw", "wav", "webm", "pcm_s16le", "pcm_f32le"] | NotGiven = NOT_GIVEN,
         language: Literal[
             "auto",
@@ -214,6 +215,9 @@ class SpeechResource(SyncAPIResource):
 
           voice: The voice id of the voice to use; voice ids can be retrieved by calls to
               `List voices` or `Voice info`.
+
+          debug: When set to true, the generated speech will also be saved to your
+              [clip library](https://app.lmnt.com/clips) in the LMNT playground.
 
           format: The desired output format of the audio. If you are using a streaming endpoint,
               you'll generate audio faster by selecting a streamable format since chunks are
@@ -268,6 +272,7 @@ class SpeechResource(SyncAPIResource):
                 {
                     "text": text,
                     "voice": voice,
+                    "debug": debug,
                     "format": format,
                     "language": language,
                     "model": model,
@@ -289,6 +294,7 @@ class SpeechResource(SyncAPIResource):
         *,
         text: str,
         voice: str,
+        debug: bool | NotGiven = NOT_GIVEN,
         format: Literal["aac", "mp3", "ulaw", "wav", "webm", "pcm_s16le", "pcm_f32le"] | NotGiven = NOT_GIVEN,
         language: Literal[
             "auto",
@@ -339,6 +345,9 @@ class SpeechResource(SyncAPIResource):
 
           voice: The voice id of the voice to use; voice ids can be retrieved by calls to
               `List voices` or `Voice info`.
+
+          debug: When set to true, the generated speech will also be saved to your
+              [clip library](https://app.lmnt.com/clips) in the LMNT playground.
 
           format: The desired output format of the audio. If you are using a streaming endpoint,
               you'll generate audio faster by selecting a streamable format since chunks are
@@ -394,6 +403,7 @@ class SpeechResource(SyncAPIResource):
                 {
                     "text": text,
                     "voice": voice,
+                    "debug": debug,
                     "format": format,
                     "language": language,
                     "model": model,
@@ -546,6 +556,7 @@ class AsyncSpeechResource(AsyncAPIResource):
         *,
         text: str,
         voice: str,
+        debug: bool | NotGiven = NOT_GIVEN,
         format: Literal["aac", "mp3", "ulaw", "wav", "webm", "pcm_s16le", "pcm_f32le"] | NotGiven = NOT_GIVEN,
         language: Literal[
             "auto",
@@ -597,6 +608,9 @@ class AsyncSpeechResource(AsyncAPIResource):
 
           voice: The voice id of the voice to use; voice ids can be retrieved by calls to
               `List voices` or `Voice info`.
+
+          debug: When set to true, the generated speech will also be saved to your
+              [clip library](https://app.lmnt.com/clips) in the LMNT playground.
 
           format: The desired output format of the audio. If you are using a streaming endpoint,
               you'll generate audio faster by selecting a streamable format since chunks are
@@ -651,6 +665,7 @@ class AsyncSpeechResource(AsyncAPIResource):
                 {
                     "text": text,
                     "voice": voice,
+                    "debug": debug,
                     "format": format,
                     "language": language,
                     "model": model,
@@ -672,6 +687,7 @@ class AsyncSpeechResource(AsyncAPIResource):
         *,
         text: str,
         voice: str,
+        debug: bool | NotGiven = NOT_GIVEN,
         format: Literal["aac", "mp3", "ulaw", "wav", "webm", "pcm_s16le", "pcm_f32le"] | NotGiven = NOT_GIVEN,
         language: Literal[
             "auto",
@@ -722,6 +738,9 @@ class AsyncSpeechResource(AsyncAPIResource):
 
           voice: The voice id of the voice to use; voice ids can be retrieved by calls to
               `List voices` or `Voice info`.
+
+          debug: When set to true, the generated speech will also be saved to your
+              [clip library](https://app.lmnt.com/clips) in the LMNT playground.
 
           format: The desired output format of the audio. If you are using a streaming endpoint,
               you'll generate audio faster by selecting a streamable format since chunks are
@@ -777,6 +796,7 @@ class AsyncSpeechResource(AsyncAPIResource):
                 {
                     "text": text,
                     "voice": voice,
+                    "debug": debug,
                     "format": format,
                     "language": language,
                     "model": model,

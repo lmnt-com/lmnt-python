@@ -17,6 +17,12 @@ class SpeechGenerateDetailedParams(TypedDict, total=False):
     `List voices` or `Voice info`.
     """
 
+    debug: bool
+    """
+    When set to true, the generated speech will also be saved to your
+    [clip library](https://app.lmnt.com/clips) in the LMNT playground.
+    """
+
     format: Literal["aac", "mp3", "ulaw", "wav", "webm", "pcm_s16le", "pcm_f32le"]
     """The desired output format of the audio.
 

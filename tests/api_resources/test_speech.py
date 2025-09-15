@@ -108,6 +108,7 @@ class TestSpeech:
         speech = client.speech.generate(
             text="hello world.",
             voice="leah",
+            debug=True,
             format="aac",
             language="auto",
             model="blizzard",
@@ -166,6 +167,7 @@ class TestSpeech:
         speech = client.speech.generate_detailed(
             text="hello world.",
             voice="leah",
+            debug=True,
             format="aac",
             language="auto",
             model="blizzard",
@@ -290,6 +292,7 @@ class TestAsyncSpeech:
         speech = await async_client.speech.generate(
             text="hello world.",
             voice="leah",
+            debug=True,
             format="aac",
             language="auto",
             model="blizzard",
@@ -348,6 +351,7 @@ class TestAsyncSpeech:
         speech = await async_client.speech.generate_detailed(
             text="hello world.",
             voice="leah",
+            debug=True,
             format="aac",
             language="auto",
             model="blizzard",
