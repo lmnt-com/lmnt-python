@@ -8,7 +8,7 @@ from typing_extensions import Literal
 import httpx
 
 from ..types import speech_convert_params, speech_generate_params, speech_generate_detailed_params
-from .._types import NOT_GIVEN, Body, Query, Headers, NotGiven, FileTypes
+from .._types import Body, Omit, Query, Headers, NotGiven, FileTypes, omit, not_given
 from .._utils import extract_files, maybe_transform, deepcopy_minimal, async_maybe_transform
 from .._compat import cached_property
 from .sessions import AsyncSessionsResource
@@ -58,7 +58,7 @@ class SpeechResource(SyncAPIResource):
         *,
         audio: FileTypes,
         voice: str,
-        format: Literal["aac", "mp3", "ulaw", "wav", "webm", "pcm_s16le", "pcm_f32le"] | NotGiven = NOT_GIVEN,
+        format: Literal["aac", "mp3", "ulaw", "wav", "webm", "pcm_s16le", "pcm_f32le"] | Omit = omit,
         language: Literal[
             "auto",
             "ar",
@@ -83,14 +83,14 @@ class SpeechResource(SyncAPIResource):
             "vi",
             "zh",
         ]
-        | NotGiven = NOT_GIVEN,
-        sample_rate: Literal[8000, 16000, 24000] | NotGiven = NOT_GIVEN,
+        | Omit = omit,
+        sample_rate: Literal[8000, 16000, 24000] | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
-        timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
+        timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> BinaryAPIResponse:
         """
         Converts speech from one voice to another.
@@ -163,8 +163,8 @@ class SpeechResource(SyncAPIResource):
         *,
         text: str,
         voice: str,
-        debug: bool | NotGiven = NOT_GIVEN,
-        format: Literal["aac", "mp3", "ulaw", "wav", "webm", "pcm_s16le", "pcm_f32le"] | NotGiven = NOT_GIVEN,
+        debug: bool | Omit = omit,
+        format: Literal["aac", "mp3", "ulaw", "wav", "webm", "pcm_s16le", "pcm_f32le"] | Omit = omit,
         language: Literal[
             "auto",
             "ar",
@@ -189,18 +189,18 @@ class SpeechResource(SyncAPIResource):
             "vi",
             "zh",
         ]
-        | NotGiven = NOT_GIVEN,
-        model: Literal["blizzard"] | NotGiven = NOT_GIVEN,
-        sample_rate: Literal[8000, 16000, 24000] | NotGiven = NOT_GIVEN,
-        seed: int | NotGiven = NOT_GIVEN,
-        temperature: float | NotGiven = NOT_GIVEN,
-        top_p: float | NotGiven = NOT_GIVEN,
+        | Omit = omit,
+        model: Literal["blizzard"] | Omit = omit,
+        sample_rate: Literal[8000, 16000, 24000] | Omit = omit,
+        seed: int | Omit = omit,
+        temperature: float | Omit = omit,
+        top_p: float | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
-        timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
+        timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> BinaryAPIResponse:
         """
         Generates speech from text and streams the audio as binary data chunks in
@@ -294,8 +294,8 @@ class SpeechResource(SyncAPIResource):
         *,
         text: str,
         voice: str,
-        debug: bool | NotGiven = NOT_GIVEN,
-        format: Literal["aac", "mp3", "ulaw", "wav", "webm", "pcm_s16le", "pcm_f32le"] | NotGiven = NOT_GIVEN,
+        debug: bool | Omit = omit,
+        format: Literal["aac", "mp3", "ulaw", "wav", "webm", "pcm_s16le", "pcm_f32le"] | Omit = omit,
         language: Literal[
             "auto",
             "ar",
@@ -320,19 +320,19 @@ class SpeechResource(SyncAPIResource):
             "vi",
             "zh",
         ]
-        | NotGiven = NOT_GIVEN,
-        model: Literal["blizzard"] | NotGiven = NOT_GIVEN,
-        return_durations: bool | NotGiven = NOT_GIVEN,
-        sample_rate: Literal[8000, 16000, 24000] | NotGiven = NOT_GIVEN,
-        seed: int | NotGiven = NOT_GIVEN,
-        temperature: float | NotGiven = NOT_GIVEN,
-        top_p: float | NotGiven = NOT_GIVEN,
+        | Omit = omit,
+        model: Literal["blizzard"] | Omit = omit,
+        return_durations: bool | Omit = omit,
+        sample_rate: Literal[8000, 16000, 24000] | Omit = omit,
+        seed: int | Omit = omit,
+        temperature: float | Omit = omit,
+        top_p: float | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
-        timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
+        timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> SpeechGenerateDetailedResponse:
         """
         Generates speech from text and returns a JSON object that contains a
@@ -451,7 +451,7 @@ class AsyncSpeechResource(AsyncAPIResource):
         *,
         audio: FileTypes,
         voice: str,
-        format: Literal["aac", "mp3", "ulaw", "wav", "webm", "pcm_s16le", "pcm_f32le"] | NotGiven = NOT_GIVEN,
+        format: Literal["aac", "mp3", "ulaw", "wav", "webm", "pcm_s16le", "pcm_f32le"] | Omit = omit,
         language: Literal[
             "auto",
             "ar",
@@ -476,14 +476,14 @@ class AsyncSpeechResource(AsyncAPIResource):
             "vi",
             "zh",
         ]
-        | NotGiven = NOT_GIVEN,
-        sample_rate: Literal[8000, 16000, 24000] | NotGiven = NOT_GIVEN,
+        | Omit = omit,
+        sample_rate: Literal[8000, 16000, 24000] | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
-        timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
+        timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> AsyncBinaryAPIResponse:
         """
         Converts speech from one voice to another.
@@ -556,8 +556,8 @@ class AsyncSpeechResource(AsyncAPIResource):
         *,
         text: str,
         voice: str,
-        debug: bool | NotGiven = NOT_GIVEN,
-        format: Literal["aac", "mp3", "ulaw", "wav", "webm", "pcm_s16le", "pcm_f32le"] | NotGiven = NOT_GIVEN,
+        debug: bool | Omit = omit,
+        format: Literal["aac", "mp3", "ulaw", "wav", "webm", "pcm_s16le", "pcm_f32le"] | Omit = omit,
         language: Literal[
             "auto",
             "ar",
@@ -582,18 +582,18 @@ class AsyncSpeechResource(AsyncAPIResource):
             "vi",
             "zh",
         ]
-        | NotGiven = NOT_GIVEN,
-        model: Literal["blizzard"] | NotGiven = NOT_GIVEN,
-        sample_rate: Literal[8000, 16000, 24000] | NotGiven = NOT_GIVEN,
-        seed: int | NotGiven = NOT_GIVEN,
-        temperature: float | NotGiven = NOT_GIVEN,
-        top_p: float | NotGiven = NOT_GIVEN,
+        | Omit = omit,
+        model: Literal["blizzard"] | Omit = omit,
+        sample_rate: Literal[8000, 16000, 24000] | Omit = omit,
+        seed: int | Omit = omit,
+        temperature: float | Omit = omit,
+        top_p: float | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
-        timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
+        timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> AsyncBinaryAPIResponse:
         """
         Generates speech from text and streams the audio as binary data chunks in
@@ -687,8 +687,8 @@ class AsyncSpeechResource(AsyncAPIResource):
         *,
         text: str,
         voice: str,
-        debug: bool | NotGiven = NOT_GIVEN,
-        format: Literal["aac", "mp3", "ulaw", "wav", "webm", "pcm_s16le", "pcm_f32le"] | NotGiven = NOT_GIVEN,
+        debug: bool | Omit = omit,
+        format: Literal["aac", "mp3", "ulaw", "wav", "webm", "pcm_s16le", "pcm_f32le"] | Omit = omit,
         language: Literal[
             "auto",
             "ar",
@@ -713,19 +713,19 @@ class AsyncSpeechResource(AsyncAPIResource):
             "vi",
             "zh",
         ]
-        | NotGiven = NOT_GIVEN,
-        model: Literal["blizzard"] | NotGiven = NOT_GIVEN,
-        return_durations: bool | NotGiven = NOT_GIVEN,
-        sample_rate: Literal[8000, 16000, 24000] | NotGiven = NOT_GIVEN,
-        seed: int | NotGiven = NOT_GIVEN,
-        temperature: float | NotGiven = NOT_GIVEN,
-        top_p: float | NotGiven = NOT_GIVEN,
+        | Omit = omit,
+        model: Literal["blizzard"] | Omit = omit,
+        return_durations: bool | Omit = omit,
+        sample_rate: Literal[8000, 16000, 24000] | Omit = omit,
+        seed: int | Omit = omit,
+        temperature: float | Omit = omit,
+        top_p: float | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
-        timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
+        timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> SpeechGenerateDetailedResponse:
         """
         Generates speech from text and returns a JSON object that contains a
