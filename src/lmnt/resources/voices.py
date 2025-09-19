@@ -7,7 +7,7 @@ from typing import Mapping, cast
 import httpx
 
 from ..types import voice_list_params, voice_create_params, voice_update_params
-from .._types import NOT_GIVEN, Body, Query, Headers, NotGiven, FileTypes, SequenceNotStr
+from .._types import Body, Omit, Query, Headers, NotGiven, FileTypes, SequenceNotStr, omit, not_given
 from .._utils import extract_files, maybe_transform, deepcopy_minimal, async_maybe_transform
 from .._compat import cached_property
 from .._resource import SyncAPIResource, AsyncAPIResource
@@ -52,14 +52,14 @@ class VoicesResource(SyncAPIResource):
         enhance: bool,
         files: SequenceNotStr[FileTypes],
         name: str,
-        description: str | NotGiven = NOT_GIVEN,
-        gender: str | NotGiven = NOT_GIVEN,
+        description: str | Omit = omit,
+        gender: str | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
-        timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
+        timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> Voice:
         """
         Submits a request to create a voice with a supplied voice configuration and a
@@ -125,7 +125,7 @@ class VoicesResource(SyncAPIResource):
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
-        timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
+        timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> Voice:
         """
         Returns details of a specific voice.
@@ -153,16 +153,16 @@ class VoicesResource(SyncAPIResource):
         self,
         id: str,
         *,
-        description: str | NotGiven = NOT_GIVEN,
-        gender: str | NotGiven = NOT_GIVEN,
-        name: str | NotGiven = NOT_GIVEN,
-        starred: bool | NotGiven = NOT_GIVEN,
+        description: str | Omit = omit,
+        gender: str | Omit = omit,
+        name: str | Omit = omit,
+        starred: bool | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
-        timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
+        timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> VoiceUpdateResponse:
         """Updates metadata for a specific voice.
 
@@ -207,14 +207,14 @@ class VoicesResource(SyncAPIResource):
     def list(
         self,
         *,
-        owner: str | NotGiven = NOT_GIVEN,
-        starred: str | NotGiven = NOT_GIVEN,
+        owner: str | Omit = omit,
+        starred: str | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
-        timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
+        timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> VoiceListResponse:
         """
         Returns a list of voices available to you.
@@ -259,7 +259,7 @@ class VoicesResource(SyncAPIResource):
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
-        timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
+        timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> VoiceDeleteResponse:
         """Deletes a voice and cancels any pending operations on it.
 
@@ -311,14 +311,14 @@ class AsyncVoicesResource(AsyncAPIResource):
         enhance: bool,
         files: SequenceNotStr[FileTypes],
         name: str,
-        description: str | NotGiven = NOT_GIVEN,
-        gender: str | NotGiven = NOT_GIVEN,
+        description: str | Omit = omit,
+        gender: str | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
-        timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
+        timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> Voice:
         """
         Submits a request to create a voice with a supplied voice configuration and a
@@ -384,7 +384,7 @@ class AsyncVoicesResource(AsyncAPIResource):
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
-        timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
+        timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> Voice:
         """
         Returns details of a specific voice.
@@ -412,16 +412,16 @@ class AsyncVoicesResource(AsyncAPIResource):
         self,
         id: str,
         *,
-        description: str | NotGiven = NOT_GIVEN,
-        gender: str | NotGiven = NOT_GIVEN,
-        name: str | NotGiven = NOT_GIVEN,
-        starred: bool | NotGiven = NOT_GIVEN,
+        description: str | Omit = omit,
+        gender: str | Omit = omit,
+        name: str | Omit = omit,
+        starred: bool | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
-        timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
+        timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> VoiceUpdateResponse:
         """Updates metadata for a specific voice.
 
@@ -466,14 +466,14 @@ class AsyncVoicesResource(AsyncAPIResource):
     async def list(
         self,
         *,
-        owner: str | NotGiven = NOT_GIVEN,
-        starred: str | NotGiven = NOT_GIVEN,
+        owner: str | Omit = omit,
+        starred: str | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
-        timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
+        timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> VoiceListResponse:
         """
         Returns a list of voices available to you.
@@ -518,7 +518,7 @@ class AsyncVoicesResource(AsyncAPIResource):
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
-        timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
+        timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> VoiceDeleteResponse:
         """Deletes a voice and cancels any pending operations on it.
 
