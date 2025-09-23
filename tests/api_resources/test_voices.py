@@ -77,14 +77,14 @@ class TestVoices:
     @parametrize
     def test_method_retrieve(self, client: Lmnt) -> None:
         voice = client.voices.retrieve(
-            "id",
+            "123",
         )
         assert_matches_type(Voice, voice, path=["response"])
 
     @parametrize
     def test_raw_response_retrieve(self, client: Lmnt) -> None:
         response = client.voices.with_raw_response.retrieve(
-            "id",
+            "123",
         )
 
         assert response.is_closed is True
@@ -95,7 +95,7 @@ class TestVoices:
     @parametrize
     def test_streaming_response_retrieve(self, client: Lmnt) -> None:
         with client.voices.with_streaming_response.retrieve(
-            "id",
+            "123",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -197,14 +197,14 @@ class TestVoices:
     @parametrize
     def test_method_delete(self, client: Lmnt) -> None:
         voice = client.voices.delete(
-            "id",
+            "123",
         )
         assert_matches_type(VoiceDeleteResponse, voice, path=["response"])
 
     @parametrize
     def test_raw_response_delete(self, client: Lmnt) -> None:
         response = client.voices.with_raw_response.delete(
-            "id",
+            "123",
         )
 
         assert response.is_closed is True
@@ -215,7 +215,7 @@ class TestVoices:
     @parametrize
     def test_streaming_response_delete(self, client: Lmnt) -> None:
         with client.voices.with_streaming_response.delete(
-            "id",
+            "123",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -293,14 +293,14 @@ class TestAsyncVoices:
     @parametrize
     async def test_method_retrieve(self, async_client: AsyncLmnt) -> None:
         voice = await async_client.voices.retrieve(
-            "id",
+            "123",
         )
         assert_matches_type(Voice, voice, path=["response"])
 
     @parametrize
     async def test_raw_response_retrieve(self, async_client: AsyncLmnt) -> None:
         response = await async_client.voices.with_raw_response.retrieve(
-            "id",
+            "123",
         )
 
         assert response.is_closed is True
@@ -311,7 +311,7 @@ class TestAsyncVoices:
     @parametrize
     async def test_streaming_response_retrieve(self, async_client: AsyncLmnt) -> None:
         async with async_client.voices.with_streaming_response.retrieve(
-            "id",
+            "123",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -413,14 +413,14 @@ class TestAsyncVoices:
     @parametrize
     async def test_method_delete(self, async_client: AsyncLmnt) -> None:
         voice = await async_client.voices.delete(
-            "id",
+            "123",
         )
         assert_matches_type(VoiceDeleteResponse, voice, path=["response"])
 
     @parametrize
     async def test_raw_response_delete(self, async_client: AsyncLmnt) -> None:
         response = await async_client.voices.with_raw_response.delete(
-            "id",
+            "123",
         )
 
         assert response.is_closed is True
@@ -431,7 +431,7 @@ class TestAsyncVoices:
     @parametrize
     async def test_streaming_response_delete(self, async_client: AsyncLmnt) -> None:
         async with async_client.voices.with_streaming_response.delete(
-            "id",
+            "123",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
