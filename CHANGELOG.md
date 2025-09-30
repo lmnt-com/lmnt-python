@@ -1,5 +1,17 @@
 # Changelog
 
+## v2.4.0 (2025-09-30)
+
+Full Changelog: [v2.3.0...v2.4.0](https://github.com/lmnt-com/lmnt-python/compare/v2.3.0...v2.4.0)
+
+- feat(api): api update ([6e0a4dd](https://github.com/lmnt-com/lmnt-python/commit/6e0a4dda62360a40d20a591ec744f2111a53a6e8))
+- feat(api): api update ([cc7f909](https://github.com/lmnt-com/lmnt-python/commit/cc7f909d59c7bca2cedfc204704cd31dbb32916c))
+- chore(internal): update pydantic dependency ([a4c5af5](https://github.com/lmnt-com/lmnt-python/commit/a4c5af517ea5fe4de75612fb596cb7e643115edb))
+- chore(types): change optional parameter type from NotGiven to Omit ([7c03fb8](https://github.com/lmnt-com/lmnt-python/commit/7c03fb8645d067dd9992b98da473df9f02b901fc))
+- chore: do not install brew dependencies in ./scripts/bootstrap by default ([75d2397](https://github.com/lmnt-com/lmnt-python/commit/75d23979700a889a7ceae787f8449ce66cc53733))
+- chore: improve example values ([5c0919c](https://github.com/lmnt-com/lmnt-python/commit/5c0919cd356a9624a9a1b5d0e4a802d7b107226f))
+      
+
 ## v2.3.0 (2025-09-03)
 
 Full Changelog: [v2.2.1...v2.3.0](https://github.com/lmnt-com/lmnt-python/compare/v2.2.1...v2.3.0)
