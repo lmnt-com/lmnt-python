@@ -120,78 +120,15 @@ jobs:
           ALL_PR_COMMITS=$(git rev-list --reverse origin/${{ env.REPO_B_TARGET }}..HEAD)
           
           # Create changelog entry
-          changelog_entry="## ${{ steps.version.outputs.new_version }} ($(date +%Y-%m-%d))
+          changelog_entry="## ${{ steps.version.outputs.new_version }} ($(date +%Y-%m-%d))\n
+          Full Changelog: [${{ steps.version.outputs.current_version }}...${{ steps.version.outputs.new_version }}](https://github.com/${{ github.repository }}/compare/${{ steps.version.outputs.current_version }}...${{ steps.version.outputs.new_version }})\n\n"
 
-          Full Changelog: [${{ steps.version.outputs.current_version }}...${{ steps.version.outputs.new_version }}](https://github.com/${{ github.repository }}/compare/${{ steps.version.outputs.current_version }}...${{ steps.version.outputs.new_version }})
-          "
-          
-          # Add features section
-          has_feat_commits=false
           for commit in $ALL_PR_COMMITS; do
             if [ -n "$commit" ]; then
               commit_msg=$(git log --format="%s" -1 "$commit")
-              if echo "$commit_msg" | grep -q "feat:"; then
-                if [ "$has_feat_commits" = false ]; then
-                  changelog_entry="${changelog_entry}
-                  ### Features
-                  "
-                  has_feat_commits=true
-                fi
-                # Remove "feat: " prefix and add to changelog with commit link
-                feature_desc=$(echo "$commit_msg" | sed 's/feat: //')
+              if ! echo "$commit_msg" | grep -q -E "^(Update sync state)"; then
                 short_sha=$(echo "$commit" | cut -c1-7)
-                changelog_entry="${changelog_entry}* ${feature_desc} ([${short_sha}](https://github.com/${{ github.repository }}/commit/${commit}))
-                "
-              fi
-            fi
-          done
-          
-          if [ "$has_feat_commits" = true ]; then
-            changelog_entry="${changelog_entry}
-          "
-          fi
-          
-          # Add fixes section
-          has_fixes=false
-          for commit in $ALL_PR_COMMITS; do
-            if [ -n "$commit" ]; then
-              commit_msg=$(git log --format="%s" -1 "$commit")
-              if echo "$commit_msg" | grep -q "fix:"; then
-                if [ "$has_fixes" = false ]; then
-                  changelog_entry="${changelog_entry}
-                  ### Bug Fixes
-                  "
-                  has_fixes=true
-                fi
-                # Remove "fix: " prefix and add to changelog with commit link
-                fix_desc=$(echo "$commit_msg" | sed 's/fix: //')
-                short_sha=$(echo "$commit" | cut -c1-7)
-                changelog_entry="${changelog_entry}* ${fix_desc} ([${short_sha}](https://github.com/${{ github.repository }}/commit/${commit}))
-                "
-              fi
-            fi
-          done
-          
-          if [ "$has_fixes" = true ]; then
-            changelog_entry="${changelog_entry}
-          "
-          fi
-          
-          # Add other changes section
-          has_other=false
-          for commit in $ALL_PR_COMMITS; do
-            if [ -n "$commit" ]; then
-              commit_msg=$(git log --format="%s" -1 "$commit")
-              if ! echo "$commit_msg" | grep -q -E "^(feat:|fix:|Update sync state)"; then
-                if [ "$has_other" = false ]; then
-                  changelog_entry="${changelog_entry}
-                  ### Other Changes
-                  "
-                  has_other=true
-                fi
-                short_sha=$(echo "$commit" | cut -c1-7)
-                changelog_entry="${changelog_entry}* ${commit_msg} ([${short_sha}](https://github.com/${{ github.repository }}/commit/${commit}))
-                "
+                changelog_entry="${changelog_entry}- ${commit_msg} ([${short_sha}](https://github.com/${{ github.repository }}/commit/${commit}))\n"
               fi
             fi
           done
