@@ -1,6 +1,3 @@
-> **Note:**
-> We released version 2.0 of this SDK in July 2025. To migrate from version 1.x, see the [migration guide](./MIGRATING.md).
-
 # Lmnt Python API library
 
 <!-- prettier-ignore -->
