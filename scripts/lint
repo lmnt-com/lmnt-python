@@ -5,7 +5,9 @@ set -e
 cd "$(dirname "$0")/.."
 
 echo "==> Running lints"
-rye run lint
+uv run ruff check .
+uv run pyright
+uv run mypy .
 
 echo "==> Making sure it imports"
-rye run python -c 'import lmnt'
+uv run python -c 'import lmnt'
