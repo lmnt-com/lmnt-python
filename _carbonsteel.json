@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "generated_at": "2026-04-25T19:19:59Z",
+  "generated_at": "2026-04-25T21:26:24Z",
   "spec_sha": "b8435ec93cccd280:83de327c97df0a08",
   "files": [
     "src/lmnt/__init__.py",
@@ -22,6 +22,9 @@
     "src/lmnt/types/voice_list_params.py",
     "src/lmnt/types/voice_list_response.py",
     "src/lmnt/types/voice_update_params.py",
-    "src/lmnt/types/voice_update_response.py"
+    "src/lmnt/types/voice_update_response.py",
+    "tests/api_resources/test_accounts.py",
+    "tests/api_resources/test_speech.py",
+    "tests/api_resources/test_voices.py"
   ]
 }
