@@ -8,13 +8,7 @@ if [[ -n "$1" && "$1" != '--'* ]]; then
   URL="$1"
   shift
 else
-  URL="$(grep 'openapi_spec_url' .stats.yml | cut -d' ' -f2)"
-fi
-
-# Check if the URL is empty
-if [ -z "$URL" ]; then
-  echo "Error: No OpenAPI spec path/url provided or found in .stats.yml"
-  exit 1
+  URL="https://api.lmnt.com/v1/openapi.yaml"
 fi
 
 echo "==> Starting mock server with URL ${URL}"
