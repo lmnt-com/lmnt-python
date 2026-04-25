@@ -583,9 +583,11 @@ def construct_type(*, value: object, type_: object, metadata: Optional[List[Any]
     return value
 
 
-@runtime_checkable
-class CachedDiscriminatorType(Protocol):
-    __discriminator__: DiscriminatorDetails
+# Cache of computed DiscriminatorDetails keyed by union type. Used to be stored as an
+# attribute on the union itself (`union.__discriminator__`), but py3.14 removed `__dict__`
+# on `typing.Union`, so attribute assignment fails. A module-level dict is functionally
+# equivalent.
+_DISCRIMINATOR_CACHE: dict[Any, "DiscriminatorDetails"] = {}
 
 
 class DiscriminatorDetails:
@@ -630,8 +632,9 @@ class DiscriminatorDetails:
 
 
 def _build_discriminated_union_meta(*, union: type, meta_annotations: tuple[Any, ...]) -> DiscriminatorDetails | None:
-    if isinstance(union, CachedDiscriminatorType):
-        return union.__discriminator__
+    cached = _DISCRIMINATOR_CACHE.get(union)
+    if cached is not None:
+        return cached
 
     discriminator_field_name: str | None = None
 
@@ -684,7 +687,7 @@ def _build_discriminated_union_meta(*, union: type, meta_annotations: tuple[Any,
         discriminator_field=discriminator_field_name,
         discriminator_alias=discriminator_alias,
     )
-    cast(CachedDiscriminatorType, union).__discriminator__ = details
+    _DISCRIMINATOR_CACHE[union] = details
     return details
 
 
