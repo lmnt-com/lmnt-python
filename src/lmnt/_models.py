@@ -265,6 +265,8 @@ class BaseModel(pydantic.BaseModel):
             context: dict[str, Any] | None = None,
             serialize_as_any: bool = False,
             fallback: Callable[[Any], Any] | None = None,
+            polymorphic_serialization: bool | None = None,
+            exclude_computed_fields: bool = False,
         ) -> dict[str, Any]:
             """Usage docs: https://docs.pydantic.dev/2.4/concepts/serialization/#modelmodel_dump
 
@@ -298,6 +300,10 @@ class BaseModel(pydantic.BaseModel):
                 raise ValueError("serialize_as_any is only supported in Pydantic v2")
             if fallback is not None:
                 raise ValueError("fallback is only supported in Pydantic v2")
+            if polymorphic_serialization is not None:
+                raise ValueError("polymorphic_serialization is only supported in Pydantic v2")
+            if exclude_computed_fields != False:
+                raise ValueError("exclude_computed_fields is only supported in Pydantic v2")
             dumped = super().dict(  # pyright: ignore[reportDeprecated]
                 include=include,
                 exclude=exclude,
@@ -325,6 +331,9 @@ class BaseModel(pydantic.BaseModel):
             context: dict[str, Any] | None = None,
             fallback: Callable[[Any], Any] | None = None,
             serialize_as_any: bool = False,
+            polymorphic_serialization: bool | None = None,
+            exclude_computed_fields: bool = False,
+            ensure_ascii: bool = False,
         ) -> str:
             """Usage docs: https://docs.pydantic.dev/2.4/concepts/serialization/#modelmodel_dump_json
 
@@ -354,6 +363,12 @@ class BaseModel(pydantic.BaseModel):
                 raise ValueError("serialize_as_any is only supported in Pydantic v2")
             if fallback is not None:
                 raise ValueError("fallback is only supported in Pydantic v2")
+            if polymorphic_serialization is not None:
+                raise ValueError("polymorphic_serialization is only supported in Pydantic v2")
+            if exclude_computed_fields != False:
+                raise ValueError("exclude_computed_fields is only supported in Pydantic v2")
+            if ensure_ascii != False:
+                raise ValueError("ensure_ascii is only supported in Pydantic v2")
             return super().json(  # type: ignore[reportDeprecated]
                 indent=indent,
                 include=include,

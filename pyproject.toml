@@ -57,59 +57,6 @@ dev = [
     "pytest-xdist==3.7.0",
 ]
 
-[tool.uv]
-# Pin transitive deps to the versions previously locked by Rye in
-# requirements.lock / requirements-dev.lock. Bump deliberately by editing
-# this list (or removing the constraint entirely) and re-running `uv lock`.
-constraint-dependencies = [
-    "aiohappyeyeballs==2.6.1",
-    "aiohttp==3.12.8",
-    "aiosignal==1.3.2",
-    "annotated-types==0.6.0",
-    "anyio==4.4.0",
-    "argcomplete==3.1.2",
-    "async-timeout==5.0.1",
-    "attrs==25.3.0",
-    "certifi==2023.7.22",
-    "colorlog==6.7.0",
-    "distlib==0.3.7",
-    "distro==1.8.0",
-    "exceptiongroup==1.2.2",
-    "execnet==2.1.1",
-    "filelock==3.12.4",
-    "frozenlist==1.6.2",
-    "h11==0.16.0",
-    "httpcore==1.0.9",
-    "httpx==0.28.1",
-    "httpx-aiohttp==0.1.8",
-    "idna==3.4",
-    "iniconfig==2.0.0",
-    "markdown-it-py==3.0.0",
-    "mdurl==0.1.2",
-    "multidict==6.4.4",
-    "mypy-extensions==1.0.0",
-    "nodeenv==1.8.0",
-    "packaging==23.2",
-    "platformdirs==3.11.0",
-    "pluggy==1.5.0",
-    "propcache==0.3.1",
-    "pydantic==2.11.9",
-    "pydantic-core==2.33.2",
-    "pygments==2.18.0",
-    "python-dateutil==2.8.2",
-    "pytz==2023.3.post1",
-    "setuptools==68.2.2",
-    "six==1.16.0",
-    "sniffio==1.3.0",
-    "tomli==2.0.2",
-    "typing-extensions==4.12.2",
-    "typing-inspection==0.4.1",
-    "virtualenv==20.24.5",
-    "websockets==15.0.1",
-    "yarl==1.20.0",
-    "zipp==3.17.0",
-]
-
 [build-system]
 requires = ["hatchling==1.26.3", "hatch-fancy-pypi-readme"]
 build-backend = "hatchling.build"
