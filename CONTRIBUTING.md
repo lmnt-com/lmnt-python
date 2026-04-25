@@ -1,35 +1,25 @@
 ## Setting up the environment
 
-### With Rye
-
-We use [Rye](https://rye.astral.sh/) to manage dependencies because it will automatically provision a Python environment with the expected Python version. To set it up, run:
+We use [uv](https://docs.astral.sh/uv/) to manage dependencies. It will automatically provision a Python environment matching the version in `.python-version`. To set it up, run:
 
 ```sh
 $ ./scripts/bootstrap
 ```
 
-Or [install Rye manually](https://rye.astral.sh/guide/installation/) and run:
+Or [install uv manually](https://docs.astral.sh/uv/getting-started/installation/) and run:
 
 ```sh
-$ rye sync --all-features
+$ uv sync --all-extras --group dev
 ```
 
-You can then run scripts using `rye run python script.py` or by activating the virtual environment:
+You can then run scripts using `uv run python script.py` or by activating the virtual environment:
 
 ```sh
 # Activate the virtual environment - https://docs.python.org/3/library/venv.html#how-venvs-work
 $ source .venv/bin/activate
 
-# now you can omit the `rye run` prefix
+# now you can omit the `uv run` prefix
 $ python script.py
-```
-
-### Without Rye
-
-Alternatively if you don't want to install `Rye`, you can stick with the standard `pip` setup by ensuring you have the Python version specified in `.python-version`, create a virtual environment however you desire and then install dependencies using this command:
-
-```sh
-$ pip install -r requirements-dev.lock
 ```
 
 ## Modifying/Adding code
@@ -45,7 +35,7 @@ All files in the `examples/` directory are not modified by the generator and can
 ```py
 # add an example to examples/<your-example>.py
 
-#!/usr/bin/env -S rye run python
+#!/usr/bin/env -S uv run python
 …
 ```
 
@@ -72,9 +62,7 @@ Building this package will create two files in the `dist/` directory, a `.tar.gz
 To create a distributable version of the library, all you have to do is run this command:
 
 ```sh
-$ rye build
-# or
-$ python -m build
+$ uv build
 ```
 
 Then to install:
