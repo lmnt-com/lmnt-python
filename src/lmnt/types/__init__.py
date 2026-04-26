@@ -14,8 +14,8 @@ from .speech_convert_params import SpeechConvertParams as SpeechConvertParams
 from .voice_delete_response import VoiceDeleteResponse as VoiceDeleteResponse
 from .voice_update_response import VoiceUpdateResponse as VoiceUpdateResponse
 from .speech_generate_params import SpeechGenerateParams as SpeechGenerateParams
-from .speech_stream_eof_command import SpeechStreamEofCommand as SpeechStreamEofCommand
 from .account_retrieve_response import AccountRetrieveResponse as AccountRetrieveResponse
+from .speech_stream_eof_command import SpeechStreamEofCommand as SpeechStreamEofCommand
 from .speech_stream_init_message import SpeechStreamInitMessage as SpeechStreamInitMessage
 from .speech_stream_text_message import SpeechStreamTextMessage as SpeechStreamTextMessage
 from .speech_stream_flush_command import SpeechStreamFlushCommand as SpeechStreamFlushCommand

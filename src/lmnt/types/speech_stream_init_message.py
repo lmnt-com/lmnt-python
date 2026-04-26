@@ -4,6 +4,7 @@ from typing import Optional
 from typing_extensions import Literal
 
 from pydantic import Field
+
 from .._models import BaseModel
 
 __all__ = ["SpeechStreamInitMessage"]
