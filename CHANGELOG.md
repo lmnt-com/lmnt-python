@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.5.1](https://github.com/lmnt-com/lmnt-python/compare/v2.5.0...v2.5.1) (2026-04-26)
+
+
+### Bug Fixes
+
+* extend lmnt.lib path for sibling distributions ([f848612](https://github.com/lmnt-com/lmnt-python/commit/f848612d1c0e9747c053b655fc51eac38635626e))
+
 ## [2.5.0](https://github.com/lmnt-com/lmnt-python/compare/v2.4.1...v2.5.0) (2026-04-26)
 
 
