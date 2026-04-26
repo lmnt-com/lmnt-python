@@ -1,5 +1,24 @@
 # Changelog
 
+## [2.4.1](https://github.com/lmnt-com/lmnt-python/compare/v2.4.0...v2.4.1) (2026-04-26)
+
+
+### Chores
+
+* drop python 3.8 fallbacks and rye references ([6138efa](https://github.com/lmnt-com/lmnt-python/commit/6138efa6e75e238a370890f5d8877e28c1d50727))
+* fix import ordering in generated types ([094c4b9](https://github.com/lmnt-com/lmnt-python/commit/094c4b9f5b55bbd2633f7bb562f3198834ce0b40))
+* generate api_resources tests from carbonsteel ([b9262db](https://github.com/lmnt-com/lmnt-python/commit/b9262dbf0edfe3deae4253917588634a1a4d5ec0))
+* generate api.md from carbonsteel ([8d72de7](https://github.com/lmnt-com/lmnt-python/commit/8d72de7c0ed5e8acbb6642d48b3136c1237675cf))
+* generate websocket types and sessions from asyncapi.yaml ([5150f43](https://github.com/lmnt-com/lmnt-python/commit/5150f436880efa15fe84d78ef6ce36657ef4f763))
+* migrate from rye to uv ([a845166](https://github.com/lmnt-com/lmnt-python/commit/a845166a810d411ece2675ff20bf74c88d3f9ad3))
+* regenerate from new code generator ([c4bb01b](https://github.com/lmnt-com/lmnt-python/commit/c4bb01b3c2b871f17085605b32d4bcb4f3662080))
+* regenerate from new code generator ([cc0b428](https://github.com/lmnt-com/lmnt-python/commit/cc0b42810cbd5d37b5d4821967dc3070774f1638))
+* register runtime files in manifest ([e117e4b](https://github.com/lmnt-com/lmnt-python/commit/e117e4be5f79a2384cbf7528fbf73595e6cbc312))
+* remove devcontainer config ([c1da477](https://github.com/lmnt-com/lmnt-python/commit/c1da477276c091dae6919f6e029eab81e4b74387))
+* remove MIGRATING.md ([9bbb761](https://github.com/lmnt-com/lmnt-python/commit/9bbb76196a3f1b9262001ac56077d12566b621cf))
+* remove SECURITY.md ([22341da](https://github.com/lmnt-com/lmnt-python/commit/22341da2983ef4d379a086b2029dcf6de0eb9704))
+* remove stainless sync state files ([380b363](https://github.com/lmnt-com/lmnt-python/commit/380b363570c578ca76dc1ec91b63daf0fec10235))
+
 ## v2.4.0 (2025-09-30)
 
 Full Changelog: [v2.3.0...v2.4.0](https://github.com/lmnt-com/lmnt-python/compare/v2.3.0...v2.4.0)
