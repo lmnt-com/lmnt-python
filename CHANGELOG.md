@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.5.0](https://github.com/lmnt-com/lmnt-python/compare/v2.4.1...v2.5.0) (2026-04-26)
+
+
+### Features
+
+* allow lmnt.* subpackages from other distributions ([8efe4fe](https://github.com/lmnt-com/lmnt-python/commit/8efe4feed05ca8aaf86141f657b50c1fcc92e2b4))
+
 ## [2.4.1](https://github.com/lmnt-com/lmnt-python/compare/v2.4.0...v2.4.1) (2026-04-26)
 
 
