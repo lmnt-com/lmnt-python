@@ -3,8 +3,8 @@
 from typing import List, Optional
 from typing_extensions import Literal
 
-from .duration import Duration
 from .._models import BaseModel
+from .duration import Duration
 
 __all__ = ["SpeechStreamExtras"]
 
