@@ -60,5 +60,13 @@
     }
   ],
   "release-type": "python",
-  "extra-files": ["src/lmnt/_version.py", "README.md"]
+  "extra-files": [
+    "src/lmnt/_version.py",
+    "README.md",
+    {
+      "path": "uv.lock",
+      "type": "toml",
+      "jsonpath": "$.package[?(@.name.value=='lmnt')].version"
+    }
+  ]
 }
