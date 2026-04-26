@@ -3,14 +3,21 @@
 from __future__ import annotations
 
 from .voice import Voice as Voice
+from .duration import Duration as Duration
 from .voice_list_params import VoiceListParams as VoiceListParams
+from .speech_stream_error import SpeechStreamError as SpeechStreamError
 from .voice_create_params import VoiceCreateParams as VoiceCreateParams
 from .voice_list_response import VoiceListResponse as VoiceListResponse
 from .voice_update_params import VoiceUpdateParams as VoiceUpdateParams
+from .speech_stream_extras import SpeechStreamExtras as SpeechStreamExtras
 from .speech_convert_params import SpeechConvertParams as SpeechConvertParams
 from .voice_delete_response import VoiceDeleteResponse as VoiceDeleteResponse
 from .voice_update_response import VoiceUpdateResponse as VoiceUpdateResponse
 from .speech_generate_params import SpeechGenerateParams as SpeechGenerateParams
+from .speech_stream_eof_command import SpeechStreamEofCommand as SpeechStreamEofCommand
 from .account_retrieve_response import AccountRetrieveResponse as AccountRetrieveResponse
+from .speech_stream_init_message import SpeechStreamInitMessage as SpeechStreamInitMessage
+from .speech_stream_text_message import SpeechStreamTextMessage as SpeechStreamTextMessage
+from .speech_stream_flush_command import SpeechStreamFlushCommand as SpeechStreamFlushCommand
 from .speech_generate_detailed_params import SpeechGenerateDetailedParams as SpeechGenerateDetailedParams
 from .speech_generate_detailed_response import SpeechGenerateDetailedResponse as SpeechGenerateDetailedResponse

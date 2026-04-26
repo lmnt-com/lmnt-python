@@ -1,48 +1,33 @@
 from __future__ import annotations
 
 import json
-from typing import Any, Dict, List, Final, Union, Literal, Optional
+from typing import Any, Dict, Final, Union, Literal, Optional
 
 import websockets
-from pydantic import Field, BaseModel
+from pydantic import BaseModel
+
+from ..types.duration import Duration as Duration
+from ..types.speech_stream_error import SpeechStreamError as ErrorMessage
+from ..types.speech_stream_extras import SpeechStreamExtras as ExtrasMessage
 
 URL_STREAMING: Final = "wss://api.lmnt.com/v1/ai/speech/stream"
 
 
-class Duration(BaseModel):
-    """Duration information for a segment of synthesized speech."""
-    
-    text: str
-    start: float = Field(description="Start time in seconds")
-    duration: float = Field(description="Duration in seconds")
-
-
 class AudioMessage(BaseModel):
     """Audio message containing synthesized speech data."""
-    
+
     type: Literal["audio"] = "audio"
     audio: bytes
 
 
-class ExtrasMessage(BaseModel):
-    """Extras message containing metadata about the synthesis."""
-    
-    type: Literal["extras"] = "extras"
-    durations: Optional[List[Duration]] = None
-    warning: Optional[str] = None
-    buffer_empty: Optional[bool] = None
-
-
-class ErrorMessage(BaseModel):
-    """Error message containing error information."""
-    
-    type: Literal["error"] = "error"
-    error: str
-
-
 class CompleteMessage(BaseModel):
-    """Complete message for commands (reset/flush)."""
-    
+    """Complete message for commands (reset/flush).
+
+    Not yet in asyncapi.yaml — V2-protocol ack message; carbonsteel will generate it once the
+    spec V2 alignment lands. Until then, kept hand-written so the SpeechSession dispatch
+    surface stays intact.
+    """
+
     type: Literal["complete"] = "complete"
     complete: Literal["reset", "flush"]
     nonce: int
