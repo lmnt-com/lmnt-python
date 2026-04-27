@@ -162,39 +162,6 @@ class TestVoices:
             )
 
     @parametrize
-    def test_method_list(self, client: Lmnt) -> None:
-        voice = client.voices.list()
-        assert_matches_type(VoiceListResponse, voice, path=["response"])
-
-    @parametrize
-    def test_method_list_with_all_params(self, client: Lmnt) -> None:
-        voice = client.voices.list(
-            owner="owner",
-            starred="starred",
-        )
-        assert_matches_type(VoiceListResponse, voice, path=["response"])
-
-    @parametrize
-    def test_raw_response_list(self, client: Lmnt) -> None:
-        response = client.voices.with_raw_response.list()
-
-        assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
-        voice = response.parse()
-        assert_matches_type(VoiceListResponse, voice, path=["response"])
-
-    @parametrize
-    def test_streaming_response_list(self, client: Lmnt) -> None:
-        with client.voices.with_streaming_response.list() as response:
-            assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
-
-            voice = response.parse()
-            assert_matches_type(VoiceListResponse, voice, path=["response"])
-
-        assert cast(Any, response.is_closed) is True
-
-    @parametrize
     def test_method_delete(self, client: Lmnt) -> None:
         voice = client.voices.delete(
             "123",
@@ -231,6 +198,39 @@ class TestVoices:
             client.voices.with_raw_response.delete(
                 "",
             )
+
+    @parametrize
+    def test_method_list(self, client: Lmnt) -> None:
+        voice = client.voices.list()
+        assert_matches_type(VoiceListResponse, voice, path=["response"])
+
+    @parametrize
+    def test_method_list_with_all_params(self, client: Lmnt) -> None:
+        voice = client.voices.list(
+            owner="owner",
+            starred="starred",
+        )
+        assert_matches_type(VoiceListResponse, voice, path=["response"])
+
+    @parametrize
+    def test_raw_response_list(self, client: Lmnt) -> None:
+        response = client.voices.with_raw_response.list()
+
+        assert response.is_closed is True
+        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        voice = response.parse()
+        assert_matches_type(VoiceListResponse, voice, path=["response"])
+
+    @parametrize
+    def test_streaming_response_list(self, client: Lmnt) -> None:
+        with client.voices.with_streaming_response.list() as response:
+            assert not response.is_closed
+            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+
+            voice = response.parse()
+            assert_matches_type(VoiceListResponse, voice, path=["response"])
+
+        assert cast(Any, response.is_closed) is True
 
 
 class TestAsyncVoices:
@@ -378,39 +378,6 @@ class TestAsyncVoices:
             )
 
     @parametrize
-    async def test_method_list(self, async_client: AsyncLmnt) -> None:
-        voice = await async_client.voices.list()
-        assert_matches_type(VoiceListResponse, voice, path=["response"])
-
-    @parametrize
-    async def test_method_list_with_all_params(self, async_client: AsyncLmnt) -> None:
-        voice = await async_client.voices.list(
-            owner="owner",
-            starred="starred",
-        )
-        assert_matches_type(VoiceListResponse, voice, path=["response"])
-
-    @parametrize
-    async def test_raw_response_list(self, async_client: AsyncLmnt) -> None:
-        response = await async_client.voices.with_raw_response.list()
-
-        assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
-        voice = await response.parse()
-        assert_matches_type(VoiceListResponse, voice, path=["response"])
-
-    @parametrize
-    async def test_streaming_response_list(self, async_client: AsyncLmnt) -> None:
-        async with async_client.voices.with_streaming_response.list() as response:
-            assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
-
-            voice = await response.parse()
-            assert_matches_type(VoiceListResponse, voice, path=["response"])
-
-        assert cast(Any, response.is_closed) is True
-
-    @parametrize
     async def test_method_delete(self, async_client: AsyncLmnt) -> None:
         voice = await async_client.voices.delete(
             "123",
@@ -447,3 +414,36 @@ class TestAsyncVoices:
             await async_client.voices.with_raw_response.delete(
                 "",
             )
+
+    @parametrize
+    async def test_method_list(self, async_client: AsyncLmnt) -> None:
+        voice = await async_client.voices.list()
+        assert_matches_type(VoiceListResponse, voice, path=["response"])
+
+    @parametrize
+    async def test_method_list_with_all_params(self, async_client: AsyncLmnt) -> None:
+        voice = await async_client.voices.list(
+            owner="owner",
+            starred="starred",
+        )
+        assert_matches_type(VoiceListResponse, voice, path=["response"])
+
+    @parametrize
+    async def test_raw_response_list(self, async_client: AsyncLmnt) -> None:
+        response = await async_client.voices.with_raw_response.list()
+
+        assert response.is_closed is True
+        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        voice = await response.parse()
+        assert_matches_type(VoiceListResponse, voice, path=["response"])
+
+    @parametrize
+    async def test_streaming_response_list(self, async_client: AsyncLmnt) -> None:
+        async with async_client.voices.with_streaming_response.list() as response:
+            assert not response.is_closed
+            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+
+            voice = await response.parse()
+            assert_matches_type(VoiceListResponse, voice, path=["response"])
+
+        assert cast(Any, response.is_closed) is True

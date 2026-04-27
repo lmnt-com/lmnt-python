@@ -29,67 +29,6 @@ class TestSpeech:
 
     @parametrize
     @pytest.mark.respx(base_url=base_url)
-    def test_method_convert(self, client: Lmnt, respx_mock: MockRouter) -> None:
-        respx_mock.post("/v1/ai/speech/convert").mock(return_value=httpx.Response(200, json={"foo": "bar"}))
-        speech = client.speech.convert(
-            audio=b"raw file contents",
-            voice="leah",
-        )
-        assert speech.is_closed
-        assert speech.json() == {"foo": "bar"}
-        assert cast(Any, speech.is_closed) is True
-        assert isinstance(speech, BinaryAPIResponse)
-
-    @parametrize
-    @pytest.mark.respx(base_url=base_url)
-    def test_method_convert_with_all_params(self, client: Lmnt, respx_mock: MockRouter) -> None:
-        respx_mock.post("/v1/ai/speech/convert").mock(return_value=httpx.Response(200, json={"foo": "bar"}))
-        speech = client.speech.convert(
-            audio=b"raw file contents",
-            voice="leah",
-            format="aac",
-            language="auto",
-            sample_rate=8000,
-        )
-        assert speech.is_closed
-        assert speech.json() == {"foo": "bar"}
-        assert cast(Any, speech.is_closed) is True
-        assert isinstance(speech, BinaryAPIResponse)
-
-    @parametrize
-    @pytest.mark.respx(base_url=base_url)
-    def test_raw_response_convert(self, client: Lmnt, respx_mock: MockRouter) -> None:
-        respx_mock.post("/v1/ai/speech/convert").mock(return_value=httpx.Response(200, json={"foo": "bar"}))
-
-        speech = client.speech.with_raw_response.convert(
-            audio=b"raw file contents",
-            voice="leah",
-        )
-
-        assert speech.is_closed is True
-        assert speech.http_request.headers.get("X-Stainless-Lang") == "python"
-        assert speech.json() == {"foo": "bar"}
-        assert isinstance(speech, BinaryAPIResponse)
-
-    @parametrize
-    @pytest.mark.respx(base_url=base_url)
-    def test_streaming_response_convert(self, client: Lmnt, respx_mock: MockRouter) -> None:
-        respx_mock.post("/v1/ai/speech/convert").mock(return_value=httpx.Response(200, json={"foo": "bar"}))
-        with client.speech.with_streaming_response.convert(
-            audio=b"raw file contents",
-            voice="leah",
-        ) as speech:
-            assert not speech.is_closed
-            assert speech.http_request.headers.get("X-Stainless-Lang") == "python"
-
-            assert speech.json() == {"foo": "bar"}
-            assert cast(Any, speech.is_closed) is True
-            assert isinstance(speech, StreamedBinaryAPIResponse)
-
-        assert cast(Any, speech.is_closed) is True
-
-    @parametrize
-    @pytest.mark.respx(base_url=base_url)
     def test_method_generate(self, client: Lmnt, respx_mock: MockRouter) -> None:
         respx_mock.post("/v1/ai/speech/bytes").mock(return_value=httpx.Response(200, json={"foo": "bar"}))
         speech = client.speech.generate(
@@ -210,67 +149,6 @@ class TestAsyncSpeech:
     parametrize = pytest.mark.parametrize(
         "async_client", [False, True, {"http_client": "aiohttp"}], indirect=True, ids=["loose", "strict", "aiohttp"]
     )
-
-    @parametrize
-    @pytest.mark.respx(base_url=base_url)
-    async def test_method_convert(self, async_client: AsyncLmnt, respx_mock: MockRouter) -> None:
-        respx_mock.post("/v1/ai/speech/convert").mock(return_value=httpx.Response(200, json={"foo": "bar"}))
-        speech = await async_client.speech.convert(
-            audio=b"raw file contents",
-            voice="leah",
-        )
-        assert speech.is_closed
-        assert await speech.json() == {"foo": "bar"}
-        assert cast(Any, speech.is_closed) is True
-        assert isinstance(speech, AsyncBinaryAPIResponse)
-
-    @parametrize
-    @pytest.mark.respx(base_url=base_url)
-    async def test_method_convert_with_all_params(self, async_client: AsyncLmnt, respx_mock: MockRouter) -> None:
-        respx_mock.post("/v1/ai/speech/convert").mock(return_value=httpx.Response(200, json={"foo": "bar"}))
-        speech = await async_client.speech.convert(
-            audio=b"raw file contents",
-            voice="leah",
-            format="aac",
-            language="auto",
-            sample_rate=8000,
-        )
-        assert speech.is_closed
-        assert await speech.json() == {"foo": "bar"}
-        assert cast(Any, speech.is_closed) is True
-        assert isinstance(speech, AsyncBinaryAPIResponse)
-
-    @parametrize
-    @pytest.mark.respx(base_url=base_url)
-    async def test_raw_response_convert(self, async_client: AsyncLmnt, respx_mock: MockRouter) -> None:
-        respx_mock.post("/v1/ai/speech/convert").mock(return_value=httpx.Response(200, json={"foo": "bar"}))
-
-        speech = await async_client.speech.with_raw_response.convert(
-            audio=b"raw file contents",
-            voice="leah",
-        )
-
-        assert speech.is_closed is True
-        assert speech.http_request.headers.get("X-Stainless-Lang") == "python"
-        assert await speech.json() == {"foo": "bar"}
-        assert isinstance(speech, AsyncBinaryAPIResponse)
-
-    @parametrize
-    @pytest.mark.respx(base_url=base_url)
-    async def test_streaming_response_convert(self, async_client: AsyncLmnt, respx_mock: MockRouter) -> None:
-        respx_mock.post("/v1/ai/speech/convert").mock(return_value=httpx.Response(200, json={"foo": "bar"}))
-        async with async_client.speech.with_streaming_response.convert(
-            audio=b"raw file contents",
-            voice="leah",
-        ) as speech:
-            assert not speech.is_closed
-            assert speech.http_request.headers.get("X-Stainless-Lang") == "python"
-
-            assert await speech.json() == {"foo": "bar"}
-            assert cast(Any, speech.is_closed) is True
-            assert isinstance(speech, AsyncStreamedBinaryAPIResponse)
-
-        assert cast(Any, speech.is_closed) is True
 
     @parametrize
     @pytest.mark.respx(base_url=base_url)

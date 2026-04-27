@@ -204,6 +204,40 @@ class VoicesResource(SyncAPIResource):
             cast_to=VoiceUpdateResponse,
         )
 
+    def delete(
+        self,
+        id: str,
+        *,
+        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
+        # The extra values given here take precedence over values defined on the client or passed to this method.
+        extra_headers: Headers | None = None,
+        extra_query: Query | None = None,
+        extra_body: Body | None = None,
+        timeout: float | httpx.Timeout | None | NotGiven = not_given,
+    ) -> VoiceDeleteResponse:
+        """Deletes a voice and cancels any pending operations on it.
+
+        Cannot be undone.
+
+        Args:
+          extra_headers: Send extra headers
+
+          extra_query: Add additional query parameters to the request
+
+          extra_body: Add additional JSON properties to the request
+
+          timeout: Override the client-level default timeout for this request, in seconds
+        """
+        if not id:
+            raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
+        return self._delete(
+            f"/v1/ai/voice/{id}",
+            options=make_request_options(
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+            ),
+            cast_to=VoiceDeleteResponse,
+        )
+
     def list(
         self,
         *,
@@ -248,40 +282,6 @@ class VoicesResource(SyncAPIResource):
                 ),
             ),
             cast_to=VoiceListResponse,
-        )
-
-    def delete(
-        self,
-        id: str,
-        *,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
-        extra_headers: Headers | None = None,
-        extra_query: Query | None = None,
-        extra_body: Body | None = None,
-        timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> VoiceDeleteResponse:
-        """Deletes a voice and cancels any pending operations on it.
-
-        Cannot be undone.
-
-        Args:
-          extra_headers: Send extra headers
-
-          extra_query: Add additional query parameters to the request
-
-          extra_body: Add additional JSON properties to the request
-
-          timeout: Override the client-level default timeout for this request, in seconds
-        """
-        if not id:
-            raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
-        return self._delete(
-            f"/v1/ai/voice/{id}",
-            options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-            ),
-            cast_to=VoiceDeleteResponse,
         )
 
 
@@ -463,6 +463,40 @@ class AsyncVoicesResource(AsyncAPIResource):
             cast_to=VoiceUpdateResponse,
         )
 
+    async def delete(
+        self,
+        id: str,
+        *,
+        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
+        # The extra values given here take precedence over values defined on the client or passed to this method.
+        extra_headers: Headers | None = None,
+        extra_query: Query | None = None,
+        extra_body: Body | None = None,
+        timeout: float | httpx.Timeout | None | NotGiven = not_given,
+    ) -> VoiceDeleteResponse:
+        """Deletes a voice and cancels any pending operations on it.
+
+        Cannot be undone.
+
+        Args:
+          extra_headers: Send extra headers
+
+          extra_query: Add additional query parameters to the request
+
+          extra_body: Add additional JSON properties to the request
+
+          timeout: Override the client-level default timeout for this request, in seconds
+        """
+        if not id:
+            raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
+        return await self._delete(
+            f"/v1/ai/voice/{id}",
+            options=make_request_options(
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+            ),
+            cast_to=VoiceDeleteResponse,
+        )
+
     async def list(
         self,
         *,
@@ -509,40 +543,6 @@ class AsyncVoicesResource(AsyncAPIResource):
             cast_to=VoiceListResponse,
         )
 
-    async def delete(
-        self,
-        id: str,
-        *,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
-        extra_headers: Headers | None = None,
-        extra_query: Query | None = None,
-        extra_body: Body | None = None,
-        timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> VoiceDeleteResponse:
-        """Deletes a voice and cancels any pending operations on it.
-
-        Cannot be undone.
-
-        Args:
-          extra_headers: Send extra headers
-
-          extra_query: Add additional query parameters to the request
-
-          extra_body: Add additional JSON properties to the request
-
-          timeout: Override the client-level default timeout for this request, in seconds
-        """
-        if not id:
-            raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
-        return await self._delete(
-            f"/v1/ai/voice/{id}",
-            options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-            ),
-            cast_to=VoiceDeleteResponse,
-        )
-
 
 class VoicesResourceWithRawResponse:
     def __init__(self, voices: VoicesResource) -> None:
@@ -557,11 +557,11 @@ class VoicesResourceWithRawResponse:
         self.update = to_raw_response_wrapper(
             voices.update,
         )
-        self.list = to_raw_response_wrapper(
-            voices.list,
-        )
         self.delete = to_raw_response_wrapper(
             voices.delete,
+        )
+        self.list = to_raw_response_wrapper(
+            voices.list,
         )
 
 
@@ -578,11 +578,11 @@ class AsyncVoicesResourceWithRawResponse:
         self.update = async_to_raw_response_wrapper(
             voices.update,
         )
-        self.list = async_to_raw_response_wrapper(
-            voices.list,
-        )
         self.delete = async_to_raw_response_wrapper(
             voices.delete,
+        )
+        self.list = async_to_raw_response_wrapper(
+            voices.list,
         )
 
 
@@ -599,11 +599,11 @@ class VoicesResourceWithStreamingResponse:
         self.update = to_streamed_response_wrapper(
             voices.update,
         )
-        self.list = to_streamed_response_wrapper(
-            voices.list,
-        )
         self.delete = to_streamed_response_wrapper(
             voices.delete,
+        )
+        self.list = to_streamed_response_wrapper(
+            voices.list,
         )
 
 
@@ -620,9 +620,9 @@ class AsyncVoicesResourceWithStreamingResponse:
         self.update = async_to_streamed_response_wrapper(
             voices.update,
         )
-        self.list = async_to_streamed_response_wrapper(
-            voices.list,
-        )
         self.delete = async_to_streamed_response_wrapper(
             voices.delete,
+        )
+        self.list = async_to_streamed_response_wrapper(
+            voices.list,
         )
