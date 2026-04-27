@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "generated_at": "2026-04-26T22:55:33Z",
-  "spec_sha": "b8435ec93cccd280:510635fad1875bc4",
+  "generated_at": "2026-04-27T22:51:05Z",
+  "spec_sha": "035a7c4d77945565:510635fad1875bc4",
   "files": [
     "api.md",
     "src/lmnt/__init__.py",
@@ -38,7 +38,6 @@
     "src/lmnt/types/__init__.py",
     "src/lmnt/types/account_retrieve_response.py",
     "src/lmnt/types/duration.py",
-    "src/lmnt/types/speech_convert_params.py",
     "src/lmnt/types/speech_generate_detailed_params.py",
     "src/lmnt/types/speech_generate_detailed_response.py",
     "src/lmnt/types/speech_generate_params.py",

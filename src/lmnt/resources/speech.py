@@ -2,14 +2,13 @@
 
 from __future__ import annotations
 
-from typing import Mapping, cast
 from typing_extensions import Literal
 
 import httpx
 
-from ..types import speech_convert_params, speech_generate_params, speech_generate_detailed_params
-from .._types import Body, Omit, Query, Headers, NotGiven, FileTypes, omit, not_given
-from .._utils import extract_files, maybe_transform, deepcopy_minimal, async_maybe_transform
+from ..types import speech_generate_params, speech_generate_detailed_params
+from .._types import Body, Omit, Query, Headers, NotGiven, omit, not_given
+from .._utils import maybe_transform, async_maybe_transform
 from .._compat import cached_property
 from .sessions import AsyncSessionsResource
 from .._resource import SyncAPIResource, AsyncAPIResource
@@ -52,111 +51,6 @@ class SpeechResource(SyncAPIResource):
         For more information, see https://www.github.com/lmnt-com/lmnt-python#with_streaming_response
         """
         return SpeechResourceWithStreamingResponse(self)
-
-    def convert(
-        self,
-        *,
-        audio: FileTypes,
-        voice: str,
-        format: Literal["aac", "mp3", "ulaw", "wav", "webm", "pcm_s16le", "pcm_f32le"] | Omit = omit,
-        language: Literal[
-            "auto",
-            "ar",
-            "de",
-            "en",
-            "es",
-            "fr",
-            "hi",
-            "id",
-            "it",
-            "ja",
-            "ko",
-            "nl",
-            "pl",
-            "pt",
-            "ru",
-            "sv",
-            "th",
-            "tr",
-            "uk",
-            "ur",
-            "vi",
-            "zh",
-        ]
-        | Omit = omit,
-        sample_rate: Literal[8000, 16000, 24000] | Omit = omit,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
-        extra_headers: Headers | None = None,
-        extra_query: Query | None = None,
-        extra_body: Body | None = None,
-        timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> BinaryAPIResponse:
-        """
-        Converts speech from one voice to another.
-
-        Args:
-          audio: The audio file to be converted into a new voice. Specify source language using
-              the `language` parameter. Acceptable formats: `wav`, `mp3`. Max file size: 1 MB.
-
-          voice: The voice id to convert the speech into. Voice ids can be retrieved by calls to
-              `List voices` or `Voice info`.
-
-          format: The desired output format of the audio. If you are using a streaming endpoint,
-              you'll generate audio faster by selecting a streamable format since chunks are
-              encoded and returned as they're generated. For non-streamable formats, the
-              entire audio will be synthesized before encoding.
-
-              Streamable formats:
-
-              - `mp3`: 96kbps MP3 audio.
-              - `ulaw`: 8-bit G711 µ-law audio with a WAV header.
-              - `webm`: WebM format with Opus audio codec.
-              - `pcm_s16le`: PCM signed 16-bit little-endian audio.
-              - `pcm_f32le`: PCM 32-bit floating-point little-endian audio.
-
-              Non-streamable formats:
-
-              - `aac`: AAC audio codec.
-              - `wav`: 16-bit PCM audio in WAV container.
-
-          language: The language of the source audio. Two letter ISO 639-1 code.
-
-          sample_rate: The desired output sample rate in Hz. Defaults to `24000` for all formats except
-              `mulaw` which defaults to `8000`.
-
-          extra_headers: Send extra headers
-
-          extra_query: Add additional query parameters to the request
-
-          extra_body: Add additional JSON properties to the request
-
-          timeout: Override the client-level default timeout for this request, in seconds
-        """
-        extra_headers = {"Accept": "application/octet-stream", **(extra_headers or {})}
-        body = deepcopy_minimal(
-            {
-                "audio": audio,
-                "voice": voice,
-                "format": format,
-                "language": language,
-                "sample_rate": sample_rate,
-            }
-        )
-        files = extract_files(cast(Mapping[str, object], body), paths=[["audio"]])
-        # It should be noted that the actual Content-Type header that will be
-        # sent to the server will contain a `boundary` parameter, e.g.
-        # multipart/form-data; boundary=---abc--
-        extra_headers = {"Content-Type": "multipart/form-data", **(extra_headers or {})}
-        return self._post(
-            "/v1/ai/speech/convert",
-            body=maybe_transform(body, speech_convert_params.SpeechConvertParams),
-            files=files,
-            options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-            ),
-            cast_to=BinaryAPIResponse,
-        )
 
     def generate(
         self,
@@ -446,111 +340,6 @@ class AsyncSpeechResource(AsyncAPIResource):
         """
         return AsyncSpeechResourceWithStreamingResponse(self)
 
-    async def convert(
-        self,
-        *,
-        audio: FileTypes,
-        voice: str,
-        format: Literal["aac", "mp3", "ulaw", "wav", "webm", "pcm_s16le", "pcm_f32le"] | Omit = omit,
-        language: Literal[
-            "auto",
-            "ar",
-            "de",
-            "en",
-            "es",
-            "fr",
-            "hi",
-            "id",
-            "it",
-            "ja",
-            "ko",
-            "nl",
-            "pl",
-            "pt",
-            "ru",
-            "sv",
-            "th",
-            "tr",
-            "uk",
-            "ur",
-            "vi",
-            "zh",
-        ]
-        | Omit = omit,
-        sample_rate: Literal[8000, 16000, 24000] | Omit = omit,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
-        extra_headers: Headers | None = None,
-        extra_query: Query | None = None,
-        extra_body: Body | None = None,
-        timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> AsyncBinaryAPIResponse:
-        """
-        Converts speech from one voice to another.
-
-        Args:
-          audio: The audio file to be converted into a new voice. Specify source language using
-              the `language` parameter. Acceptable formats: `wav`, `mp3`. Max file size: 1 MB.
-
-          voice: The voice id to convert the speech into. Voice ids can be retrieved by calls to
-              `List voices` or `Voice info`.
-
-          format: The desired output format of the audio. If you are using a streaming endpoint,
-              you'll generate audio faster by selecting a streamable format since chunks are
-              encoded and returned as they're generated. For non-streamable formats, the
-              entire audio will be synthesized before encoding.
-
-              Streamable formats:
-
-              - `mp3`: 96kbps MP3 audio.
-              - `ulaw`: 8-bit G711 µ-law audio with a WAV header.
-              - `webm`: WebM format with Opus audio codec.
-              - `pcm_s16le`: PCM signed 16-bit little-endian audio.
-              - `pcm_f32le`: PCM 32-bit floating-point little-endian audio.
-
-              Non-streamable formats:
-
-              - `aac`: AAC audio codec.
-              - `wav`: 16-bit PCM audio in WAV container.
-
-          language: The language of the source audio. Two letter ISO 639-1 code.
-
-          sample_rate: The desired output sample rate in Hz. Defaults to `24000` for all formats except
-              `mulaw` which defaults to `8000`.
-
-          extra_headers: Send extra headers
-
-          extra_query: Add additional query parameters to the request
-
-          extra_body: Add additional JSON properties to the request
-
-          timeout: Override the client-level default timeout for this request, in seconds
-        """
-        extra_headers = {"Accept": "application/octet-stream", **(extra_headers or {})}
-        body = deepcopy_minimal(
-            {
-                "audio": audio,
-                "voice": voice,
-                "format": format,
-                "language": language,
-                "sample_rate": sample_rate,
-            }
-        )
-        files = extract_files(cast(Mapping[str, object], body), paths=[["audio"]])
-        # It should be noted that the actual Content-Type header that will be
-        # sent to the server will contain a `boundary` parameter, e.g.
-        # multipart/form-data; boundary=---abc--
-        extra_headers = {"Content-Type": "multipart/form-data", **(extra_headers or {})}
-        return await self._post(
-            "/v1/ai/speech/convert",
-            body=await async_maybe_transform(body, speech_convert_params.SpeechConvertParams),
-            files=files,
-            options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-            ),
-            cast_to=AsyncBinaryAPIResponse,
-        )
-
     async def generate(
         self,
         *,
@@ -819,10 +608,6 @@ class SpeechResourceWithRawResponse:
     def __init__(self, speech: SpeechResource) -> None:
         self._speech = speech
 
-        self.convert = to_custom_raw_response_wrapper(
-            speech.convert,
-            BinaryAPIResponse,
-        )
         self.generate = to_custom_raw_response_wrapper(
             speech.generate,
             BinaryAPIResponse,
@@ -836,10 +621,6 @@ class AsyncSpeechResourceWithRawResponse:
     def __init__(self, speech: AsyncSpeechResource) -> None:
         self._speech = speech
 
-        self.convert = async_to_custom_raw_response_wrapper(
-            speech.convert,
-            AsyncBinaryAPIResponse,
-        )
         self.generate = async_to_custom_raw_response_wrapper(
             speech.generate,
             AsyncBinaryAPIResponse,
@@ -853,10 +634,6 @@ class SpeechResourceWithStreamingResponse:
     def __init__(self, speech: SpeechResource) -> None:
         self._speech = speech
 
-        self.convert = to_custom_streamed_response_wrapper(
-            speech.convert,
-            StreamedBinaryAPIResponse,
-        )
         self.generate = to_custom_streamed_response_wrapper(
             speech.generate,
             StreamedBinaryAPIResponse,
@@ -870,10 +647,6 @@ class AsyncSpeechResourceWithStreamingResponse:
     def __init__(self, speech: AsyncSpeechResource) -> None:
         self._speech = speech
 
-        self.convert = async_to_custom_streamed_response_wrapper(
-            speech.convert,
-            AsyncStreamedBinaryAPIResponse,
-        )
         self.generate = async_to_custom_streamed_response_wrapper(
             speech.generate,
             AsyncStreamedBinaryAPIResponse,

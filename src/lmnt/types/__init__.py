@@ -10,7 +10,6 @@ from .voice_create_params import VoiceCreateParams as VoiceCreateParams
 from .voice_list_response import VoiceListResponse as VoiceListResponse
 from .voice_update_params import VoiceUpdateParams as VoiceUpdateParams
 from .speech_stream_extras import SpeechStreamExtras as SpeechStreamExtras
-from .speech_convert_params import SpeechConvertParams as SpeechConvertParams
 from .voice_delete_response import VoiceDeleteResponse as VoiceDeleteResponse
 from .voice_update_response import VoiceUpdateResponse as VoiceUpdateResponse
 from .speech_generate_params import SpeechGenerateParams as SpeechGenerateParams
