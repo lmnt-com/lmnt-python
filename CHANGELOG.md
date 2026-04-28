@@ -1,5 +1,18 @@
 # Changelog
 
+## [2.5.2](https://github.com/lmnt-com/lmnt-python/compare/v2.5.1...v2.5.2) (2026-04-28)
+
+
+### Chores
+
+* bump nox and use session.run_install for uv sync ([74c4425](https://github.com/lmnt-com/lmnt-python/commit/74c4425f6a1c3ebc9c0c835cb04890889c650f44))
+* regenerate sdk ([8004007](https://github.com/lmnt-com/lmnt-python/commit/80040072ee6b3999123a8dbf07fb0713f63bc62f))
+
+
+### Documentation
+
+* streamline README and drop examples/ ([2d5b925](https://github.com/lmnt-com/lmnt-python/commit/2d5b925e5814b3fcc2219c749e3730d6d0cf926d))
+
 ## [2.5.1](https://github.com/lmnt-com/lmnt-python/compare/v2.5.0...v2.5.1) (2026-04-26)
 
 
