@@ -2,7 +2,7 @@
 
 [![PyPI version](https://img.shields.io/pypi/v/lmnt.svg?label=pypi%20(stable))](https://pypi.org/project/lmnt/)
 
-The LMNT Python SDK provides convenient access to the LMNT API from Python applications.
+The LMNT Python SDK provides convenient access to the [LMNT API](https://docs.lmnt.com/api/) from Python applications.
 
 ## Documentation
 
