@@ -7,5 +7,5 @@ __all__ = ["VoiceUpdateResponse"]
 
 
 class VoiceUpdateResponse(BaseModel):
-    voice: Voice
-    """Voice details"""
+  voice: Voice
+  """Voice details"""

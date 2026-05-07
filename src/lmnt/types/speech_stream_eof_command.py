@@ -8,7 +8,7 @@ __all__ = ["SpeechStreamEofCommand"]
 
 
 class SpeechStreamEofCommand(BaseModel):
-    eof: Literal[True]
-    """Signal the server that no more text will be sent"""
+  eof: Literal[True]
+  """Signal the server that no more text will be sent"""
 
-    type: Literal["eofCommand"] = "eofCommand"
+  type: Literal["eofCommand"] = "eofCommand"

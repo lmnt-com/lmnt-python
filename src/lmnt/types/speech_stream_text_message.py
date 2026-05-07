@@ -8,7 +8,7 @@ __all__ = ["SpeechStreamTextMessage"]
 
 
 class SpeechStreamTextMessage(BaseModel):
-    text: str
-    """The text to be synthesized into speech"""
+  text: str
+  """The text to generate speech from"""
 
-    type: Literal["textMessage"] = "textMessage"
+  type: Literal["textMessage"] = "textMessage"

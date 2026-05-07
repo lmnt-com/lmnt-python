@@ -33,624 +33,654 @@ __all__ = ["SpeechResource", "AsyncSpeechResource"]
 
 
 class SpeechResource(SyncAPIResource):
-    @cached_property
-    def with_raw_response(self) -> SpeechResourceWithRawResponse:
-        """
-        This property can be used as a prefix for any HTTP method call to return
-        the raw response object instead of the parsed content.
+  @cached_property
+  def with_raw_response(self) -> SpeechResourceWithRawResponse:
+    """
+    This property can be used as a prefix for any HTTP method call to return
+    the raw response object instead of the parsed content.
 
-        For more information, see https://www.github.com/lmnt-com/lmnt-python#accessing-raw-response-data-eg-headers
-        """
-        return SpeechResourceWithRawResponse(self)
+    For more information, see https://www.github.com/lmnt-com/lmnt-python#accessing-raw-response-data-eg-headers
+    """
+    return SpeechResourceWithRawResponse(self)
 
-    @cached_property
-    def with_streaming_response(self) -> SpeechResourceWithStreamingResponse:
-        """
-        An alternative to `.with_raw_response` that doesn't eagerly read the response body.
+  @cached_property
+  def with_streaming_response(self) -> SpeechResourceWithStreamingResponse:
+    """
+    An alternative to `.with_raw_response` that doesn't eagerly read the response body.
 
-        For more information, see https://www.github.com/lmnt-com/lmnt-python#with_streaming_response
-        """
-        return SpeechResourceWithStreamingResponse(self)
+    For more information, see https://www.github.com/lmnt-com/lmnt-python#with_streaming_response
+    """
+    return SpeechResourceWithStreamingResponse(self)
 
-    def generate(
-        self,
-        *,
-        text: str,
-        voice: str,
-        debug: bool | Omit = omit,
-        format: Literal["aac", "mp3", "ulaw", "wav", "webm", "pcm_s16le", "pcm_f32le"] | Omit = omit,
-        language: Literal[
-            "auto",
-            "ar",
-            "de",
-            "en",
-            "es",
-            "fr",
-            "hi",
-            "id",
-            "it",
-            "ja",
-            "ko",
-            "nl",
-            "pl",
-            "pt",
-            "ru",
-            "sv",
-            "th",
-            "tr",
-            "uk",
-            "ur",
-            "vi",
-            "zh",
-        ]
-        | Omit = omit,
-        model: Literal["blizzard"] | Omit = omit,
-        sample_rate: Literal[8000, 16000, 24000] | Omit = omit,
-        seed: int | Omit = omit,
-        temperature: float | Omit = omit,
-        top_p: float | Omit = omit,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
-        extra_headers: Headers | None = None,
-        extra_query: Query | None = None,
-        extra_body: Body | None = None,
-        timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> BinaryAPIResponse:
-        """
-        Generates speech from text and streams the audio as binary data chunks in
-        real-time as they are generated.
+  def generate(
+      self,
+      *,
+      text: str,
+      voice: str,
+      debug: bool | Omit = omit,
+      format: Literal["aac", "mp3", "ulaw", "wav", "webm", "pcm_s16le", "pcm_f32le"] | Omit = omit,
+      language: Literal[
+          "auto",
+          "ar",
+          "as",
+          "bn",
+          "cs",
+          "da",
+          "de",
+          "en",
+          "es",
+          "fi",
+          "fr",
+          "hi",
+          "id",
+          "it",
+          "ja",
+          "ko",
+          "ml",
+          "mr",
+          "nl",
+          "pl",
+          "pt",
+          "ru",
+          "sk",
+          "sv",
+          "ta",
+          "te",
+          "th",
+          "tr",
+          "uk",
+          "ur",
+          "vi",
+          "zh",
+      ]
+      | Omit = omit,
+      model: Literal["blizzard"] | Omit = omit,
+      sample_rate: Literal[8000, 16000, 24000] | Omit = omit,
+      temperature: float | Omit = omit,
+      top_p: float | Omit = omit,
+      # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
+      # The extra values given here take precedence over values defined on the client or passed to this method.
+      extra_headers: Headers | None = None,
+      extra_query: Query | None = None,
+      extra_body: Body | None = None,
+      timeout: float | httpx.Timeout | None | NotGiven = not_given,
+  ) -> BinaryAPIResponse:
+    """
+    Generates speech from text and streams the audio as binary data chunks in
+    real-time as they are generated.
 
-        This is the recommended endpoint for most text-to-speech use cases. You can
-        either stream the chunks for low-latency playback or collect all chunks to get
-        the complete audio file.
+    This is the recommended endpoint for most text-to-speech use cases. You can
+    either stream the chunks for low-latency playback or collect all chunks to get
+    the complete audio file.
 
-        Args:
-          text: The text to synthesize; max 5000 characters per request (including spaces).
+    Args:
+      text: The text to generate speech from; max 5000 characters per request (including
+          spaces).
 
-          voice: The voice id of the voice to use; voice ids can be retrieved by calls to
-              `List voices` or `Voice info`.
+      voice: The voice id of the voice to use; voice ids can be retrieved by calls to
+          `List voices` or `Voice info`.
 
-          debug: When set to true, the generated speech will also be saved to your
-              [clip library](https://app.lmnt.com/clips) in the LMNT playground.
+      debug: When set to true, the generated speech will also be saved to your
+          [clip library](https://app.lmnt.com/clips) in the LMNT playground.
 
-          format: The desired output format of the audio. If you are using a streaming endpoint,
-              you'll generate audio faster by selecting a streamable format since chunks are
-              encoded and returned as they're generated. For non-streamable formats, the
-              entire audio will be synthesized before encoding.
+      format: The desired output format of the audio. If you are using a streaming endpoint,
+          you'll generate audio faster by selecting a streamable format since chunks are
+          encoded and returned as they're generated. For non-streamable formats, all
+          speech will be generated before encoding.
 
-              Streamable formats:
+          Streamable formats:
 
-              - `mp3`: 96kbps MP3 audio.
-              - `ulaw`: 8-bit G711 µ-law audio with a WAV header.
-              - `webm`: WebM format with Opus audio codec.
-              - `pcm_s16le`: PCM signed 16-bit little-endian audio.
-              - `pcm_f32le`: PCM 32-bit floating-point little-endian audio.
+          - `mp3`: 96kbps MP3 audio.
+          - `ulaw`: 8-bit G711 µ-law audio with a WAV header.
+          - `webm`: WebM format with Opus audio codec.
+          - `pcm_s16le`: PCM signed 16-bit little-endian audio.
+          - `pcm_f32le`: PCM 32-bit floating-point little-endian audio.
 
-              Non-streamable formats:
+          Non-streamable formats:
 
-              - `aac`: AAC audio codec.
-              - `wav`: 16-bit PCM audio in WAV container.
+          - `aac`: AAC audio codec.
+          - `wav`: 16-bit PCM audio in WAV container.
 
-          language: The desired language. Two letter ISO 639-1 code. Defaults to auto language
-              detection, but specifying the language is recommended for faster generation.
+      language: The desired language. Two letter ISO 639-1 code. Defaults to auto language
+          detection, but specifying the language is recommended for faster generation.
 
-          model: The model to use for synthesis. Learn more about models
-              [here](https://docs.lmnt.com/guides/models).
+      model: The model to use for speech generation. Learn more about models
+          [here](https://docs.lmnt.com/models/overview).
 
-          sample_rate: The desired output sample rate in Hz. Defaults to `24000` for all formats except
-              `mulaw` which defaults to `8000`.
+      sample_rate: The desired output sample rate in Hz. Defaults to `24000` for all formats except
+          `mulaw` which defaults to `8000`.
 
-          seed: Seed used to specify a different take; defaults to random
+      temperature: Influences how expressive and emotionally varied the speech becomes. Lower
+          values (like 0.3) create more neutral, consistent speaking styles. Higher values
+          (like 1.0) allow for more dynamic emotional range and speaking styles.
 
-          temperature: Influences how expressive and emotionally varied the speech becomes. Lower
-              values (like 0.3) create more neutral, consistent speaking styles. Higher values
-              (like 1.0) allow for more dynamic emotional range and speaking styles.
+      top_p: Controls the stability of the generated speech. A lower value (like 0.3)
+          produces more consistent, reliable speech. A higher value (like 0.9) gives more
+          flexibility in how words are spoken, but might occasionally produce unusual
+          intonations or speech patterns.
 
-          top_p: Controls the stability of the generated speech. A lower value (like 0.3)
-              produces more consistent, reliable speech. A higher value (like 0.9) gives more
-              flexibility in how words are spoken, but might occasionally produce unusual
-              intonations or speech patterns.
+      extra_headers: Send extra headers
 
-          extra_headers: Send extra headers
+      extra_query: Add additional query parameters to the request
 
-          extra_query: Add additional query parameters to the request
+      extra_body: Add additional JSON properties to the request
 
-          extra_body: Add additional JSON properties to the request
+      timeout: Override the client-level default timeout for this request, in seconds
+    """
+    extra_headers = {"Accept": "application/octet-stream", **(extra_headers or {})}
+    return self._post(
+        "/v1/ai/speech/bytes",
+        body=maybe_transform(
+            {
+                "text": text,
+                "voice": voice,
+                "debug": debug,
+                "format": format,
+                "language": language,
+                "model": model,
+                "sample_rate": sample_rate,
+                "temperature": temperature,
+                "top_p": top_p,
+            },
+            speech_generate_params.SpeechGenerateParams,
+        ),
+        options=make_request_options(
+            extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+        ),
+        cast_to=BinaryAPIResponse,
+    )
 
-          timeout: Override the client-level default timeout for this request, in seconds
-        """
-        extra_headers = {"Accept": "application/octet-stream", **(extra_headers or {})}
-        return self._post(
-            "/v1/ai/speech/bytes",
-            body=maybe_transform(
-                {
-                    "text": text,
-                    "voice": voice,
-                    "debug": debug,
-                    "format": format,
-                    "language": language,
-                    "model": model,
-                    "sample_rate": sample_rate,
-                    "seed": seed,
-                    "temperature": temperature,
-                    "top_p": top_p,
-                },
-                speech_generate_params.SpeechGenerateParams,
-            ),
-            options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-            ),
-            cast_to=BinaryAPIResponse,
-        )
+  def generate_detailed(
+      self,
+      *,
+      text: str,
+      voice: str,
+      debug: bool | Omit = omit,
+      format: Literal["aac", "mp3", "ulaw", "wav", "webm", "pcm_s16le", "pcm_f32le"] | Omit = omit,
+      language: Literal[
+          "auto",
+          "ar",
+          "as",
+          "bn",
+          "cs",
+          "da",
+          "de",
+          "en",
+          "es",
+          "fi",
+          "fr",
+          "hi",
+          "id",
+          "it",
+          "ja",
+          "ko",
+          "ml",
+          "mr",
+          "nl",
+          "pl",
+          "pt",
+          "ru",
+          "sk",
+          "sv",
+          "ta",
+          "te",
+          "th",
+          "tr",
+          "uk",
+          "ur",
+          "vi",
+          "zh",
+      ]
+      | Omit = omit,
+      model: Literal["blizzard"] | Omit = omit,
+      return_timestamps: bool | Omit = omit,
+      sample_rate: Literal[8000, 16000, 24000] | Omit = omit,
+      temperature: float | Omit = omit,
+      top_p: float | Omit = omit,
+      # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
+      # The extra values given here take precedence over values defined on the client or passed to this method.
+      extra_headers: Headers | None = None,
+      extra_query: Query | None = None,
+      extra_body: Body | None = None,
+      timeout: float | httpx.Timeout | None | NotGiven = not_given,
+  ) -> SpeechGenerateDetailedResponse:
+    """
+    Generates speech from text and returns a JSON object that contains a
+    base64-encoded audio string and optionally word-level timestamps. This endpoint
+    waits for all speech to be generated before responding, so it is not ideal for
+    latency-sensitive applications.
 
-    def generate_detailed(
-        self,
-        *,
-        text: str,
-        voice: str,
-        debug: bool | Omit = omit,
-        format: Literal["aac", "mp3", "ulaw", "wav", "webm", "pcm_s16le", "pcm_f32le"] | Omit = omit,
-        language: Literal[
-            "auto",
-            "ar",
-            "de",
-            "en",
-            "es",
-            "fr",
-            "hi",
-            "id",
-            "it",
-            "ja",
-            "ko",
-            "nl",
-            "pl",
-            "pt",
-            "ru",
-            "sv",
-            "th",
-            "tr",
-            "uk",
-            "ur",
-            "vi",
-            "zh",
-        ]
-        | Omit = omit,
-        model: Literal["blizzard"] | Omit = omit,
-        return_durations: bool | Omit = omit,
-        sample_rate: Literal[8000, 16000, 24000] | Omit = omit,
-        seed: int | Omit = omit,
-        temperature: float | Omit = omit,
-        top_p: float | Omit = omit,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
-        extra_headers: Headers | None = None,
-        extra_query: Query | None = None,
-        extra_body: Body | None = None,
-        timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> SpeechGenerateDetailedResponse:
-        """
-        Generates speech from text and returns a JSON object that contains a
-        **base64-encoded audio string** and optionally word-level durations
-        (timestamps). This endpoint waits for the entire synthesis before responding, so
-        it is not ideal for latency-sensitive applications.
+    Args:
+      text: The text to generate speech from; max 5000 characters per request (including
+          spaces).
 
-        Args:
-          text: The text to synthesize; max 5000 characters per request (including spaces).
+      voice: The voice id of the voice to use; voice ids can be retrieved by calls to
+          `List voices` or `Voice info`.
 
-          voice: The voice id of the voice to use; voice ids can be retrieved by calls to
-              `List voices` or `Voice info`.
+      debug: When set to true, the generated speech will also be saved to your
+          [clip library](https://app.lmnt.com/clips) in the LMNT playground.
 
-          debug: When set to true, the generated speech will also be saved to your
-              [clip library](https://app.lmnt.com/clips) in the LMNT playground.
+      format: The desired output format of the audio. If you are using a streaming endpoint,
+          you'll generate audio faster by selecting a streamable format since chunks are
+          encoded and returned as they're generated. For non-streamable formats, all
+          speech will be generated before encoding.
 
-          format: The desired output format of the audio. If you are using a streaming endpoint,
-              you'll generate audio faster by selecting a streamable format since chunks are
-              encoded and returned as they're generated. For non-streamable formats, the
-              entire audio will be synthesized before encoding.
+          Streamable formats:
 
-              Streamable formats:
+          - `mp3`: 96kbps MP3 audio.
+          - `ulaw`: 8-bit G711 µ-law audio with a WAV header.
+          - `webm`: WebM format with Opus audio codec.
+          - `pcm_s16le`: PCM signed 16-bit little-endian audio.
+          - `pcm_f32le`: PCM 32-bit floating-point little-endian audio.
 
-              - `mp3`: 96kbps MP3 audio.
-              - `ulaw`: 8-bit G711 µ-law audio with a WAV header.
-              - `webm`: WebM format with Opus audio codec.
-              - `pcm_s16le`: PCM signed 16-bit little-endian audio.
-              - `pcm_f32le`: PCM 32-bit floating-point little-endian audio.
+          Non-streamable formats:
 
-              Non-streamable formats:
+          - `aac`: AAC audio codec.
+          - `wav`: 16-bit PCM audio in WAV container.
 
-              - `aac`: AAC audio codec.
-              - `wav`: 16-bit PCM audio in WAV container.
+      language: The desired language. Two letter ISO 639-1 code. Defaults to auto language
+          detection, but specifying the language is recommended for faster generation.
 
-          language: The desired language. Two letter ISO 639-1 code. Defaults to auto language
-              detection, but specifying the language is recommended for faster generation.
+      model: The model to use for speech generation. Learn more about models
+          [here](https://docs.lmnt.com/models/overview).
 
-          model: The model to use for synthesis. Learn more about models
-              [here](https://docs.lmnt.com/guides/models).
+      return_timestamps: If set as `true`, the response will contain a `timestamps` array describing
+          where each input element falls in the generated audio.
 
-          return_durations: If set as `true`, response will contain a durations object.
+      sample_rate: The desired output sample rate in Hz. Defaults to `24000` for all formats except
+          `mulaw` which defaults to `8000`.
 
-          sample_rate: The desired output sample rate in Hz. Defaults to `24000` for all formats except
-              `mulaw` which defaults to `8000`.
+      temperature: Influences how expressive and emotionally varied the speech becomes. Lower
+          values (like 0.3) create more neutral, consistent speaking styles. Higher values
+          (like 1.0) allow for more dynamic emotional range and speaking styles.
 
-          seed: Seed used to specify a different take; defaults to random
+      top_p: Controls the stability of the generated speech. A lower value (like 0.3)
+          produces more consistent, reliable speech. A higher value (like 0.9) gives more
+          flexibility in how words are spoken, but might occasionally produce unusual
+          intonations or speech patterns.
 
-          temperature: Influences how expressive and emotionally varied the speech becomes. Lower
-              values (like 0.3) create more neutral, consistent speaking styles. Higher values
-              (like 1.0) allow for more dynamic emotional range and speaking styles.
+      extra_headers: Send extra headers
 
-          top_p: Controls the stability of the generated speech. A lower value (like 0.3)
-              produces more consistent, reliable speech. A higher value (like 0.9) gives more
-              flexibility in how words are spoken, but might occasionally produce unusual
-              intonations or speech patterns.
+      extra_query: Add additional query parameters to the request
 
-          extra_headers: Send extra headers
+      extra_body: Add additional JSON properties to the request
 
-          extra_query: Add additional query parameters to the request
-
-          extra_body: Add additional JSON properties to the request
-
-          timeout: Override the client-level default timeout for this request, in seconds
-        """
-        return self._post(
-            "/v1/ai/speech",
-            body=maybe_transform(
-                {
-                    "text": text,
-                    "voice": voice,
-                    "debug": debug,
-                    "format": format,
-                    "language": language,
-                    "model": model,
-                    "return_durations": return_durations,
-                    "sample_rate": sample_rate,
-                    "seed": seed,
-                    "temperature": temperature,
-                    "top_p": top_p,
-                },
-                speech_generate_detailed_params.SpeechGenerateDetailedParams,
-            ),
-            options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-            ),
-            cast_to=SpeechGenerateDetailedResponse,
-        )
+      timeout: Override the client-level default timeout for this request, in seconds
+    """
+    return self._post(
+        "/v1/ai/speech",
+        body=maybe_transform(
+            {
+                "text": text,
+                "voice": voice,
+                "debug": debug,
+                "format": format,
+                "language": language,
+                "model": model,
+                "return_timestamps": return_timestamps,
+                "sample_rate": sample_rate,
+                "temperature": temperature,
+                "top_p": top_p,
+            },
+            speech_generate_detailed_params.SpeechGenerateDetailedParams,
+        ),
+        options=make_request_options(
+            extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+        ),
+        cast_to=SpeechGenerateDetailedResponse,
+    )
 
 
 class AsyncSpeechResource(AsyncAPIResource):
-    @cached_property
-    def sessions(self) -> AsyncSessionsResource:
-        return AsyncSessionsResource(self._client)
+  @cached_property
+  def sessions(self) -> AsyncSessionsResource:
+    return AsyncSessionsResource(self._client)
 
-    @cached_property
-    def with_raw_response(self) -> AsyncSpeechResourceWithRawResponse:
-        """
-        This property can be used as a prefix for any HTTP method call to return
-        the raw response object instead of the parsed content.
+  @cached_property
+  def with_raw_response(self) -> AsyncSpeechResourceWithRawResponse:
+    """
+    This property can be used as a prefix for any HTTP method call to return
+    the raw response object instead of the parsed content.
 
-        For more information, see https://www.github.com/lmnt-com/lmnt-python#accessing-raw-response-data-eg-headers
-        """
-        return AsyncSpeechResourceWithRawResponse(self)
+    For more information, see https://www.github.com/lmnt-com/lmnt-python#accessing-raw-response-data-eg-headers
+    """
+    return AsyncSpeechResourceWithRawResponse(self)
 
-    @cached_property
-    def with_streaming_response(self) -> AsyncSpeechResourceWithStreamingResponse:
-        """
-        An alternative to `.with_raw_response` that doesn't eagerly read the response body.
+  @cached_property
+  def with_streaming_response(self) -> AsyncSpeechResourceWithStreamingResponse:
+    """
+    An alternative to `.with_raw_response` that doesn't eagerly read the response body.
 
-        For more information, see https://www.github.com/lmnt-com/lmnt-python#with_streaming_response
-        """
-        return AsyncSpeechResourceWithStreamingResponse(self)
+    For more information, see https://www.github.com/lmnt-com/lmnt-python#with_streaming_response
+    """
+    return AsyncSpeechResourceWithStreamingResponse(self)
 
-    async def generate(
-        self,
-        *,
-        text: str,
-        voice: str,
-        debug: bool | Omit = omit,
-        format: Literal["aac", "mp3", "ulaw", "wav", "webm", "pcm_s16le", "pcm_f32le"] | Omit = omit,
-        language: Literal[
-            "auto",
-            "ar",
-            "de",
-            "en",
-            "es",
-            "fr",
-            "hi",
-            "id",
-            "it",
-            "ja",
-            "ko",
-            "nl",
-            "pl",
-            "pt",
-            "ru",
-            "sv",
-            "th",
-            "tr",
-            "uk",
-            "ur",
-            "vi",
-            "zh",
-        ]
-        | Omit = omit,
-        model: Literal["blizzard"] | Omit = omit,
-        sample_rate: Literal[8000, 16000, 24000] | Omit = omit,
-        seed: int | Omit = omit,
-        temperature: float | Omit = omit,
-        top_p: float | Omit = omit,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
-        extra_headers: Headers | None = None,
-        extra_query: Query | None = None,
-        extra_body: Body | None = None,
-        timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> AsyncBinaryAPIResponse:
-        """
-        Generates speech from text and streams the audio as binary data chunks in
-        real-time as they are generated.
+  async def generate(
+      self,
+      *,
+      text: str,
+      voice: str,
+      debug: bool | Omit = omit,
+      format: Literal["aac", "mp3", "ulaw", "wav", "webm", "pcm_s16le", "pcm_f32le"] | Omit = omit,
+      language: Literal[
+          "auto",
+          "ar",
+          "as",
+          "bn",
+          "cs",
+          "da",
+          "de",
+          "en",
+          "es",
+          "fi",
+          "fr",
+          "hi",
+          "id",
+          "it",
+          "ja",
+          "ko",
+          "ml",
+          "mr",
+          "nl",
+          "pl",
+          "pt",
+          "ru",
+          "sk",
+          "sv",
+          "ta",
+          "te",
+          "th",
+          "tr",
+          "uk",
+          "ur",
+          "vi",
+          "zh",
+      ]
+      | Omit = omit,
+      model: Literal["blizzard"] | Omit = omit,
+      sample_rate: Literal[8000, 16000, 24000] | Omit = omit,
+      temperature: float | Omit = omit,
+      top_p: float | Omit = omit,
+      # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
+      # The extra values given here take precedence over values defined on the client or passed to this method.
+      extra_headers: Headers | None = None,
+      extra_query: Query | None = None,
+      extra_body: Body | None = None,
+      timeout: float | httpx.Timeout | None | NotGiven = not_given,
+  ) -> AsyncBinaryAPIResponse:
+    """
+    Generates speech from text and streams the audio as binary data chunks in
+    real-time as they are generated.
 
-        This is the recommended endpoint for most text-to-speech use cases. You can
-        either stream the chunks for low-latency playback or collect all chunks to get
-        the complete audio file.
+    This is the recommended endpoint for most text-to-speech use cases. You can
+    either stream the chunks for low-latency playback or collect all chunks to get
+    the complete audio file.
 
-        Args:
-          text: The text to synthesize; max 5000 characters per request (including spaces).
+    Args:
+      text: The text to generate speech from; max 5000 characters per request (including
+          spaces).
 
-          voice: The voice id of the voice to use; voice ids can be retrieved by calls to
-              `List voices` or `Voice info`.
+      voice: The voice id of the voice to use; voice ids can be retrieved by calls to
+          `List voices` or `Voice info`.
 
-          debug: When set to true, the generated speech will also be saved to your
-              [clip library](https://app.lmnt.com/clips) in the LMNT playground.
+      debug: When set to true, the generated speech will also be saved to your
+          [clip library](https://app.lmnt.com/clips) in the LMNT playground.
 
-          format: The desired output format of the audio. If you are using a streaming endpoint,
-              you'll generate audio faster by selecting a streamable format since chunks are
-              encoded and returned as they're generated. For non-streamable formats, the
-              entire audio will be synthesized before encoding.
+      format: The desired output format of the audio. If you are using a streaming endpoint,
+          you'll generate audio faster by selecting a streamable format since chunks are
+          encoded and returned as they're generated. For non-streamable formats, all
+          speech will be generated before encoding.
 
-              Streamable formats:
+          Streamable formats:
 
-              - `mp3`: 96kbps MP3 audio.
-              - `ulaw`: 8-bit G711 µ-law audio with a WAV header.
-              - `webm`: WebM format with Opus audio codec.
-              - `pcm_s16le`: PCM signed 16-bit little-endian audio.
-              - `pcm_f32le`: PCM 32-bit floating-point little-endian audio.
+          - `mp3`: 96kbps MP3 audio.
+          - `ulaw`: 8-bit G711 µ-law audio with a WAV header.
+          - `webm`: WebM format with Opus audio codec.
+          - `pcm_s16le`: PCM signed 16-bit little-endian audio.
+          - `pcm_f32le`: PCM 32-bit floating-point little-endian audio.
 
-              Non-streamable formats:
+          Non-streamable formats:
 
-              - `aac`: AAC audio codec.
-              - `wav`: 16-bit PCM audio in WAV container.
+          - `aac`: AAC audio codec.
+          - `wav`: 16-bit PCM audio in WAV container.
 
-          language: The desired language. Two letter ISO 639-1 code. Defaults to auto language
-              detection, but specifying the language is recommended for faster generation.
+      language: The desired language. Two letter ISO 639-1 code. Defaults to auto language
+          detection, but specifying the language is recommended for faster generation.
 
-          model: The model to use for synthesis. Learn more about models
-              [here](https://docs.lmnt.com/guides/models).
+      model: The model to use for speech generation. Learn more about models
+          [here](https://docs.lmnt.com/models/overview).
 
-          sample_rate: The desired output sample rate in Hz. Defaults to `24000` for all formats except
-              `mulaw` which defaults to `8000`.
+      sample_rate: The desired output sample rate in Hz. Defaults to `24000` for all formats except
+          `mulaw` which defaults to `8000`.
 
-          seed: Seed used to specify a different take; defaults to random
+      temperature: Influences how expressive and emotionally varied the speech becomes. Lower
+          values (like 0.3) create more neutral, consistent speaking styles. Higher values
+          (like 1.0) allow for more dynamic emotional range and speaking styles.
 
-          temperature: Influences how expressive and emotionally varied the speech becomes. Lower
-              values (like 0.3) create more neutral, consistent speaking styles. Higher values
-              (like 1.0) allow for more dynamic emotional range and speaking styles.
+      top_p: Controls the stability of the generated speech. A lower value (like 0.3)
+          produces more consistent, reliable speech. A higher value (like 0.9) gives more
+          flexibility in how words are spoken, but might occasionally produce unusual
+          intonations or speech patterns.
 
-          top_p: Controls the stability of the generated speech. A lower value (like 0.3)
-              produces more consistent, reliable speech. A higher value (like 0.9) gives more
-              flexibility in how words are spoken, but might occasionally produce unusual
-              intonations or speech patterns.
+      extra_headers: Send extra headers
 
-          extra_headers: Send extra headers
+      extra_query: Add additional query parameters to the request
 
-          extra_query: Add additional query parameters to the request
+      extra_body: Add additional JSON properties to the request
 
-          extra_body: Add additional JSON properties to the request
+      timeout: Override the client-level default timeout for this request, in seconds
+    """
+    extra_headers = {"Accept": "application/octet-stream", **(extra_headers or {})}
+    return await self._post(
+        "/v1/ai/speech/bytes",
+        body=await async_maybe_transform(
+            {
+                "text": text,
+                "voice": voice,
+                "debug": debug,
+                "format": format,
+                "language": language,
+                "model": model,
+                "sample_rate": sample_rate,
+                "temperature": temperature,
+                "top_p": top_p,
+            },
+            speech_generate_params.SpeechGenerateParams,
+        ),
+        options=make_request_options(
+            extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+        ),
+        cast_to=AsyncBinaryAPIResponse,
+    )
 
-          timeout: Override the client-level default timeout for this request, in seconds
-        """
-        extra_headers = {"Accept": "application/octet-stream", **(extra_headers or {})}
-        return await self._post(
-            "/v1/ai/speech/bytes",
-            body=await async_maybe_transform(
-                {
-                    "text": text,
-                    "voice": voice,
-                    "debug": debug,
-                    "format": format,
-                    "language": language,
-                    "model": model,
-                    "sample_rate": sample_rate,
-                    "seed": seed,
-                    "temperature": temperature,
-                    "top_p": top_p,
-                },
-                speech_generate_params.SpeechGenerateParams,
-            ),
-            options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-            ),
-            cast_to=AsyncBinaryAPIResponse,
-        )
+  async def generate_detailed(
+      self,
+      *,
+      text: str,
+      voice: str,
+      debug: bool | Omit = omit,
+      format: Literal["aac", "mp3", "ulaw", "wav", "webm", "pcm_s16le", "pcm_f32le"] | Omit = omit,
+      language: Literal[
+          "auto",
+          "ar",
+          "as",
+          "bn",
+          "cs",
+          "da",
+          "de",
+          "en",
+          "es",
+          "fi",
+          "fr",
+          "hi",
+          "id",
+          "it",
+          "ja",
+          "ko",
+          "ml",
+          "mr",
+          "nl",
+          "pl",
+          "pt",
+          "ru",
+          "sk",
+          "sv",
+          "ta",
+          "te",
+          "th",
+          "tr",
+          "uk",
+          "ur",
+          "vi",
+          "zh",
+      ]
+      | Omit = omit,
+      model: Literal["blizzard"] | Omit = omit,
+      return_timestamps: bool | Omit = omit,
+      sample_rate: Literal[8000, 16000, 24000] | Omit = omit,
+      temperature: float | Omit = omit,
+      top_p: float | Omit = omit,
+      # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
+      # The extra values given here take precedence over values defined on the client or passed to this method.
+      extra_headers: Headers | None = None,
+      extra_query: Query | None = None,
+      extra_body: Body | None = None,
+      timeout: float | httpx.Timeout | None | NotGiven = not_given,
+  ) -> SpeechGenerateDetailedResponse:
+    """
+    Generates speech from text and returns a JSON object that contains a
+    base64-encoded audio string and optionally word-level timestamps. This endpoint
+    waits for all speech to be generated before responding, so it is not ideal for
+    latency-sensitive applications.
 
-    async def generate_detailed(
-        self,
-        *,
-        text: str,
-        voice: str,
-        debug: bool | Omit = omit,
-        format: Literal["aac", "mp3", "ulaw", "wav", "webm", "pcm_s16le", "pcm_f32le"] | Omit = omit,
-        language: Literal[
-            "auto",
-            "ar",
-            "de",
-            "en",
-            "es",
-            "fr",
-            "hi",
-            "id",
-            "it",
-            "ja",
-            "ko",
-            "nl",
-            "pl",
-            "pt",
-            "ru",
-            "sv",
-            "th",
-            "tr",
-            "uk",
-            "ur",
-            "vi",
-            "zh",
-        ]
-        | Omit = omit,
-        model: Literal["blizzard"] | Omit = omit,
-        return_durations: bool | Omit = omit,
-        sample_rate: Literal[8000, 16000, 24000] | Omit = omit,
-        seed: int | Omit = omit,
-        temperature: float | Omit = omit,
-        top_p: float | Omit = omit,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
-        extra_headers: Headers | None = None,
-        extra_query: Query | None = None,
-        extra_body: Body | None = None,
-        timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> SpeechGenerateDetailedResponse:
-        """
-        Generates speech from text and returns a JSON object that contains a
-        **base64-encoded audio string** and optionally word-level durations
-        (timestamps). This endpoint waits for the entire synthesis before responding, so
-        it is not ideal for latency-sensitive applications.
+    Args:
+      text: The text to generate speech from; max 5000 characters per request (including
+          spaces).
 
-        Args:
-          text: The text to synthesize; max 5000 characters per request (including spaces).
+      voice: The voice id of the voice to use; voice ids can be retrieved by calls to
+          `List voices` or `Voice info`.
 
-          voice: The voice id of the voice to use; voice ids can be retrieved by calls to
-              `List voices` or `Voice info`.
+      debug: When set to true, the generated speech will also be saved to your
+          [clip library](https://app.lmnt.com/clips) in the LMNT playground.
 
-          debug: When set to true, the generated speech will also be saved to your
-              [clip library](https://app.lmnt.com/clips) in the LMNT playground.
+      format: The desired output format of the audio. If you are using a streaming endpoint,
+          you'll generate audio faster by selecting a streamable format since chunks are
+          encoded and returned as they're generated. For non-streamable formats, all
+          speech will be generated before encoding.
 
-          format: The desired output format of the audio. If you are using a streaming endpoint,
-              you'll generate audio faster by selecting a streamable format since chunks are
-              encoded and returned as they're generated. For non-streamable formats, the
-              entire audio will be synthesized before encoding.
+          Streamable formats:
 
-              Streamable formats:
+          - `mp3`: 96kbps MP3 audio.
+          - `ulaw`: 8-bit G711 µ-law audio with a WAV header.
+          - `webm`: WebM format with Opus audio codec.
+          - `pcm_s16le`: PCM signed 16-bit little-endian audio.
+          - `pcm_f32le`: PCM 32-bit floating-point little-endian audio.
 
-              - `mp3`: 96kbps MP3 audio.
-              - `ulaw`: 8-bit G711 µ-law audio with a WAV header.
-              - `webm`: WebM format with Opus audio codec.
-              - `pcm_s16le`: PCM signed 16-bit little-endian audio.
-              - `pcm_f32le`: PCM 32-bit floating-point little-endian audio.
+          Non-streamable formats:
 
-              Non-streamable formats:
+          - `aac`: AAC audio codec.
+          - `wav`: 16-bit PCM audio in WAV container.
 
-              - `aac`: AAC audio codec.
-              - `wav`: 16-bit PCM audio in WAV container.
+      language: The desired language. Two letter ISO 639-1 code. Defaults to auto language
+          detection, but specifying the language is recommended for faster generation.
 
-          language: The desired language. Two letter ISO 639-1 code. Defaults to auto language
-              detection, but specifying the language is recommended for faster generation.
+      model: The model to use for speech generation. Learn more about models
+          [here](https://docs.lmnt.com/models/overview).
 
-          model: The model to use for synthesis. Learn more about models
-              [here](https://docs.lmnt.com/guides/models).
+      return_timestamps: If set as `true`, the response will contain a `timestamps` array describing
+          where each input element falls in the generated audio.
 
-          return_durations: If set as `true`, response will contain a durations object.
+      sample_rate: The desired output sample rate in Hz. Defaults to `24000` for all formats except
+          `mulaw` which defaults to `8000`.
 
-          sample_rate: The desired output sample rate in Hz. Defaults to `24000` for all formats except
-              `mulaw` which defaults to `8000`.
+      temperature: Influences how expressive and emotionally varied the speech becomes. Lower
+          values (like 0.3) create more neutral, consistent speaking styles. Higher values
+          (like 1.0) allow for more dynamic emotional range and speaking styles.
 
-          seed: Seed used to specify a different take; defaults to random
+      top_p: Controls the stability of the generated speech. A lower value (like 0.3)
+          produces more consistent, reliable speech. A higher value (like 0.9) gives more
+          flexibility in how words are spoken, but might occasionally produce unusual
+          intonations or speech patterns.
 
-          temperature: Influences how expressive and emotionally varied the speech becomes. Lower
-              values (like 0.3) create more neutral, consistent speaking styles. Higher values
-              (like 1.0) allow for more dynamic emotional range and speaking styles.
+      extra_headers: Send extra headers
 
-          top_p: Controls the stability of the generated speech. A lower value (like 0.3)
-              produces more consistent, reliable speech. A higher value (like 0.9) gives more
-              flexibility in how words are spoken, but might occasionally produce unusual
-              intonations or speech patterns.
+      extra_query: Add additional query parameters to the request
 
-          extra_headers: Send extra headers
+      extra_body: Add additional JSON properties to the request
 
-          extra_query: Add additional query parameters to the request
-
-          extra_body: Add additional JSON properties to the request
-
-          timeout: Override the client-level default timeout for this request, in seconds
-        """
-        return await self._post(
-            "/v1/ai/speech",
-            body=await async_maybe_transform(
-                {
-                    "text": text,
-                    "voice": voice,
-                    "debug": debug,
-                    "format": format,
-                    "language": language,
-                    "model": model,
-                    "return_durations": return_durations,
-                    "sample_rate": sample_rate,
-                    "seed": seed,
-                    "temperature": temperature,
-                    "top_p": top_p,
-                },
-                speech_generate_detailed_params.SpeechGenerateDetailedParams,
-            ),
-            options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-            ),
-            cast_to=SpeechGenerateDetailedResponse,
-        )
+      timeout: Override the client-level default timeout for this request, in seconds
+    """
+    return await self._post(
+        "/v1/ai/speech",
+        body=await async_maybe_transform(
+            {
+                "text": text,
+                "voice": voice,
+                "debug": debug,
+                "format": format,
+                "language": language,
+                "model": model,
+                "return_timestamps": return_timestamps,
+                "sample_rate": sample_rate,
+                "temperature": temperature,
+                "top_p": top_p,
+            },
+            speech_generate_detailed_params.SpeechGenerateDetailedParams,
+        ),
+        options=make_request_options(
+            extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+        ),
+        cast_to=SpeechGenerateDetailedResponse,
+    )
 
 
 class SpeechResourceWithRawResponse:
-    def __init__(self, speech: SpeechResource) -> None:
-        self._speech = speech
+  def __init__(self, speech: SpeechResource) -> None:
+    self._speech = speech
 
-        self.generate = to_custom_raw_response_wrapper(
-            speech.generate,
-            BinaryAPIResponse,
-        )
-        self.generate_detailed = to_raw_response_wrapper(
-            speech.generate_detailed,
-        )
+    self.generate = to_custom_raw_response_wrapper(
+        speech.generate,
+        BinaryAPIResponse,
+    )
+    self.generate_detailed = to_raw_response_wrapper(
+        speech.generate_detailed,
+    )
 
 
 class AsyncSpeechResourceWithRawResponse:
-    def __init__(self, speech: AsyncSpeechResource) -> None:
-        self._speech = speech
+  def __init__(self, speech: AsyncSpeechResource) -> None:
+    self._speech = speech
 
-        self.generate = async_to_custom_raw_response_wrapper(
-            speech.generate,
-            AsyncBinaryAPIResponse,
-        )
-        self.generate_detailed = async_to_raw_response_wrapper(
-            speech.generate_detailed,
-        )
+    self.generate = async_to_custom_raw_response_wrapper(
+        speech.generate,
+        AsyncBinaryAPIResponse,
+    )
+    self.generate_detailed = async_to_raw_response_wrapper(
+        speech.generate_detailed,
+    )
 
 
 class SpeechResourceWithStreamingResponse:
-    def __init__(self, speech: SpeechResource) -> None:
-        self._speech = speech
+  def __init__(self, speech: SpeechResource) -> None:
+    self._speech = speech
 
-        self.generate = to_custom_streamed_response_wrapper(
-            speech.generate,
-            StreamedBinaryAPIResponse,
-        )
-        self.generate_detailed = to_streamed_response_wrapper(
-            speech.generate_detailed,
-        )
+    self.generate = to_custom_streamed_response_wrapper(
+        speech.generate,
+        StreamedBinaryAPIResponse,
+    )
+    self.generate_detailed = to_streamed_response_wrapper(
+        speech.generate_detailed,
+    )
 
 
 class AsyncSpeechResourceWithStreamingResponse:
-    def __init__(self, speech: AsyncSpeechResource) -> None:
-        self._speech = speech
+  def __init__(self, speech: AsyncSpeechResource) -> None:
+    self._speech = speech
 
-        self.generate = async_to_custom_streamed_response_wrapper(
-            speech.generate,
-            AsyncStreamedBinaryAPIResponse,
-        )
-        self.generate_detailed = async_to_streamed_response_wrapper(
-            speech.generate_detailed,
-        )
+    self.generate = async_to_custom_streamed_response_wrapper(
+        speech.generate,
+        AsyncStreamedBinaryAPIResponse,
+    )
+    self.generate_detailed = async_to_streamed_response_wrapper(
+        speech.generate_detailed,
+    )

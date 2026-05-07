@@ -78,7 +78,7 @@ __all__ = [
 ]
 
 if not _t.TYPE_CHECKING:
-    from ._utils._resources_proxy import resources as resources
+  from ._utils._resources_proxy import resources as resources
 
 _setup_logging()
 
@@ -88,9 +88,9 @@ _setup_logging()
 # lmnt._exceptions.NotFoundError -> lmnt.NotFoundError
 __locals = locals()
 for __name in __all__:
-    if not __name.startswith("__"):
-        try:
-            __locals[__name].__module__ = "lmnt"
-        except (TypeError, AttributeError):
-            # Some of our exported symbols are builtins which we can't set attributes for.
-            pass
+  if not __name.startswith("__"):
+    try:
+      __locals[__name].__module__ = "lmnt"
+    except (TypeError, AttributeError):
+      # Some of our exported symbols are builtins which we can't set attributes for.
+      pass

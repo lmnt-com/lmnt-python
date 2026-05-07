@@ -8,7 +8,10 @@ __all__ = ["SpeechStreamFlushCommand"]
 
 
 class SpeechStreamFlushCommand(BaseModel):
-    flush: Literal[True]
-    """Force the server to synthesize the text it has without closing the connection"""
+  flush: Literal[True]
+  """
+    Force the server to generate speech for the text it has without closing the
+    connection
+    """
 
-    type: Literal["flushCommand"] = "flushCommand"
+  type: Literal["flushCommand"] = "flushCommand"
