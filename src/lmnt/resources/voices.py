@@ -2,12 +2,12 @@
 
 from __future__ import annotations
 
-from typing import Mapping, cast
+from typing import Mapping, Iterable, cast
 
 import httpx
 
 from ..types import voice_list_params, voice_create_params, voice_update_params
-from .._types import Body, Omit, Query, Headers, NotGiven, FileTypes, SequenceNotStr, omit, not_given
+from .._types import Body, Omit, Query, Headers, NotGiven, FileTypes, omit, not_given
 from .._utils import extract_files, maybe_transform, deepcopy_minimal, async_maybe_transform
 from .._compat import cached_property
 from .._resource import SyncAPIResource, AsyncAPIResource
@@ -27,602 +27,600 @@ __all__ = ["VoicesResource", "AsyncVoicesResource"]
 
 
 class VoicesResource(SyncAPIResource):
-    @cached_property
-    def with_raw_response(self) -> VoicesResourceWithRawResponse:
-        """
-        This property can be used as a prefix for any HTTP method call to return
-        the raw response object instead of the parsed content.
+  @cached_property
+  def with_raw_response(self) -> VoicesResourceWithRawResponse:
+    """
+    This property can be used as a prefix for any HTTP method call to return
+    the raw response object instead of the parsed content.
 
-        For more information, see https://www.github.com/lmnt-com/lmnt-python#accessing-raw-response-data-eg-headers
-        """
-        return VoicesResourceWithRawResponse(self)
+    For more information, see https://www.github.com/lmnt-com/lmnt-python#accessing-raw-response-data-eg-headers
+    """
+    return VoicesResourceWithRawResponse(self)
 
-    @cached_property
-    def with_streaming_response(self) -> VoicesResourceWithStreamingResponse:
-        """
-        An alternative to `.with_raw_response` that doesn't eagerly read the response body.
+  @cached_property
+  def with_streaming_response(self) -> VoicesResourceWithStreamingResponse:
+    """
+    An alternative to `.with_raw_response` that doesn't eagerly read the response body.
 
-        For more information, see https://www.github.com/lmnt-com/lmnt-python#with_streaming_response
-        """
-        return VoicesResourceWithStreamingResponse(self)
+    For more information, see https://www.github.com/lmnt-com/lmnt-python#with_streaming_response
+    """
+    return VoicesResourceWithStreamingResponse(self)
 
-    def create(
-        self,
-        *,
-        enhance: bool,
-        files: SequenceNotStr[FileTypes],
-        name: str,
-        description: str | Omit = omit,
-        gender: str | Omit = omit,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
-        extra_headers: Headers | None = None,
-        extra_query: Query | None = None,
-        extra_body: Body | None = None,
-        timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> Voice:
-        """
-        Submits a request to create a voice with a supplied voice configuration and a
-        batch of input audio data.
+  def create(
+      self,
+      *,
+      file: FileTypes,
+      name: str,
+      description: str | Omit = omit,
+      gender: str | Omit = omit,
+      tags: Iterable[str] | Omit = omit,
+      # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
+      # The extra values given here take precedence over values defined on the client or passed to this method.
+      extra_headers: Headers | None = None,
+      extra_query: Query | None = None,
+      extra_body: Body | None = None,
+      timeout: float | httpx.Timeout | None | NotGiven = not_given,
+  ) -> Voice:
+    """
+    Submits a request to create a voice with a supplied voice configuration and a
+    batch of input audio data.
 
-        Args:
-          enhance: For unclean audio with background noise, applies processing to attempt to
-              improve quality. Default is `false` as this can also degrade quality in some
-              circumstances.
+    Args:
+      file: The input audio file to train the voice with, as a binary `wav`, `mp3`, `mp4`,
+          `m4a`, or `webm` attachment.
 
-          files: One or more input audio files to train the voice in the form of binary `wav`,
-              `mp3`, `mp4`, `m4a`, or `webm` attachments.
+          - Max file size: 250 MB.
 
-              - Max attached files: 20.
-              - Max total file size: 250 MB.
+      name: The display name for this voice
 
-          name: The display name for this voice
+      description: A text description of this voice.
 
-          description: A text description of this voice.
+      gender: A tag describing the gender of this voice. Has no effect on voice creation.
 
-          gender: A tag describing the gender of this voice. Has no effect on voice creation.
+      tags: A list of tags to attach to this voice.
 
-          extra_headers: Send extra headers
+      extra_headers: Send extra headers
 
-          extra_query: Add additional query parameters to the request
+      extra_query: Add additional query parameters to the request
 
-          extra_body: Add additional JSON properties to the request
+      extra_body: Add additional JSON properties to the request
 
-          timeout: Override the client-level default timeout for this request, in seconds
-        """
-        body = deepcopy_minimal(
+      timeout: Override the client-level default timeout for this request, in seconds
+    """
+    body = deepcopy_minimal(
+        {
+            "file": file,
+            "name": name,
+            "description": description,
+            "gender": gender,
+            "tags": tags,
+        }
+    )
+    files = extract_files(cast(Mapping[str, object], body), paths=[["file"]])
+    # It should be noted that the actual Content-Type header that will be
+    # sent to the server will contain a `boundary` parameter, e.g.
+    # multipart/form-data; boundary=---abc--
+    extra_headers = {"Content-Type": "multipart/form-data", **(extra_headers or {})}
+    return self._post(
+        "/v1/ai/voice",
+        body=maybe_transform(body, voice_create_params.VoiceCreateParams),
+        files=files,
+        options=make_request_options(
+            extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+        ),
+        cast_to=Voice,
+    )
+
+  def retrieve(
+      self,
+      id: str,
+      *,
+      # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
+      # The extra values given here take precedence over values defined on the client or passed to this method.
+      extra_headers: Headers | None = None,
+      extra_query: Query | None = None,
+      extra_body: Body | None = None,
+      timeout: float | httpx.Timeout | None | NotGiven = not_given,
+  ) -> Voice:
+    """
+    Returns details of a specific voice.
+
+    Args:
+      extra_headers: Send extra headers
+
+      extra_query: Add additional query parameters to the request
+
+      extra_body: Add additional JSON properties to the request
+
+      timeout: Override the client-level default timeout for this request, in seconds
+    """
+    if not id:
+      raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
+    return self._get(
+        f"/v1/ai/voice/{id}",
+        options=make_request_options(
+            extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+        ),
+        cast_to=Voice,
+    )
+
+  def update(
+      self,
+      id: str,
+      *,
+      description: str | Omit = omit,
+      gender: str | Omit = omit,
+      name: str | Omit = omit,
+      starred: bool | Omit = omit,
+      tags: Iterable[str] | Omit = omit,
+      # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
+      # The extra values given here take precedence over values defined on the client or passed to this method.
+      extra_headers: Headers | None = None,
+      extra_query: Query | None = None,
+      extra_body: Body | None = None,
+      timeout: float | httpx.Timeout | None | NotGiven = not_given,
+  ) -> VoiceUpdateResponse:
+    """Updates metadata for a specific voice.
+
+    Only provided fields will be changed.
+
+    Args:
+      description: A description of this voice.
+
+      gender: A tag describing the gender of this voice, e.g. `male`, `female`, `nonbinary`.
+
+      name: The display name for this voice.
+
+      starred: If `true`, adds this voice to your starred list.
+
+      tags: Replaces the tags attached to this voice with the given list.
+
+      extra_headers: Send extra headers
+
+      extra_query: Add additional query parameters to the request
+
+      extra_body: Add additional JSON properties to the request
+
+      timeout: Override the client-level default timeout for this request, in seconds
+    """
+    if not id:
+      raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
+    return self._put(
+        f"/v1/ai/voice/{id}",
+        body=maybe_transform(
             {
-                "enhance": enhance,
-                "files": files,
-                "name": name,
                 "description": description,
                 "gender": gender,
-            }
-        )
-        extracted_files = extract_files(cast(Mapping[str, object], body), paths=[["files", "<array>"]])
-        # Remove the files from the body since they are now in extracted_files
-        body.pop("files", None)
-        # It should be noted that the actual Content-Type header that will be
-        # sent to the server will contain a `boundary` parameter, e.g.
-        # multipart/form-data; boundary=---abc--
-        extra_headers = {"Content-Type": "multipart/form-data", **(extra_headers or {})}
-        return self._post(
-            "/v1/ai/voice",
-            body=maybe_transform(body, voice_create_params.VoiceCreateParams),
-            files=extracted_files,
-            options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-            ),
-            cast_to=Voice,
-        )
+                "name": name,
+                "starred": starred,
+                "tags": tags,
+            },
+            voice_update_params.VoiceUpdateParams,
+        ),
+        options=make_request_options(
+            extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+        ),
+        cast_to=VoiceUpdateResponse,
+    )
 
-    def retrieve(
-        self,
-        id: str,
-        *,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
-        extra_headers: Headers | None = None,
-        extra_query: Query | None = None,
-        extra_body: Body | None = None,
-        timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> Voice:
-        """
-        Returns details of a specific voice.
+  def delete(
+      self,
+      id: str,
+      *,
+      # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
+      # The extra values given here take precedence over values defined on the client or passed to this method.
+      extra_headers: Headers | None = None,
+      extra_query: Query | None = None,
+      extra_body: Body | None = None,
+      timeout: float | httpx.Timeout | None | NotGiven = not_given,
+  ) -> VoiceDeleteResponse:
+    """Deletes a voice and cancels any pending operations on it.
 
-        Args:
-          extra_headers: Send extra headers
+    Cannot be undone.
 
-          extra_query: Add additional query parameters to the request
+    Args:
+      extra_headers: Send extra headers
 
-          extra_body: Add additional JSON properties to the request
+      extra_query: Add additional query parameters to the request
 
-          timeout: Override the client-level default timeout for this request, in seconds
-        """
-        if not id:
-            raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
-        return self._get(
-            f"/v1/ai/voice/{id}",
-            options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-            ),
-            cast_to=Voice,
-        )
+      extra_body: Add additional JSON properties to the request
 
-    def update(
-        self,
-        id: str,
-        *,
-        description: str | Omit = omit,
-        gender: str | Omit = omit,
-        name: str | Omit = omit,
-        starred: bool | Omit = omit,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
-        extra_headers: Headers | None = None,
-        extra_query: Query | None = None,
-        extra_body: Body | None = None,
-        timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> VoiceUpdateResponse:
-        """Updates metadata for a specific voice.
+      timeout: Override the client-level default timeout for this request, in seconds
+    """
+    if not id:
+      raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
+    return self._delete(
+        f"/v1/ai/voice/{id}",
+        options=make_request_options(
+            extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+        ),
+        cast_to=VoiceDeleteResponse,
+    )
 
-        Only provided fields will be changed.
+  def list(
+      self,
+      *,
+      owner: str | Omit = omit,
+      starred: str | Omit = omit,
+      # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
+      # The extra values given here take precedence over values defined on the client or passed to this method.
+      extra_headers: Headers | None = None,
+      extra_query: Query | None = None,
+      extra_body: Body | None = None,
+      timeout: float | httpx.Timeout | None | NotGiven = not_given,
+  ) -> VoiceListResponse:
+    """
+    Returns a list of voices available to you.
 
-        Args:
-          description: A description of this voice.
+    Args:
+      owner: Which owner's voices to return. Choose from `system`, `me`, or `all`.
 
-          gender: A tag describing the gender of this voice, e.g. `male`, `female`, `nonbinary`.
+      starred: If true, only returns voices that you have starred.
 
-          name: The display name for this voice.
+      extra_headers: Send extra headers
 
-          starred: If `true`, adds this voice to your starred list.
+      extra_query: Add additional query parameters to the request
 
-          extra_headers: Send extra headers
+      extra_body: Add additional JSON properties to the request
 
-          extra_query: Add additional query parameters to the request
-
-          extra_body: Add additional JSON properties to the request
-
-          timeout: Override the client-level default timeout for this request, in seconds
-        """
-        if not id:
-            raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
-        return self._put(
-            f"/v1/ai/voice/{id}",
-            body=maybe_transform(
+      timeout: Override the client-level default timeout for this request, in seconds
+    """
+    return self._get(
+        "/v1/ai/voice/list",
+        options=make_request_options(
+            extra_headers=extra_headers,
+            extra_query=extra_query,
+            extra_body=extra_body,
+            timeout=timeout,
+            query=maybe_transform(
                 {
-                    "description": description,
-                    "gender": gender,
-                    "name": name,
+                    "owner": owner,
                     "starred": starred,
                 },
-                voice_update_params.VoiceUpdateParams,
+                voice_list_params.VoiceListParams,
             ),
-            options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-            ),
-            cast_to=VoiceUpdateResponse,
-        )
-
-    def delete(
-        self,
-        id: str,
-        *,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
-        extra_headers: Headers | None = None,
-        extra_query: Query | None = None,
-        extra_body: Body | None = None,
-        timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> VoiceDeleteResponse:
-        """Deletes a voice and cancels any pending operations on it.
-
-        Cannot be undone.
-
-        Args:
-          extra_headers: Send extra headers
-
-          extra_query: Add additional query parameters to the request
-
-          extra_body: Add additional JSON properties to the request
-
-          timeout: Override the client-level default timeout for this request, in seconds
-        """
-        if not id:
-            raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
-        return self._delete(
-            f"/v1/ai/voice/{id}",
-            options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-            ),
-            cast_to=VoiceDeleteResponse,
-        )
-
-    def list(
-        self,
-        *,
-        owner: str | Omit = omit,
-        starred: str | Omit = omit,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
-        extra_headers: Headers | None = None,
-        extra_query: Query | None = None,
-        extra_body: Body | None = None,
-        timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> VoiceListResponse:
-        """
-        Returns a list of voices available to you.
-
-        Args:
-          owner: Which owner's voices to return. Choose from `system`, `me`, or `all`.
-
-          starred: If true, only returns voices that you have starred.
-
-          extra_headers: Send extra headers
-
-          extra_query: Add additional query parameters to the request
-
-          extra_body: Add additional JSON properties to the request
-
-          timeout: Override the client-level default timeout for this request, in seconds
-        """
-        return self._get(
-            "/v1/ai/voice/list",
-            options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                query=maybe_transform(
-                    {
-                        "owner": owner,
-                        "starred": starred,
-                    },
-                    voice_list_params.VoiceListParams,
-                ),
-            ),
-            cast_to=VoiceListResponse,
-        )
+        ),
+        cast_to=VoiceListResponse,
+    )
 
 
 class AsyncVoicesResource(AsyncAPIResource):
-    @cached_property
-    def with_raw_response(self) -> AsyncVoicesResourceWithRawResponse:
-        """
-        This property can be used as a prefix for any HTTP method call to return
-        the raw response object instead of the parsed content.
+  @cached_property
+  def with_raw_response(self) -> AsyncVoicesResourceWithRawResponse:
+    """
+    This property can be used as a prefix for any HTTP method call to return
+    the raw response object instead of the parsed content.
 
-        For more information, see https://www.github.com/lmnt-com/lmnt-python#accessing-raw-response-data-eg-headers
-        """
-        return AsyncVoicesResourceWithRawResponse(self)
+    For more information, see https://www.github.com/lmnt-com/lmnt-python#accessing-raw-response-data-eg-headers
+    """
+    return AsyncVoicesResourceWithRawResponse(self)
 
-    @cached_property
-    def with_streaming_response(self) -> AsyncVoicesResourceWithStreamingResponse:
-        """
-        An alternative to `.with_raw_response` that doesn't eagerly read the response body.
+  @cached_property
+  def with_streaming_response(self) -> AsyncVoicesResourceWithStreamingResponse:
+    """
+    An alternative to `.with_raw_response` that doesn't eagerly read the response body.
 
-        For more information, see https://www.github.com/lmnt-com/lmnt-python#with_streaming_response
-        """
-        return AsyncVoicesResourceWithStreamingResponse(self)
+    For more information, see https://www.github.com/lmnt-com/lmnt-python#with_streaming_response
+    """
+    return AsyncVoicesResourceWithStreamingResponse(self)
 
-    async def create(
-        self,
-        *,
-        enhance: bool,
-        files: SequenceNotStr[FileTypes],
-        name: str,
-        description: str | Omit = omit,
-        gender: str | Omit = omit,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
-        extra_headers: Headers | None = None,
-        extra_query: Query | None = None,
-        extra_body: Body | None = None,
-        timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> Voice:
-        """
-        Submits a request to create a voice with a supplied voice configuration and a
-        batch of input audio data.
+  async def create(
+      self,
+      *,
+      file: FileTypes,
+      name: str,
+      description: str | Omit = omit,
+      gender: str | Omit = omit,
+      tags: Iterable[str] | Omit = omit,
+      # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
+      # The extra values given here take precedence over values defined on the client or passed to this method.
+      extra_headers: Headers | None = None,
+      extra_query: Query | None = None,
+      extra_body: Body | None = None,
+      timeout: float | httpx.Timeout | None | NotGiven = not_given,
+  ) -> Voice:
+    """
+    Submits a request to create a voice with a supplied voice configuration and a
+    batch of input audio data.
 
-        Args:
-          enhance: For unclean audio with background noise, applies processing to attempt to
-              improve quality. Default is `false` as this can also degrade quality in some
-              circumstances.
+    Args:
+      file: The input audio file to train the voice with, as a binary `wav`, `mp3`, `mp4`,
+          `m4a`, or `webm` attachment.
 
-          files: One or more input audio files to train the voice in the form of binary `wav`,
-              `mp3`, `mp4`, `m4a`, or `webm` attachments.
+          - Max file size: 250 MB.
 
-              - Max attached files: 20.
-              - Max total file size: 250 MB.
+      name: The display name for this voice
 
-          name: The display name for this voice
+      description: A text description of this voice.
 
-          description: A text description of this voice.
+      gender: A tag describing the gender of this voice. Has no effect on voice creation.
 
-          gender: A tag describing the gender of this voice. Has no effect on voice creation.
+      tags: A list of tags to attach to this voice.
 
-          extra_headers: Send extra headers
+      extra_headers: Send extra headers
 
-          extra_query: Add additional query parameters to the request
+      extra_query: Add additional query parameters to the request
 
-          extra_body: Add additional JSON properties to the request
+      extra_body: Add additional JSON properties to the request
 
-          timeout: Override the client-level default timeout for this request, in seconds
-        """
-        body = deepcopy_minimal(
+      timeout: Override the client-level default timeout for this request, in seconds
+    """
+    body = deepcopy_minimal(
+        {
+            "file": file,
+            "name": name,
+            "description": description,
+            "gender": gender,
+            "tags": tags,
+        }
+    )
+    files = extract_files(cast(Mapping[str, object], body), paths=[["file"]])
+    # It should be noted that the actual Content-Type header that will be
+    # sent to the server will contain a `boundary` parameter, e.g.
+    # multipart/form-data; boundary=---abc--
+    extra_headers = {"Content-Type": "multipart/form-data", **(extra_headers or {})}
+    return await self._post(
+        "/v1/ai/voice",
+        body=await async_maybe_transform(body, voice_create_params.VoiceCreateParams),
+        files=files,
+        options=make_request_options(
+            extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+        ),
+        cast_to=Voice,
+    )
+
+  async def retrieve(
+      self,
+      id: str,
+      *,
+      # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
+      # The extra values given here take precedence over values defined on the client or passed to this method.
+      extra_headers: Headers | None = None,
+      extra_query: Query | None = None,
+      extra_body: Body | None = None,
+      timeout: float | httpx.Timeout | None | NotGiven = not_given,
+  ) -> Voice:
+    """
+    Returns details of a specific voice.
+
+    Args:
+      extra_headers: Send extra headers
+
+      extra_query: Add additional query parameters to the request
+
+      extra_body: Add additional JSON properties to the request
+
+      timeout: Override the client-level default timeout for this request, in seconds
+    """
+    if not id:
+      raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
+    return await self._get(
+        f"/v1/ai/voice/{id}",
+        options=make_request_options(
+            extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+        ),
+        cast_to=Voice,
+    )
+
+  async def update(
+      self,
+      id: str,
+      *,
+      description: str | Omit = omit,
+      gender: str | Omit = omit,
+      name: str | Omit = omit,
+      starred: bool | Omit = omit,
+      tags: Iterable[str] | Omit = omit,
+      # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
+      # The extra values given here take precedence over values defined on the client or passed to this method.
+      extra_headers: Headers | None = None,
+      extra_query: Query | None = None,
+      extra_body: Body | None = None,
+      timeout: float | httpx.Timeout | None | NotGiven = not_given,
+  ) -> VoiceUpdateResponse:
+    """Updates metadata for a specific voice.
+
+    Only provided fields will be changed.
+
+    Args:
+      description: A description of this voice.
+
+      gender: A tag describing the gender of this voice, e.g. `male`, `female`, `nonbinary`.
+
+      name: The display name for this voice.
+
+      starred: If `true`, adds this voice to your starred list.
+
+      tags: Replaces the tags attached to this voice with the given list.
+
+      extra_headers: Send extra headers
+
+      extra_query: Add additional query parameters to the request
+
+      extra_body: Add additional JSON properties to the request
+
+      timeout: Override the client-level default timeout for this request, in seconds
+    """
+    if not id:
+      raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
+    return await self._put(
+        f"/v1/ai/voice/{id}",
+        body=await async_maybe_transform(
             {
-                "enhance": enhance,
-                "files": files,
-                "name": name,
                 "description": description,
                 "gender": gender,
-            }
-        )
-        extracted_files = extract_files(cast(Mapping[str, object], body), paths=[["files", "<array>"]])
-        # Remove the files from the body since they are now in extracted_files
-        body.pop("files", None)
-        # It should be noted that the actual Content-Type header that will be
-        # sent to the server will contain a `boundary` parameter, e.g.
-        # multipart/form-data; boundary=---abc--
-        extra_headers = {"Content-Type": "multipart/form-data", **(extra_headers or {})}
-        return await self._post(
-            "/v1/ai/voice",
-            body=await async_maybe_transform(body, voice_create_params.VoiceCreateParams),
-            files=extracted_files,
-            options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-            ),
-            cast_to=Voice,
-        )
+                "name": name,
+                "starred": starred,
+                "tags": tags,
+            },
+            voice_update_params.VoiceUpdateParams,
+        ),
+        options=make_request_options(
+            extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+        ),
+        cast_to=VoiceUpdateResponse,
+    )
 
-    async def retrieve(
-        self,
-        id: str,
-        *,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
-        extra_headers: Headers | None = None,
-        extra_query: Query | None = None,
-        extra_body: Body | None = None,
-        timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> Voice:
-        """
-        Returns details of a specific voice.
+  async def delete(
+      self,
+      id: str,
+      *,
+      # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
+      # The extra values given here take precedence over values defined on the client or passed to this method.
+      extra_headers: Headers | None = None,
+      extra_query: Query | None = None,
+      extra_body: Body | None = None,
+      timeout: float | httpx.Timeout | None | NotGiven = not_given,
+  ) -> VoiceDeleteResponse:
+    """Deletes a voice and cancels any pending operations on it.
 
-        Args:
-          extra_headers: Send extra headers
+    Cannot be undone.
 
-          extra_query: Add additional query parameters to the request
+    Args:
+      extra_headers: Send extra headers
 
-          extra_body: Add additional JSON properties to the request
+      extra_query: Add additional query parameters to the request
 
-          timeout: Override the client-level default timeout for this request, in seconds
-        """
-        if not id:
-            raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
-        return await self._get(
-            f"/v1/ai/voice/{id}",
-            options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-            ),
-            cast_to=Voice,
-        )
+      extra_body: Add additional JSON properties to the request
 
-    async def update(
-        self,
-        id: str,
-        *,
-        description: str | Omit = omit,
-        gender: str | Omit = omit,
-        name: str | Omit = omit,
-        starred: bool | Omit = omit,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
-        extra_headers: Headers | None = None,
-        extra_query: Query | None = None,
-        extra_body: Body | None = None,
-        timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> VoiceUpdateResponse:
-        """Updates metadata for a specific voice.
+      timeout: Override the client-level default timeout for this request, in seconds
+    """
+    if not id:
+      raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
+    return await self._delete(
+        f"/v1/ai/voice/{id}",
+        options=make_request_options(
+            extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+        ),
+        cast_to=VoiceDeleteResponse,
+    )
 
-        Only provided fields will be changed.
+  async def list(
+      self,
+      *,
+      owner: str | Omit = omit,
+      starred: str | Omit = omit,
+      # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
+      # The extra values given here take precedence over values defined on the client or passed to this method.
+      extra_headers: Headers | None = None,
+      extra_query: Query | None = None,
+      extra_body: Body | None = None,
+      timeout: float | httpx.Timeout | None | NotGiven = not_given,
+  ) -> VoiceListResponse:
+    """
+    Returns a list of voices available to you.
 
-        Args:
-          description: A description of this voice.
+    Args:
+      owner: Which owner's voices to return. Choose from `system`, `me`, or `all`.
 
-          gender: A tag describing the gender of this voice, e.g. `male`, `female`, `nonbinary`.
+      starred: If true, only returns voices that you have starred.
 
-          name: The display name for this voice.
+      extra_headers: Send extra headers
 
-          starred: If `true`, adds this voice to your starred list.
+      extra_query: Add additional query parameters to the request
 
-          extra_headers: Send extra headers
+      extra_body: Add additional JSON properties to the request
 
-          extra_query: Add additional query parameters to the request
-
-          extra_body: Add additional JSON properties to the request
-
-          timeout: Override the client-level default timeout for this request, in seconds
-        """
-        if not id:
-            raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
-        return await self._put(
-            f"/v1/ai/voice/{id}",
-            body=await async_maybe_transform(
+      timeout: Override the client-level default timeout for this request, in seconds
+    """
+    return await self._get(
+        "/v1/ai/voice/list",
+        options=make_request_options(
+            extra_headers=extra_headers,
+            extra_query=extra_query,
+            extra_body=extra_body,
+            timeout=timeout,
+            query=await async_maybe_transform(
                 {
-                    "description": description,
-                    "gender": gender,
-                    "name": name,
+                    "owner": owner,
                     "starred": starred,
                 },
-                voice_update_params.VoiceUpdateParams,
+                voice_list_params.VoiceListParams,
             ),
-            options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-            ),
-            cast_to=VoiceUpdateResponse,
-        )
-
-    async def delete(
-        self,
-        id: str,
-        *,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
-        extra_headers: Headers | None = None,
-        extra_query: Query | None = None,
-        extra_body: Body | None = None,
-        timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> VoiceDeleteResponse:
-        """Deletes a voice and cancels any pending operations on it.
-
-        Cannot be undone.
-
-        Args:
-          extra_headers: Send extra headers
-
-          extra_query: Add additional query parameters to the request
-
-          extra_body: Add additional JSON properties to the request
-
-          timeout: Override the client-level default timeout for this request, in seconds
-        """
-        if not id:
-            raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
-        return await self._delete(
-            f"/v1/ai/voice/{id}",
-            options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-            ),
-            cast_to=VoiceDeleteResponse,
-        )
-
-    async def list(
-        self,
-        *,
-        owner: str | Omit = omit,
-        starred: str | Omit = omit,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
-        extra_headers: Headers | None = None,
-        extra_query: Query | None = None,
-        extra_body: Body | None = None,
-        timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> VoiceListResponse:
-        """
-        Returns a list of voices available to you.
-
-        Args:
-          owner: Which owner's voices to return. Choose from `system`, `me`, or `all`.
-
-          starred: If true, only returns voices that you have starred.
-
-          extra_headers: Send extra headers
-
-          extra_query: Add additional query parameters to the request
-
-          extra_body: Add additional JSON properties to the request
-
-          timeout: Override the client-level default timeout for this request, in seconds
-        """
-        return await self._get(
-            "/v1/ai/voice/list",
-            options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                query=await async_maybe_transform(
-                    {
-                        "owner": owner,
-                        "starred": starred,
-                    },
-                    voice_list_params.VoiceListParams,
-                ),
-            ),
-            cast_to=VoiceListResponse,
-        )
+        ),
+        cast_to=VoiceListResponse,
+    )
 
 
 class VoicesResourceWithRawResponse:
-    def __init__(self, voices: VoicesResource) -> None:
-        self._voices = voices
+  def __init__(self, voices: VoicesResource) -> None:
+    self._voices = voices
 
-        self.create = to_raw_response_wrapper(
-            voices.create,
-        )
-        self.retrieve = to_raw_response_wrapper(
-            voices.retrieve,
-        )
-        self.update = to_raw_response_wrapper(
-            voices.update,
-        )
-        self.delete = to_raw_response_wrapper(
-            voices.delete,
-        )
-        self.list = to_raw_response_wrapper(
-            voices.list,
-        )
+    self.create = to_raw_response_wrapper(
+        voices.create,
+    )
+    self.retrieve = to_raw_response_wrapper(
+        voices.retrieve,
+    )
+    self.update = to_raw_response_wrapper(
+        voices.update,
+    )
+    self.delete = to_raw_response_wrapper(
+        voices.delete,
+    )
+    self.list = to_raw_response_wrapper(
+        voices.list,
+    )
 
 
 class AsyncVoicesResourceWithRawResponse:
-    def __init__(self, voices: AsyncVoicesResource) -> None:
-        self._voices = voices
+  def __init__(self, voices: AsyncVoicesResource) -> None:
+    self._voices = voices
 
-        self.create = async_to_raw_response_wrapper(
-            voices.create,
-        )
-        self.retrieve = async_to_raw_response_wrapper(
-            voices.retrieve,
-        )
-        self.update = async_to_raw_response_wrapper(
-            voices.update,
-        )
-        self.delete = async_to_raw_response_wrapper(
-            voices.delete,
-        )
-        self.list = async_to_raw_response_wrapper(
-            voices.list,
-        )
+    self.create = async_to_raw_response_wrapper(
+        voices.create,
+    )
+    self.retrieve = async_to_raw_response_wrapper(
+        voices.retrieve,
+    )
+    self.update = async_to_raw_response_wrapper(
+        voices.update,
+    )
+    self.delete = async_to_raw_response_wrapper(
+        voices.delete,
+    )
+    self.list = async_to_raw_response_wrapper(
+        voices.list,
+    )
 
 
 class VoicesResourceWithStreamingResponse:
-    def __init__(self, voices: VoicesResource) -> None:
-        self._voices = voices
+  def __init__(self, voices: VoicesResource) -> None:
+    self._voices = voices
 
-        self.create = to_streamed_response_wrapper(
-            voices.create,
-        )
-        self.retrieve = to_streamed_response_wrapper(
-            voices.retrieve,
-        )
-        self.update = to_streamed_response_wrapper(
-            voices.update,
-        )
-        self.delete = to_streamed_response_wrapper(
-            voices.delete,
-        )
-        self.list = to_streamed_response_wrapper(
-            voices.list,
-        )
+    self.create = to_streamed_response_wrapper(
+        voices.create,
+    )
+    self.retrieve = to_streamed_response_wrapper(
+        voices.retrieve,
+    )
+    self.update = to_streamed_response_wrapper(
+        voices.update,
+    )
+    self.delete = to_streamed_response_wrapper(
+        voices.delete,
+    )
+    self.list = to_streamed_response_wrapper(
+        voices.list,
+    )
 
 
 class AsyncVoicesResourceWithStreamingResponse:
-    def __init__(self, voices: AsyncVoicesResource) -> None:
-        self._voices = voices
+  def __init__(self, voices: AsyncVoicesResource) -> None:
+    self._voices = voices
 
-        self.create = async_to_streamed_response_wrapper(
-            voices.create,
-        )
-        self.retrieve = async_to_streamed_response_wrapper(
-            voices.retrieve,
-        )
-        self.update = async_to_streamed_response_wrapper(
-            voices.update,
-        )
-        self.delete = async_to_streamed_response_wrapper(
-            voices.delete,
-        )
-        self.list = async_to_streamed_response_wrapper(
-            voices.list,
-        )
+    self.create = async_to_streamed_response_wrapper(
+        voices.create,
+    )
+    self.retrieve = async_to_streamed_response_wrapper(
+        voices.retrieve,
+    )
+    self.update = async_to_streamed_response_wrapper(
+        voices.update,
+    )
+    self.delete = async_to_streamed_response_wrapper(
+        voices.delete,
+    )
+    self.list = async_to_streamed_response_wrapper(
+        voices.list,
+    )

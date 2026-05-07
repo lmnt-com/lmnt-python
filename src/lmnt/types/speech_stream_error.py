@@ -8,10 +8,10 @@ __all__ = ["SpeechStreamError"]
 
 
 class SpeechStreamError(BaseModel):
-    error: str
-    """Error message describing what went wrong.
+  error: str
+  """Error message describing what went wrong.
 
     Connection will close immediately after error message.
     """
 
-    type: Literal["error"] = "error"
+  type: Literal["error"] = "error"

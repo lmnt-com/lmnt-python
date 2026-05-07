@@ -8,8 +8,8 @@ __all__ = ["VoiceListParams"]
 
 
 class VoiceListParams(TypedDict, total=False):
-    owner: str
-    """Which owner's voices to return. Choose from `system`, `me`, or `all`."""
+  owner: str
+  """Which owner's voices to return. Choose from `system`, `me`, or `all`."""
 
-    starred: str
-    """If true, only returns voices that you have starred."""
+  starred: str
+  """If true, only returns voices that you have starred."""

@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from .voice import Voice as Voice
-from .duration import Duration as Duration
+from .timestamp import Timestamp as Timestamp
 from .voice_list_params import VoiceListParams as VoiceListParams
 from .speech_stream_error import SpeechStreamError as SpeechStreamError
 from .voice_create_params import VoiceCreateParams as VoiceCreateParams

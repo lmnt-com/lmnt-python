@@ -11,16 +11,16 @@ __all__ = ["SpeechStreamInitMessage"]
 
 
 class SpeechStreamInitMessage(BaseModel):
-    x_api_key: str = Field(alias="X-API-Key")
-    """Your API key obtained from your account page"""
+  x_api_key: str = Field(alias="X-API-Key")
+  """Your API key obtained from your account page"""
 
-    type: Literal["initMessage"] = "initMessage"
+  type: Literal["initMessage"] = "initMessage"
 
-    voice: str
-    """The voice ID to use for synthesis, obtained from 'List voices' API"""
+  voice: str
+  """The voice ID to use for speech generation, obtained from 'List voices' API"""
 
-    format: Optional[Literal["mp3", "pcm_s16le", "pcm_f32le", "ulaw", "webm"]] = None
-    """The desired output format of the audio.
+  format: Optional[Literal["mp3", "pcm_s16le", "pcm_f32le", "ulaw", "webm"]] = None
+  """The desired output format of the audio.
 
     - `mp3`: 96kbps MP3 audio.
     - `pcm_s16le`: PCM signed 16-bit little-endian audio.
@@ -29,39 +29,55 @@ class SpeechStreamInitMessage(BaseModel):
     - `webm`: WebM format with Opus audio codec.
     """
 
-    language: Optional[
-        Literal[
-            "auto",
-            "ar",
-            "de",
-            "en",
-            "es",
-            "fr",
-            "hi",
-            "id",
-            "it",
-            "ja",
-            "ko",
-            "nl",
-            "pl",
-            "pt",
-            "ru",
-            "sv",
-            "th",
-            "tr",
-            "uk",
-            "ur",
-            "vi",
-            "zh",
-        ]
-    ] = None
-    """The desired language.
+  language: Optional[
+      Literal[
+          "auto",
+          "ar",
+          "as",
+          "bn",
+          "cs",
+          "da",
+          "de",
+          "en",
+          "es",
+          "fi",
+          "fr",
+          "hi",
+          "id",
+          "it",
+          "ja",
+          "ko",
+          "ml",
+          "mr",
+          "nl",
+          "pl",
+          "pt",
+          "ru",
+          "sk",
+          "sv",
+          "ta",
+          "te",
+          "th",
+          "tr",
+          "uk",
+          "ur",
+          "vi",
+          "zh",
+      ]
+  ] = None
+  """The desired language.
 
     Two letter ISO 639-1 code. Defaults to auto language detection.
     """
 
-    return_extras: Optional[bool] = None
-    """Controls whether the server will return extra information about the synthesis"""
+  lmnt_version: Optional[str] = Field(default=None, alias="lmnt-version")
+  """The LMNT API version that this client was built against."""
 
-    sample_rate: Optional[Literal[24000, 16000, 8000]] = None
-    """The desired output audio sample rate"""
+  return_extras: Optional[bool] = None
+  """
+    Controls whether the server will return extra information about the generated
+    speech
+    """
+
+  sample_rate: Optional[Literal[24000, 16000, 8000]] = None
+  """The desired output audio sample rate"""

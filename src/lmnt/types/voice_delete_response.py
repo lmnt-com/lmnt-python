@@ -6,4 +6,4 @@ __all__ = ["VoiceDeleteResponse"]
 
 
 class VoiceDeleteResponse(BaseModel):
-    success: bool
+  success: bool

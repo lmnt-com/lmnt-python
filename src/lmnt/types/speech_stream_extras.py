@@ -4,27 +4,27 @@ from typing import List, Optional
 from typing_extensions import Literal
 
 from .._models import BaseModel
-from .duration import Duration
+from .timestamp import Timestamp
 
 __all__ = ["SpeechStreamExtras"]
 
 
 class SpeechStreamExtras(BaseModel):
-    type: Literal["extras"] = "extras"
+  type: Literal["extras"] = "extras"
 
-    buffer_empty: Optional[bool] = None
-    """Indicates whether the server has finished synthesizing all received text.
-
-    Particularly useful when you have triggered a `flush`.
+  buffer_empty: Optional[bool] = None
+  """
+    Indicates whether the server has finished generating speech for all received
+    text. Particularly useful when you have triggered a `flush`.
     """
 
-    durations: Optional[List[Duration]] = None
-    """Array of objects detailing the duration of each text token
+  timestamps: Optional[List[Timestamp]] = None
+  """Array of timestamp objects, one per generated text token.
 
-    <Warning> The durations array resets its start time for each chunk of audio.
+    <Warning> The timestamps array resets its start time for each chunk of audio.
 
     </Warning>
     """
 
-    warning: Optional[str] = None
-    """Contains any warnings encountered during synthesis"""
+  warning: Optional[str] = None
+  """Contains any warnings encountered during speech generation"""
