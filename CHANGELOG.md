@@ -1,5 +1,29 @@
 # Changelog
 
+## [2.6.0](https://github.com/lmnt-com/lmnt-python/compare/v2.5.1...v2.6.0) (2026-05-09)
+
+
+### Features
+
+* **api:** regenerate for LMNT API 1.1 ([e1c0cb2](https://github.com/lmnt-com/lmnt-python/commit/e1c0cb22c68bee0abda341d3879277b74324ed98))
+* **api:** speech session improvements for API 1.1 ([04ce21e](https://github.com/lmnt-com/lmnt-python/commit/04ce21eefeae58c1081ebedb8f52527a41e77220))
+
+
+### Chores
+
+* bump nox and use session.run_install for uv sync ([74c4425](https://github.com/lmnt-com/lmnt-python/commit/74c4425f6a1c3ebc9c0c835cb04890889c650f44))
+* drop pydantic v1 support ([104c7f7](https://github.com/lmnt-com/lmnt-python/commit/104c7f7897439852fbc2c2e82d4b562948fd342b))
+* drop unused pydantic BaseModel import ([8c43e92](https://github.com/lmnt-com/lmnt-python/commit/8c43e92a6382ee4d737566bdadf81c71034ac5b6))
+* regenerate sdk ([8004007](https://github.com/lmnt-com/lmnt-python/commit/80040072ee6b3999123a8dbf07fb0713f63bc62f))
+* silence pyright on request_id field overrides and list narrowing ([f8bf9bd](https://github.com/lmnt-com/lmnt-python/commit/f8bf9bdddca2c50fb475ea8c06d8d3387b2ebb40))
+
+
+### Documentation
+
+* link LMNT API reference in README intro ([721854b](https://github.com/lmnt-com/lmnt-python/commit/721854b0acd967cc5217c4815a472665b71330bf))
+* refresh speech session descriptions ([3226e7a](https://github.com/lmnt-com/lmnt-python/commit/3226e7ad425aeb00c2289dfb49fe573acef55b7a))
+* streamline README and drop examples/ ([2d5b925](https://github.com/lmnt-com/lmnt-python/commit/2d5b925e5814b3fcc2219c749e3730d6d0cf926d))
+
 ## [2.5.1](https://github.com/lmnt-com/lmnt-python/compare/v2.5.0...v2.5.1) (2026-04-26)
 
 
