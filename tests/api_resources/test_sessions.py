@@ -10,11 +10,14 @@ import websockets
 
 from lmnt import AsyncLmnt
 from lmnt.resources.sessions import (
-    AudioMessage,
-    ErrorMessage,
-    ExtrasMessage,
-    SpeechSession,
-    SpeechSessionResponse,
+  SpeechSession,
+  SpeechSessionAudio,
+  SpeechSessionError,
+  SpeechSessionReady,
+  SpeechSessionResponse,
+  SpeechSessionTimestamps,
+  SpeechSessionFlushComplete,
+  SpeechSessionResetComplete,
 )
 
 Frame = Union[str, bytes]
@@ -69,9 +72,8 @@ async def _drain(session: SpeechSession) -> List[SpeechSessionResponse]:
 
 class TestAsyncSessions:
   @pytest.mark.asyncio
-  async def test_init_message_operation(self, fake_connect: Any) -> None:
-    """The SDK ships an init message on connect with X-API-Key, lmnt-version,
-    and every required `initMessage` property from the spec."""
+  async def test_init_operation(self, fake_connect: Any) -> None:
+    """On connect, the SDK sends the `init` message with every required property from the spec."""
     fake = fake_connect([])
 
     client = AsyncLmnt(api_key="test-api-key")
@@ -84,48 +86,76 @@ class TestAsyncSessions:
     assert sent["voice"] == "voice-id"
 
   @pytest.mark.asyncio
-  async def test_text_streaming_operation(self, fake_connect: Any) -> None:
-    """`append_text` sends a `textMessage` frame whose key is the schema's required
-    property name."""
+  async def test_text_operation(self, fake_connect: Any) -> None:
+    """`send_text(text)` sends a `text` frame."""
     fake = fake_connect([])
 
     client = AsyncLmnt(api_key="test-api-key")
     session = await client.speech.sessions.create(voice="voice-id")
-    await session.append_text("hello world")
+    await session.send_text("text-value")
 
     assert len(fake.sent) == 2
-    assert json.loads(fake.sent[1]) == {"text": "hello world"}
+    assert json.loads(fake.sent[1]) == {"type": "text", "text": "text-value"}
 
   @pytest.mark.asyncio
   async def test_flush_operation(self, fake_connect: Any) -> None:
-    """`flush()` sends a `flushCommand` frame. Returns the nonce."""
+    """`send_flush()` sends a `flush` frame. Returns the nonce."""
     fake = fake_connect([])
 
     client = AsyncLmnt(api_key="test-api-key")
     session = await client.speech.sessions.create(voice="voice-id")
-    nonce = await session.flush()
+    nonce = await session.send_flush()
     assert nonce == 1
 
     assert len(fake.sent) == 2
-    assert json.loads(fake.sent[1]) == {"command": "flush", "nonce": 1}
+    assert json.loads(fake.sent[1]) == {"type": "flush", "nonce": 1}
 
   @pytest.mark.asyncio
-  async def test_eof_operation(self, fake_connect: Any) -> None:
-    """`finish()` sends a `eofCommand` frame."""
+  async def test_reset_operation(self, fake_connect: Any) -> None:
+    """`send_reset()` sends a `reset` frame. Returns the nonce."""
     fake = fake_connect([])
 
     client = AsyncLmnt(api_key="test-api-key")
     session = await client.speech.sessions.create(voice="voice-id")
-    await session.finish()
+    nonce = await session.send_reset()
+    assert nonce == 1
 
     assert len(fake.sent) == 2
-    assert json.loads(fake.sent[1]) == {"command": "eof"}
+    assert json.loads(fake.sent[1]) == {"type": "reset", "nonce": 1}
+
+  @pytest.mark.asyncio
+  async def test_finish_operation(self, fake_connect: Any) -> None:
+    """`send_finish()` sends a `finish` frame."""
+    fake = fake_connect([])
+
+    client = AsyncLmnt(api_key="test-api-key")
+    session = await client.speech.sessions.create(voice="voice-id")
+    await session.send_finish()
+
+    assert len(fake.sent) == 2
+    assert json.loads(fake.sent[1]) == {"type": "finish"}
+
+  @pytest.mark.asyncio
+  async def test_receive_ready(self, fake_connect: Any) -> None:
+    """A `ready` JSON frame yields a `SpeechSessionReady` from the iterator."""
+    payload = {"type": "ready", "request_id": "request_id-value"}
+    fake_connect([json.dumps(payload)])
+
+    client = AsyncLmnt(api_key="test-api-key")
+    session = await client.speech.sessions.create(voice="voice-id")
+    received = await _drain(session)
+
+    assert len(received) == 1
+    only = received[0]
+    assert isinstance(only, SpeechSessionReady)
+    assert only.type == "ready"
+    assert only.request_id == "request_id-value"
 
   @pytest.mark.asyncio
   async def test_receive_audio(self, fake_connect: Any) -> None:
-    """A binary `audio` frame yields an `AudioMessage` from the iterator."""
-    audio_bytes = b"\x00\x01\x02\x03"
-    fake_connect([audio_bytes])
+    """A binary `audio` frame yields a `SpeechSessionAudio` from the iterator."""
+    payload = b"\x00\x01\x02\x03"
+    fake_connect([payload])
 
     client = AsyncLmnt(api_key="test-api-key")
     session = await client.speech.sessions.create(voice="voice-id")
@@ -133,38 +163,64 @@ class TestAsyncSessions:
 
     assert len(received) == 1
     only = received[0]
-    assert isinstance(only, AudioMessage)
+    assert isinstance(only, SpeechSessionAudio)
     assert only.type == "audio"
-    assert only.audio == audio_bytes
+    assert only.audio == payload
 
   @pytest.mark.asyncio
-  async def test_receive_extras(self, fake_connect: Any) -> None:
-    """A `extras` JSON frame matching the spec's schema yields an
-    `ExtrasMessage` from the iterator."""
-    extras_payload = {
-        "timestamps": [{"text": "hi", "start": 0.0, "duration": 0.5}],
-        "buffer_empty": True,
-        "warning": None,
-    }
-    fake_connect([json.dumps(extras_payload)])
+  async def test_receive_timestamps(self, fake_connect: Any) -> None:
+    """A `timestamps` JSON frame yields a `SpeechSessionTimestamps` from the iterator."""
+    payload = {"type": "timestamps", "timestamps": [{"text": "hi", "start": 0.0, "duration": 0.5}]}
+    fake_connect([json.dumps(payload)])
 
     client = AsyncLmnt(api_key="test-api-key")
-    session = await client.speech.sessions.create(voice="voice-id", return_extras=True)
+    session = await client.speech.sessions.create(voice="voice-id", return_timestamps=True)
     received = await _drain(session)
 
     assert len(received) == 1
     only = received[0]
-    assert isinstance(only, ExtrasMessage)
-    assert only.type == "extras"
+    assert isinstance(only, SpeechSessionTimestamps)
+    assert only.type == "timestamps"
     assert only.timestamps is not None
     assert len(only.timestamps) == 1
-    assert only.buffer_empty is True
+
+  @pytest.mark.asyncio
+  async def test_receive_flush_complete(self, fake_connect: Any) -> None:
+    """A `flush_complete` JSON frame yields a `SpeechSessionFlushComplete` from the iterator."""
+    payload = {"type": "flush_complete", "nonce": 1}
+    fake_connect([json.dumps(payload)])
+
+    client = AsyncLmnt(api_key="test-api-key")
+    session = await client.speech.sessions.create(voice="voice-id")
+    received = await _drain(session)
+
+    assert len(received) == 1
+    only = received[0]
+    assert isinstance(only, SpeechSessionFlushComplete)
+    assert only.type == "flush_complete"
+    assert only.nonce == 1
+
+  @pytest.mark.asyncio
+  async def test_receive_reset_complete(self, fake_connect: Any) -> None:
+    """A `reset_complete` JSON frame yields a `SpeechSessionResetComplete` from the iterator."""
+    payload = {"type": "reset_complete", "nonce": 1}
+    fake_connect([json.dumps(payload)])
+
+    client = AsyncLmnt(api_key="test-api-key")
+    session = await client.speech.sessions.create(voice="voice-id")
+    received = await _drain(session)
+
+    assert len(received) == 1
+    only = received[0]
+    assert isinstance(only, SpeechSessionResetComplete)
+    assert only.type == "reset_complete"
+    assert only.nonce == 1
 
   @pytest.mark.asyncio
   async def test_receive_error(self, fake_connect: Any) -> None:
-    """An `error` JSON frame yields an `ErrorMessage` from the iterator."""
-    error_payload = {"error": "voice not found"}
-    fake_connect([json.dumps(error_payload)])
+    """A `error` JSON frame yields a `SpeechSessionError` from the iterator."""
+    payload = {"type": "error", "error": None, "request_id": "request_id-value"}
+    fake_connect([json.dumps(payload)])
 
     client = AsyncLmnt(api_key="test-api-key")
     session = await client.speech.sessions.create(voice="voice-id")
@@ -172,6 +228,6 @@ class TestAsyncSessions:
 
     assert len(received) == 1
     only = received[0]
-    assert isinstance(only, ErrorMessage)
+    assert isinstance(only, SpeechSessionError)
     assert only.type == "error"
-    assert only.error == "voice not found"
+    assert only.request_id == "request_id-value"

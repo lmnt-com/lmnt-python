@@ -60,7 +60,7 @@ from ._types import (
 )
 from ._utils import is_dict, is_list, asyncify, is_given, lru_cache, is_mapping
 from ._compat import PYDANTIC_V1, model_copy, model_dump
-from ._models import GenericModel, FinalRequestOptions, validate_type, construct_type
+from ._models import BaseModel, GenericModel, FinalRequestOptions, validate_type, construct_type
 from ._response import (
     APIResponse,
     BaseAPIResponse,
@@ -620,14 +620,26 @@ class BaseClient(Generic[_HttpxClientT, _DefaultStreamT]):
 
         try:
             if inspect.isclass(cast_to) and issubclass(cast_to, ModelBuilderProtocol):
-                return cast(ResponseT, cast_to.build(response=response, data=data))
-
-            if self._strict_response_validation:
-                return cast(ResponseT, validate_type(type_=cast_to, value=data))
-
-            return cast(ResponseT, construct_type(type_=cast_to, value=data))
+                parsed: object = cast_to.build(response=response, data=data)
+            elif self._strict_response_validation:
+                parsed = validate_type(type_=cast_to, value=data)
+            else:
+                parsed = construct_type(type_=cast_to, value=data)
         except pydantic.ValidationError as err:
             raise APIResponseValidationError(response=response, body=data) from err
+
+        # Stamp the `request-id` response header onto BaseModel instances (and lists of them)
+        # so callers can read `voice.request_id` without going through `with_raw_response`.
+        request_id = response.headers.get("request-id")
+        if request_id is not None:
+            if isinstance(parsed, BaseModel):
+                parsed.request_id = request_id
+            elif isinstance(parsed, list):
+                for item in parsed:
+                    if isinstance(item, BaseModel):
+                        item.request_id = request_id
+
+        return cast(ResponseT, parsed)
 
     @property
     def qs(self) -> Querystring:

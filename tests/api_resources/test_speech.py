@@ -11,14 +11,14 @@ from respx import MockRouter
 
 from lmnt import Lmnt, AsyncLmnt
 from lmnt.types import (
-    SpeechGenerateDetailedResponse,
+  SpeechGenerateDetailedResponse,
 )
 from tests.utils import assert_matches_type
 from lmnt._response import (
-    BinaryAPIResponse,
-    AsyncBinaryAPIResponse,
-    StreamedBinaryAPIResponse,
-    AsyncStreamedBinaryAPIResponse,
+  BinaryAPIResponse,
+  AsyncBinaryAPIResponse,
+  StreamedBinaryAPIResponse,
+  AsyncStreamedBinaryAPIResponse,
 )
 
 base_url = os.environ.get("TEST_API_BASE_URL", "http://127.0.0.1:4010")
@@ -32,8 +32,8 @@ class TestSpeech:
   def test_method_generate(self, client: Lmnt, respx_mock: MockRouter) -> None:
     respx_mock.post("/v1/ai/speech/bytes").mock(return_value=httpx.Response(200, json={"foo": "bar"}))
     speech = client.speech.generate(
-        text="Uhh, did you see the weather in Palo Alto tomorrow? Yeah, can't believe it's gonna rain, dude. Like what?",
-        voice="leah",
+      text="Uhh, did you see the weather in Palo Alto tomorrow? Yeah, can't believe it's gonna rain, dude. Like what?",
+      voice="leah",
     )
     assert speech.is_closed
     assert speech.json() == {"foo": "bar"}
@@ -45,15 +45,15 @@ class TestSpeech:
   def test_method_generate_with_all_params(self, client: Lmnt, respx_mock: MockRouter) -> None:
     respx_mock.post("/v1/ai/speech/bytes").mock(return_value=httpx.Response(200, json={"foo": "bar"}))
     speech = client.speech.generate(
-        text="Uhh, did you see the weather in Palo Alto tomorrow? Yeah, can't believe it's gonna rain, dude. Like what?",
-        voice="leah",
-        debug=True,
-        format="aac",
-        language="auto",
-        model="blizzard",
-        sample_rate=8000,
-        temperature=0,
-        top_p=0,
+      text="Uhh, did you see the weather in Palo Alto tomorrow? Yeah, can't believe it's gonna rain, dude. Like what?",
+      voice="leah",
+      debug=True,
+      format="aac",
+      language="auto",
+      model="blizzard",
+      sample_rate=8000,
+      temperature=0,
+      top_p=0,
     )
     assert speech.is_closed
     assert speech.json() == {"foo": "bar"}
@@ -66,8 +66,8 @@ class TestSpeech:
     respx_mock.post("/v1/ai/speech/bytes").mock(return_value=httpx.Response(200, json={"foo": "bar"}))
 
     speech = client.speech.with_raw_response.generate(
-        text="Uhh, did you see the weather in Palo Alto tomorrow? Yeah, can't believe it's gonna rain, dude. Like what?",
-        voice="leah",
+      text="Uhh, did you see the weather in Palo Alto tomorrow? Yeah, can't believe it's gonna rain, dude. Like what?",
+      voice="leah",
     )
 
     assert speech.is_closed is True
@@ -80,8 +80,8 @@ class TestSpeech:
   def test_streaming_response_generate(self, client: Lmnt, respx_mock: MockRouter) -> None:
     respx_mock.post("/v1/ai/speech/bytes").mock(return_value=httpx.Response(200, json={"foo": "bar"}))
     with client.speech.with_streaming_response.generate(
-        text="Uhh, did you see the weather in Palo Alto tomorrow? Yeah, can't believe it's gonna rain, dude. Like what?",
-        voice="leah",
+      text="Uhh, did you see the weather in Palo Alto tomorrow? Yeah, can't believe it's gonna rain, dude. Like what?",
+      voice="leah",
     ) as speech:
       assert not speech.is_closed
       assert speech.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -95,32 +95,32 @@ class TestSpeech:
   @parametrize
   def test_method_generate_detailed(self, client: Lmnt) -> None:
     speech = client.speech.generate_detailed(
-        text="Uhh, did you see the weather in Palo Alto tomorrow? Yeah, can't believe it's gonna rain, dude. Like what?",
-        voice="leah",
+      text="Uhh, did you see the weather in Palo Alto tomorrow? Yeah, can't believe it's gonna rain, dude. Like what?",
+      voice="leah",
     )
     assert_matches_type(SpeechGenerateDetailedResponse, speech, path=["response"])
 
   @parametrize
   def test_method_generate_detailed_with_all_params(self, client: Lmnt) -> None:
     speech = client.speech.generate_detailed(
-        text="Uhh, did you see the weather in Palo Alto tomorrow? Yeah, can't believe it's gonna rain, dude. Like what?",
-        voice="leah",
-        debug=True,
-        format="aac",
-        language="auto",
-        model="blizzard",
-        return_timestamps=True,
-        sample_rate=8000,
-        temperature=0,
-        top_p=0,
+      text="Uhh, did you see the weather in Palo Alto tomorrow? Yeah, can't believe it's gonna rain, dude. Like what?",
+      voice="leah",
+      debug=True,
+      format="aac",
+      language="auto",
+      model="blizzard",
+      return_timestamps=True,
+      sample_rate=8000,
+      temperature=0,
+      top_p=0,
     )
     assert_matches_type(SpeechGenerateDetailedResponse, speech, path=["response"])
 
   @parametrize
   def test_raw_response_generate_detailed(self, client: Lmnt) -> None:
     response = client.speech.with_raw_response.generate_detailed(
-        text="Uhh, did you see the weather in Palo Alto tomorrow? Yeah, can't believe it's gonna rain, dude. Like what?",
-        voice="leah",
+      text="Uhh, did you see the weather in Palo Alto tomorrow? Yeah, can't believe it's gonna rain, dude. Like what?",
+      voice="leah",
     )
 
     assert response.is_closed is True
@@ -131,8 +131,8 @@ class TestSpeech:
   @parametrize
   def test_streaming_response_generate_detailed(self, client: Lmnt) -> None:
     with client.speech.with_streaming_response.generate_detailed(
-        text="Uhh, did you see the weather in Palo Alto tomorrow? Yeah, can't believe it's gonna rain, dude. Like what?",
-        voice="leah",
+      text="Uhh, did you see the weather in Palo Alto tomorrow? Yeah, can't believe it's gonna rain, dude. Like what?",
+      voice="leah",
     ) as response:
       assert not response.is_closed
       assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -145,7 +145,7 @@ class TestSpeech:
 
 class TestAsyncSpeech:
   parametrize = pytest.mark.parametrize(
-      "async_client", [False, True, {"http_client": "aiohttp"}], indirect=True, ids=["loose", "strict", "aiohttp"]
+    "async_client", [False, True, {"http_client": "aiohttp"}], indirect=True, ids=["loose", "strict", "aiohttp"]
   )
 
   @parametrize
@@ -153,8 +153,8 @@ class TestAsyncSpeech:
   async def test_method_generate(self, async_client: AsyncLmnt, respx_mock: MockRouter) -> None:
     respx_mock.post("/v1/ai/speech/bytes").mock(return_value=httpx.Response(200, json={"foo": "bar"}))
     speech = await async_client.speech.generate(
-        text="Uhh, did you see the weather in Palo Alto tomorrow? Yeah, can't believe it's gonna rain, dude. Like what?",
-        voice="leah",
+      text="Uhh, did you see the weather in Palo Alto tomorrow? Yeah, can't believe it's gonna rain, dude. Like what?",
+      voice="leah",
     )
     assert speech.is_closed
     assert await speech.json() == {"foo": "bar"}
@@ -166,15 +166,15 @@ class TestAsyncSpeech:
   async def test_method_generate_with_all_params(self, async_client: AsyncLmnt, respx_mock: MockRouter) -> None:
     respx_mock.post("/v1/ai/speech/bytes").mock(return_value=httpx.Response(200, json={"foo": "bar"}))
     speech = await async_client.speech.generate(
-        text="Uhh, did you see the weather in Palo Alto tomorrow? Yeah, can't believe it's gonna rain, dude. Like what?",
-        voice="leah",
-        debug=True,
-        format="aac",
-        language="auto",
-        model="blizzard",
-        sample_rate=8000,
-        temperature=0,
-        top_p=0,
+      text="Uhh, did you see the weather in Palo Alto tomorrow? Yeah, can't believe it's gonna rain, dude. Like what?",
+      voice="leah",
+      debug=True,
+      format="aac",
+      language="auto",
+      model="blizzard",
+      sample_rate=8000,
+      temperature=0,
+      top_p=0,
     )
     assert speech.is_closed
     assert await speech.json() == {"foo": "bar"}
@@ -187,8 +187,8 @@ class TestAsyncSpeech:
     respx_mock.post("/v1/ai/speech/bytes").mock(return_value=httpx.Response(200, json={"foo": "bar"}))
 
     speech = await async_client.speech.with_raw_response.generate(
-        text="Uhh, did you see the weather in Palo Alto tomorrow? Yeah, can't believe it's gonna rain, dude. Like what?",
-        voice="leah",
+      text="Uhh, did you see the weather in Palo Alto tomorrow? Yeah, can't believe it's gonna rain, dude. Like what?",
+      voice="leah",
     )
 
     assert speech.is_closed is True
@@ -201,8 +201,8 @@ class TestAsyncSpeech:
   async def test_streaming_response_generate(self, async_client: AsyncLmnt, respx_mock: MockRouter) -> None:
     respx_mock.post("/v1/ai/speech/bytes").mock(return_value=httpx.Response(200, json={"foo": "bar"}))
     async with async_client.speech.with_streaming_response.generate(
-        text="Uhh, did you see the weather in Palo Alto tomorrow? Yeah, can't believe it's gonna rain, dude. Like what?",
-        voice="leah",
+      text="Uhh, did you see the weather in Palo Alto tomorrow? Yeah, can't believe it's gonna rain, dude. Like what?",
+      voice="leah",
     ) as speech:
       assert not speech.is_closed
       assert speech.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -216,32 +216,32 @@ class TestAsyncSpeech:
   @parametrize
   async def test_method_generate_detailed(self, async_client: AsyncLmnt) -> None:
     speech = await async_client.speech.generate_detailed(
-        text="Uhh, did you see the weather in Palo Alto tomorrow? Yeah, can't believe it's gonna rain, dude. Like what?",
-        voice="leah",
+      text="Uhh, did you see the weather in Palo Alto tomorrow? Yeah, can't believe it's gonna rain, dude. Like what?",
+      voice="leah",
     )
     assert_matches_type(SpeechGenerateDetailedResponse, speech, path=["response"])
 
   @parametrize
   async def test_method_generate_detailed_with_all_params(self, async_client: AsyncLmnt) -> None:
     speech = await async_client.speech.generate_detailed(
-        text="Uhh, did you see the weather in Palo Alto tomorrow? Yeah, can't believe it's gonna rain, dude. Like what?",
-        voice="leah",
-        debug=True,
-        format="aac",
-        language="auto",
-        model="blizzard",
-        return_timestamps=True,
-        sample_rate=8000,
-        temperature=0,
-        top_p=0,
+      text="Uhh, did you see the weather in Palo Alto tomorrow? Yeah, can't believe it's gonna rain, dude. Like what?",
+      voice="leah",
+      debug=True,
+      format="aac",
+      language="auto",
+      model="blizzard",
+      return_timestamps=True,
+      sample_rate=8000,
+      temperature=0,
+      top_p=0,
     )
     assert_matches_type(SpeechGenerateDetailedResponse, speech, path=["response"])
 
   @parametrize
   async def test_raw_response_generate_detailed(self, async_client: AsyncLmnt) -> None:
     response = await async_client.speech.with_raw_response.generate_detailed(
-        text="Uhh, did you see the weather in Palo Alto tomorrow? Yeah, can't believe it's gonna rain, dude. Like what?",
-        voice="leah",
+      text="Uhh, did you see the weather in Palo Alto tomorrow? Yeah, can't believe it's gonna rain, dude. Like what?",
+      voice="leah",
     )
 
     assert response.is_closed is True
@@ -252,8 +252,8 @@ class TestAsyncSpeech:
   @parametrize
   async def test_streaming_response_generate_detailed(self, async_client: AsyncLmnt) -> None:
     async with async_client.speech.with_streaming_response.generate_detailed(
-        text="Uhh, did you see the weather in Palo Alto tomorrow? Yeah, can't believe it's gonna rain, dude. Like what?",
-        voice="leah",
+      text="Uhh, did you see the weather in Palo Alto tomorrow? Yeah, can't believe it's gonna rain, dude. Like what?",
+      voice="leah",
     ) as response:
       assert not response.is_closed
       assert response.http_request.headers.get("X-Stainless-Lang") == "python"

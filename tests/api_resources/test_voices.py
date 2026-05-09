@@ -9,10 +9,10 @@ import pytest
 
 from lmnt import Lmnt, AsyncLmnt
 from lmnt.types import (
-    Voice,
-    VoiceListResponse,
-    VoiceDeleteResponse,
-    VoiceUpdateResponse,
+  Voice,
+  VoiceListResponse,
+  VoiceDeleteResponse,
+  VoiceUpdateResponse,
 )
 from tests.utils import assert_matches_type
 
@@ -26,8 +26,8 @@ class TestVoices:
   @parametrize
   def test_method_create(self, client: Lmnt) -> None:
     voice = client.voices.create(
-        file=b"raw file contents",
-        name="new-voice",
+      file=b"raw file contents",
+      name="new-voice",
     )
     assert_matches_type(Voice, voice, path=["response"])
 
@@ -35,11 +35,11 @@ class TestVoices:
   @parametrize
   def test_method_create_with_all_params(self, client: Lmnt) -> None:
     voice = client.voices.create(
-        file=b"raw file contents",
-        name="new-voice",
-        description="description",
-        gender="gender",
-        tags=["tags"],
+      file=b"raw file contents",
+      name="new-voice",
+      description="description",
+      gender="gender",
+      tags=["tags"],
     )
     assert_matches_type(Voice, voice, path=["response"])
 
@@ -47,8 +47,8 @@ class TestVoices:
   @parametrize
   def test_raw_response_create(self, client: Lmnt) -> None:
     response = client.voices.with_raw_response.create(
-        file=b"raw file contents",
-        name="new-voice",
+      file=b"raw file contents",
+      name="new-voice",
     )
 
     assert response.is_closed is True
@@ -60,8 +60,8 @@ class TestVoices:
   @parametrize
   def test_streaming_response_create(self, client: Lmnt) -> None:
     with client.voices.with_streaming_response.create(
-        file=b"raw file contents",
-        name="new-voice",
+      file=b"raw file contents",
+      name="new-voice",
     ) as response:
       assert not response.is_closed
       assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -74,14 +74,14 @@ class TestVoices:
   @parametrize
   def test_method_retrieve(self, client: Lmnt) -> None:
     voice = client.voices.retrieve(
-        "123",
+      "9c4a8f2b3e1d7c40",
     )
     assert_matches_type(Voice, voice, path=["response"])
 
   @parametrize
   def test_raw_response_retrieve(self, client: Lmnt) -> None:
     response = client.voices.with_raw_response.retrieve(
-        "123",
+      "9c4a8f2b3e1d7c40",
     )
 
     assert response.is_closed is True
@@ -92,7 +92,7 @@ class TestVoices:
   @parametrize
   def test_streaming_response_retrieve(self, client: Lmnt) -> None:
     with client.voices.with_streaming_response.retrieve(
-        "123",
+      "9c4a8f2b3e1d7c40",
     ) as response:
       assert not response.is_closed
       assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -106,32 +106,32 @@ class TestVoices:
   def test_path_params_retrieve(self, client: Lmnt) -> None:
     with pytest.raises(ValueError, match=r"Expected a non-empty value for `id` but received ''"):
       client.voices.with_raw_response.retrieve(
-          "",
+        "",
       )
 
   @parametrize
   def test_method_update(self, client: Lmnt) -> None:
     voice = client.voices.update(
-        id="123",
+      id="9c4a8f2b3e1d7c40",
     )
     assert_matches_type(VoiceUpdateResponse, voice, path=["response"])
 
   @parametrize
   def test_method_update_with_all_params(self, client: Lmnt) -> None:
     voice = client.voices.update(
-        id="123",
-        description="description",
-        gender="gender",
-        name="name",
-        starred=True,
-        tags=["tags"],
+      id="9c4a8f2b3e1d7c40",
+      description="description",
+      gender="gender",
+      name="name",
+      starred=True,
+      tags=["tags"],
     )
     assert_matches_type(VoiceUpdateResponse, voice, path=["response"])
 
   @parametrize
   def test_raw_response_update(self, client: Lmnt) -> None:
     response = client.voices.with_raw_response.update(
-        id="123",
+      id="9c4a8f2b3e1d7c40",
     )
 
     assert response.is_closed is True
@@ -142,7 +142,7 @@ class TestVoices:
   @parametrize
   def test_streaming_response_update(self, client: Lmnt) -> None:
     with client.voices.with_streaming_response.update(
-        id="123",
+      id="9c4a8f2b3e1d7c40",
     ) as response:
       assert not response.is_closed
       assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -156,20 +156,20 @@ class TestVoices:
   def test_path_params_update(self, client: Lmnt) -> None:
     with pytest.raises(ValueError, match=r"Expected a non-empty value for `id` but received ''"):
       client.voices.with_raw_response.update(
-          id="",
+        id="",
       )
 
   @parametrize
   def test_method_delete(self, client: Lmnt) -> None:
     voice = client.voices.delete(
-        "123",
+      "9c4a8f2b3e1d7c40",
     )
     assert_matches_type(VoiceDeleteResponse, voice, path=["response"])
 
   @parametrize
   def test_raw_response_delete(self, client: Lmnt) -> None:
     response = client.voices.with_raw_response.delete(
-        "123",
+      "9c4a8f2b3e1d7c40",
     )
 
     assert response.is_closed is True
@@ -180,7 +180,7 @@ class TestVoices:
   @parametrize
   def test_streaming_response_delete(self, client: Lmnt) -> None:
     with client.voices.with_streaming_response.delete(
-        "123",
+      "9c4a8f2b3e1d7c40",
     ) as response:
       assert not response.is_closed
       assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -194,7 +194,7 @@ class TestVoices:
   def test_path_params_delete(self, client: Lmnt) -> None:
     with pytest.raises(ValueError, match=r"Expected a non-empty value for `id` but received ''"):
       client.voices.with_raw_response.delete(
-          "",
+        "",
       )
 
   @parametrize
@@ -205,8 +205,8 @@ class TestVoices:
   @parametrize
   def test_method_list_with_all_params(self, client: Lmnt) -> None:
     voice = client.voices.list(
-        owner="owner",
-        starred="starred",
+      owner="owner",
+      starred="starred",
     )
     assert_matches_type(VoiceListResponse, voice, path=["response"])
 
@@ -233,15 +233,15 @@ class TestVoices:
 
 class TestAsyncVoices:
   parametrize = pytest.mark.parametrize(
-      "async_client", [False, True, {"http_client": "aiohttp"}], indirect=True, ids=["loose", "strict", "aiohttp"]
+    "async_client", [False, True, {"http_client": "aiohttp"}], indirect=True, ids=["loose", "strict", "aiohttp"]
   )
 
   @pytest.mark.skip(reason="Prism bug detailed here: https://github.com/stoplightio/prism/pull/2654")
   @parametrize
   async def test_method_create(self, async_client: AsyncLmnt) -> None:
     voice = await async_client.voices.create(
-        file=b"raw file contents",
-        name="new-voice",
+      file=b"raw file contents",
+      name="new-voice",
     )
     assert_matches_type(Voice, voice, path=["response"])
 
@@ -249,11 +249,11 @@ class TestAsyncVoices:
   @parametrize
   async def test_method_create_with_all_params(self, async_client: AsyncLmnt) -> None:
     voice = await async_client.voices.create(
-        file=b"raw file contents",
-        name="new-voice",
-        description="description",
-        gender="gender",
-        tags=["tags"],
+      file=b"raw file contents",
+      name="new-voice",
+      description="description",
+      gender="gender",
+      tags=["tags"],
     )
     assert_matches_type(Voice, voice, path=["response"])
 
@@ -261,8 +261,8 @@ class TestAsyncVoices:
   @parametrize
   async def test_raw_response_create(self, async_client: AsyncLmnt) -> None:
     response = await async_client.voices.with_raw_response.create(
-        file=b"raw file contents",
-        name="new-voice",
+      file=b"raw file contents",
+      name="new-voice",
     )
 
     assert response.is_closed is True
@@ -274,8 +274,8 @@ class TestAsyncVoices:
   @parametrize
   async def test_streaming_response_create(self, async_client: AsyncLmnt) -> None:
     async with async_client.voices.with_streaming_response.create(
-        file=b"raw file contents",
-        name="new-voice",
+      file=b"raw file contents",
+      name="new-voice",
     ) as response:
       assert not response.is_closed
       assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -288,14 +288,14 @@ class TestAsyncVoices:
   @parametrize
   async def test_method_retrieve(self, async_client: AsyncLmnt) -> None:
     voice = await async_client.voices.retrieve(
-        "123",
+      "9c4a8f2b3e1d7c40",
     )
     assert_matches_type(Voice, voice, path=["response"])
 
   @parametrize
   async def test_raw_response_retrieve(self, async_client: AsyncLmnt) -> None:
     response = await async_client.voices.with_raw_response.retrieve(
-        "123",
+      "9c4a8f2b3e1d7c40",
     )
 
     assert response.is_closed is True
@@ -306,7 +306,7 @@ class TestAsyncVoices:
   @parametrize
   async def test_streaming_response_retrieve(self, async_client: AsyncLmnt) -> None:
     async with async_client.voices.with_streaming_response.retrieve(
-        "123",
+      "9c4a8f2b3e1d7c40",
     ) as response:
       assert not response.is_closed
       assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -320,32 +320,32 @@ class TestAsyncVoices:
   async def test_path_params_retrieve(self, async_client: AsyncLmnt) -> None:
     with pytest.raises(ValueError, match=r"Expected a non-empty value for `id` but received ''"):
       await async_client.voices.with_raw_response.retrieve(
-          "",
+        "",
       )
 
   @parametrize
   async def test_method_update(self, async_client: AsyncLmnt) -> None:
     voice = await async_client.voices.update(
-        id="123",
+      id="9c4a8f2b3e1d7c40",
     )
     assert_matches_type(VoiceUpdateResponse, voice, path=["response"])
 
   @parametrize
   async def test_method_update_with_all_params(self, async_client: AsyncLmnt) -> None:
     voice = await async_client.voices.update(
-        id="123",
-        description="description",
-        gender="gender",
-        name="name",
-        starred=True,
-        tags=["tags"],
+      id="9c4a8f2b3e1d7c40",
+      description="description",
+      gender="gender",
+      name="name",
+      starred=True,
+      tags=["tags"],
     )
     assert_matches_type(VoiceUpdateResponse, voice, path=["response"])
 
   @parametrize
   async def test_raw_response_update(self, async_client: AsyncLmnt) -> None:
     response = await async_client.voices.with_raw_response.update(
-        id="123",
+      id="9c4a8f2b3e1d7c40",
     )
 
     assert response.is_closed is True
@@ -356,7 +356,7 @@ class TestAsyncVoices:
   @parametrize
   async def test_streaming_response_update(self, async_client: AsyncLmnt) -> None:
     async with async_client.voices.with_streaming_response.update(
-        id="123",
+      id="9c4a8f2b3e1d7c40",
     ) as response:
       assert not response.is_closed
       assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -370,20 +370,20 @@ class TestAsyncVoices:
   async def test_path_params_update(self, async_client: AsyncLmnt) -> None:
     with pytest.raises(ValueError, match=r"Expected a non-empty value for `id` but received ''"):
       await async_client.voices.with_raw_response.update(
-          id="",
+        id="",
       )
 
   @parametrize
   async def test_method_delete(self, async_client: AsyncLmnt) -> None:
     voice = await async_client.voices.delete(
-        "123",
+      "9c4a8f2b3e1d7c40",
     )
     assert_matches_type(VoiceDeleteResponse, voice, path=["response"])
 
   @parametrize
   async def test_raw_response_delete(self, async_client: AsyncLmnt) -> None:
     response = await async_client.voices.with_raw_response.delete(
-        "123",
+      "9c4a8f2b3e1d7c40",
     )
 
     assert response.is_closed is True
@@ -394,7 +394,7 @@ class TestAsyncVoices:
   @parametrize
   async def test_streaming_response_delete(self, async_client: AsyncLmnt) -> None:
     async with async_client.voices.with_streaming_response.delete(
-        "123",
+      "9c4a8f2b3e1d7c40",
     ) as response:
       assert not response.is_closed
       assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -408,7 +408,7 @@ class TestAsyncVoices:
   async def test_path_params_delete(self, async_client: AsyncLmnt) -> None:
     with pytest.raises(ValueError, match=r"Expected a non-empty value for `id` but received ''"):
       await async_client.voices.with_raw_response.delete(
-          "",
+        "",
       )
 
   @parametrize
@@ -419,8 +419,8 @@ class TestAsyncVoices:
   @parametrize
   async def test_method_list_with_all_params(self, async_client: AsyncLmnt) -> None:
     voice = await async_client.voices.list(
-        owner="owner",
-        starred="starred",
+      owner="owner",
+      starred="starred",
     )
     assert_matches_type(VoiceListResponse, voice, path=["response"])
 
