@@ -8,14 +8,14 @@ from typing_extensions import Literal
 import httpx
 
 __all__ = [
-    "BadRequestError",
-    "AuthenticationError",
-    "PermissionDeniedError",
-    "NotFoundError",
-    "ConflictError",
-    "UnprocessableEntityError",
-    "RateLimitError",
-    "InternalServerError",
+  "BadRequestError",
+  "AuthenticationError",
+  "PermissionDeniedError",
+  "NotFoundError",
+  "ConflictError",
+  "UnprocessableEntityError",
+  "RateLimitError",
+  "InternalServerError",
 ]
 
 

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import os
 import json
 from typing import Any, Dict, Final, Union, Literal, Optional
 
@@ -10,35 +11,43 @@ from pydantic import BaseModel
 
 from .._resource import AsyncAPIResource
 from .._api_version import LMNT_API_VERSION
-from ..types.speech_stream_error import SpeechStreamError as ErrorMessage
-from ..types.speech_stream_extras import SpeechStreamExtras as ExtrasMessage
+from ..types.speech_session_audio import SpeechSessionAudio as SpeechSessionAudio
+from ..types.speech_session_error import SpeechSessionError as SpeechSessionError
+from ..types.speech_session_ready import SpeechSessionReady as SpeechSessionReady
+from ..types.speech_session_timestamps import SpeechSessionTimestamps as SpeechSessionTimestamps
+from ..types.speech_session_flush_complete import SpeechSessionFlushComplete as SpeechSessionFlushComplete
+from ..types.speech_session_reset_complete import SpeechSessionResetComplete as SpeechSessionResetComplete
 
 __all__ = ["AsyncSessionsResource", "SpeechSession"]
 
 URL_STREAMING: Final = "wss://api.lmnt.com/v1/ai/speech/stream"
+WS_PATH: Final = "/v1/ai/speech/stream"
+DEFAULT_BASE_URL: Final = "https://api.lmnt.com"
 
 
-class AudioMessage(BaseModel):
-  """Audio message containing synthesized speech data."""
+def _ws_url_from_base(base_url: object) -> str:
+  """Compose the streaming WebSocket URL from the client base URL.
 
-  type: Literal["audio"] = "audio"
-  audio: bytes
-
-
-class CompleteMessage(BaseModel):
-  """Complete message for commands (reset/flush).
-
-  Not yet in asyncapi.yaml — V2-protocol ack message; carbonsteel will generate it once the
-  spec V2 alignment lands. Until then, kept hand-written so the SpeechSession dispatch
-  surface stays intact.
+  Rewrites the scheme (`http(s)` -> `ws(s)`) and appends `WS_PATH`, so a custom
+  `base_url` on the Lmnt client (e.g. staging or a local proxy) flows through to
+  the WebSocket connection.
   """
+  s = str(base_url).rstrip("/")
+  if s.startswith("https://"):
+    s = "wss://" + s[len("https://") :]
+  elif s.startswith("http://"):
+    s = "ws://" + s[len("http://") :]
+  return s + WS_PATH
 
-  type: Literal["complete"] = "complete"
-  complete: Literal["reset", "flush"]
-  nonce: int
 
-
-SpeechSessionResponse = Union[AudioMessage, ExtrasMessage, ErrorMessage, CompleteMessage]
+SpeechSessionResponse = Union[
+  SpeechSessionAudio,
+  SpeechSessionReady,
+  SpeechSessionTimestamps,
+  SpeechSessionFlushComplete,
+  SpeechSessionResetComplete,
+  SpeechSessionError,
+]
 
 
 class UnexpectedMessageError(Exception):
@@ -50,108 +59,109 @@ class UnexpectedMessageError(Exception):
 
 
 class SpeechSession:
-  """Async websocket connection for LMNT speech session."""
-
   def __init__(
-      self,
-      api_key: str,
-      voice: str,
-      format: Optional[Literal["mp3", "pcm_s16le", "pcm_f32le", "ulaw", "webm"]] = None,
-      language: Optional[
-          Literal[
-          "auto",
-              "ar",
-              "as",
-              "bn",
-              "cs",
-              "da",
-              "de",
-              "en",
-              "es",
-              "fi",
-              "fr",
-              "hi",
-              "id",
-              "it",
-              "ja",
-              "ko",
-              "ml",
-              "mr",
-              "nl",
-              "pl",
-              "pt",
-              "ru",
-              "sk",
-              "sv",
-              "ta",
-              "te",
-              "th",
-              "tr",
-              "uk",
-              "ur",
-              "vi",
-              "zh",
-          ]
-      ] = None,
-      return_extras: Optional[bool] = None,
-      sample_rate: Optional[Literal[24000, 16000, 8000]] = None,
+    self,
+    api_key: str,
+    voice: str,
+    format: Optional[Literal["mp3", "pcm_s16le", "pcm_f32le", "ulaw", "webm"]] = None,
+    language: Optional[
+      Literal[
+        "auto",
+        "ar",
+        "as",
+        "bn",
+        "cs",
+        "da",
+        "de",
+        "en",
+        "es",
+        "fi",
+        "fr",
+        "hi",
+        "id",
+        "it",
+        "ja",
+        "ko",
+        "ml",
+        "mr",
+        "nl",
+        "pl",
+        "pt",
+        "ru",
+        "sk",
+        "sv",
+        "ta",
+        "te",
+        "th",
+        "tr",
+        "uk",
+        "ur",
+        "vi",
+        "zh",
+      ]
+    ] = None,
+    return_timestamps: Optional[bool] = None,
+    sample_rate: Optional[Literal[24000, 16000, 8000]] = None,
+    base_url: object = DEFAULT_BASE_URL,
   ):
     self.api_key = api_key
     self.voice = voice
     self.format = format
     self.language = language
-    self.return_extras = return_extras
+    self.return_timestamps = return_timestamps
     self.sample_rate = sample_rate
+    self.url = _ws_url_from_base(base_url)
     self.websocket: Optional[Any] = None
     self.nonce: int = 0
+    self.request_id: Optional[str] = None
 
   async def connect(self) -> None:
-    """Establish the websocket connection."""
-    self.websocket = await websockets.connect(URL_STREAMING)
-    init_msg = {
-        "X-API-Key": self.api_key,
-        "lmnt-version": LMNT_API_VERSION,
-        "voice": self.voice,
+    """Connect the `SpeechSession`."""
+    self.websocket = await websockets.connect(self.url)
+    init_msg: Dict[str, Any] = {
+      "X-API-Key": self.api_key,
+      "lmnt-version": LMNT_API_VERSION,
+      "voice": self.voice,
     }
-    if self.format:
+    if self.format is not None:
       init_msg["format"] = self.format
-    if self.language:
+    if self.language is not None:
       init_msg["language"] = self.language
-    if self.return_extras:
-      init_msg["return_extras"] = str(self.return_extras)
-    if self.sample_rate:
-      init_msg["sample_rate"] = str(self.sample_rate)
+    if self.return_timestamps is not None:
+      init_msg["return_timestamps"] = self.return_timestamps
+    if self.sample_rate is not None:
+      init_msg["sample_rate"] = self.sample_rate
     if self.websocket is not None:
       await self.websocket.send(json.dumps(init_msg))
 
-  async def append_text(self, text: str) -> None:
-    """Append text to be synthesized."""
-    await self._send_message({"text": text})
+  async def send_text(self, text: str) -> None:
+    """The text you send can be split at any point."""
+    await self._send_message({"type": "text", "text": text})
 
-  async def flush(self) -> int:
-    """Flush the current text buffer."""
+  async def send_flush(self) -> int:
+    """Each `flush` carries a client-chosen `nonce`. The server replies with a `flush_complete` carrying the matching nonce once it has finished streaming the flushed audio."""
     self.nonce += 1
-    await self._send_message({"command": "flush", "nonce": self.nonce})
+    await self._send_message({"type": "flush", "nonce": self.nonce})
     return self.nonce
 
-  async def reset(self) -> int:
-    """Reset the current text buffer."""
+  async def send_reset(self) -> int:
+    """Each `reset` carries a client-chosen `nonce`. The server replies with a `reset_complete` carrying the matching nonce once the buffer has been cleared."""
     self.nonce += 1
-    await self._send_message({"command": "reset", "nonce": self.nonce})
+    await self._send_message({"type": "reset", "nonce": self.nonce})
     return self.nonce
 
-  async def finish(self) -> None:
-    """Mark the session as finished."""
-    await self._send_message({"command": "eof"})
+  async def send_finish(self) -> None:
+    """Inform the server you're done appending text to this session and want it to close when the server has finished dispatching speech."""
+    await self._send_message({"type": "finish"})
 
   async def close(self) -> None:
-    """Close the websocket connection."""
+    """Close the `SpeechSession`."""
     if self.websocket is not None:
       await self.websocket.close()
       self.websocket = None
 
   async def _send_message(self, message: Dict[str, Any]) -> None:
-    """Send a message through the websocket."""
+    """Send a message on the `SpeechSession`."""
     if self.websocket is not None:
       await self.websocket.send(json.dumps(message))
 
@@ -160,7 +170,7 @@ class SpeechSession:
     return self
 
   async def __anext__(self) -> SpeechSessionResponse:
-    """Get the next speech session response."""
+    """Get the next message from the server."""
     if not self.websocket:
       raise StopAsyncIteration
     try:
@@ -169,7 +179,7 @@ class SpeechSession:
       if isinstance(message, str):
         return self._parse_text_message(message)
       elif isinstance(message, bytes):
-        return AudioMessage(type="audio", audio=message)
+        return SpeechSessionAudio(type="audio", audio=message)
       else:
         raise UnexpectedMessageError(f"Unexpected message type: {type(message)}")
 
@@ -177,70 +187,78 @@ class SpeechSession:
       raise StopAsyncIteration from err
 
   def _parse_text_message(self, text_data: str) -> SpeechSessionResponse:
-    """Parse a text message from the server."""
+    """Parse a text message from the server. Dispatches on the `type` discriminator."""
     try:
       message_json = json.loads(text_data)
     except json.JSONDecodeError as err:
       raise ValueError(f"Invalid JSON received from server: {text_data}") from err
 
-    if "error" in message_json:
-      return ErrorMessage.model_construct(**message_json)
-
-    if "complete" in message_json:
-      return CompleteMessage.model_construct(**message_json)
-
-    if self.return_extras and (
-        message_json.get("timestamps") or message_json.get("warning") or message_json.get("buffer_empty") is not None
-    ):
-      return ExtrasMessage.model_construct(**message_json)
-
+    message_type = message_json.get("type")
+    if message_type == "ready":
+      self.request_id = message_json.get("request_id")
+      return SpeechSessionReady.model_construct(**message_json)
+    if message_type == "timestamps":
+      return SpeechSessionTimestamps.model_construct(**message_json)
+    if message_type == "flush_complete":
+      return SpeechSessionFlushComplete.model_construct(**message_json)
+    if message_type == "reset_complete":
+      return SpeechSessionResetComplete.model_construct(**message_json)
+    if message_type == "error":
+      return SpeechSessionError.model_construct(**message_json)
     raise UnexpectedMessageError(f"Unexpected message: {text_data}")
+
+  async def stream_audio_to_file(self, path: str | os.PathLike[str]) -> None:
+    """Stream the `audio` frames from this session to `path`."""
+    with open(path, "wb") as f:
+      async for message in self:
+        if isinstance(message, SpeechSessionAudio):
+          f.write(message.audio)
 
 
 class AsyncSessionsResource(AsyncAPIResource):
   async def create(
-      self,
-      *,
-      voice: str,
-      format: Optional[Literal["mp3", "pcm_s16le", "pcm_f32le", "ulaw", "webm"]] = None,
-      language: Optional[
-          Literal[
-          "auto",
-              "ar",
-              "as",
-              "bn",
-              "cs",
-              "da",
-              "de",
-              "en",
-              "es",
-              "fi",
-              "fr",
-              "hi",
-              "id",
-              "it",
-              "ja",
-              "ko",
-              "ml",
-              "mr",
-              "nl",
-              "pl",
-              "pt",
-              "ru",
-              "sk",
-              "sv",
-              "ta",
-              "te",
-              "th",
-              "tr",
-              "uk",
-              "ur",
-              "vi",
-              "zh",
-          ]
-      ] = None,
-      return_extras: Optional[bool] = None,
-      sample_rate: Optional[Literal[24000, 16000, 8000]] = None,
+    self,
+    *,
+    voice: str,
+    format: Optional[Literal["mp3", "pcm_s16le", "pcm_f32le", "ulaw", "webm"]] = None,
+    language: Optional[
+      Literal[
+        "auto",
+        "ar",
+        "as",
+        "bn",
+        "cs",
+        "da",
+        "de",
+        "en",
+        "es",
+        "fi",
+        "fr",
+        "hi",
+        "id",
+        "it",
+        "ja",
+        "ko",
+        "ml",
+        "mr",
+        "nl",
+        "pl",
+        "pt",
+        "ru",
+        "sk",
+        "sv",
+        "ta",
+        "te",
+        "th",
+        "tr",
+        "uk",
+        "ur",
+        "vi",
+        "zh",
+      ]
+    ] = None,
+    return_timestamps: Optional[bool] = None,
+    sample_rate: Optional[Literal[24000, 16000, 8000]] = None,
   ) -> SpeechSession:
     """
     Stream text to our servers and receive generated speech in real-time. Great for latency-sensitive applications and situations where you don't have all the text upfront.
@@ -253,17 +271,18 @@ class AsyncSessionsResource(AsyncAPIResource):
         - `pcm_f32le`: PCM 32-bit floating-point little-endian audio.
         - `ulaw`: 8-bit G711 µ-law audio with a WAV header.
         - `webm`: WebM format with Opus audio codec.
-      language: The desired language. Two letter ISO 639-1 code. Defaults to auto language detection.
-      return_extras: Controls whether the server will return extra information about the generated speech
+      language:
+      return_timestamps: Controls whether the server will return timestamps for the generated speech
       sample_rate: The desired output audio sample rate
     """
     session = SpeechSession(
-        self._client.api_key,
-        voice=voice,
-        format=format,
-        language=language,
-        return_extras=return_extras,
-        sample_rate=sample_rate,
+      self._client.api_key,
+      voice=voice,
+      format=format,
+      language=language,
+      return_timestamps=return_timestamps,
+      sample_rate=sample_rate,
+      base_url=self._client.base_url,
     )
     await session.connect()
     return session

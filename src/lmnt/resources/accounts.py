@@ -8,10 +8,10 @@ from .._types import Body, Query, Headers, NotGiven, not_given
 from .._compat import cached_property
 from .._resource import SyncAPIResource, AsyncAPIResource
 from .._response import (
-    to_raw_response_wrapper,
-    to_streamed_response_wrapper,
-    async_to_raw_response_wrapper,
-    async_to_streamed_response_wrapper,
+  to_raw_response_wrapper,
+  to_streamed_response_wrapper,
+  async_to_raw_response_wrapper,
+  async_to_streamed_response_wrapper,
 )
 from .._base_client import make_request_options
 from ..types.account_retrieve_response import AccountRetrieveResponse
@@ -40,22 +40,22 @@ class AccountsResource(SyncAPIResource):
     return AccountsResourceWithStreamingResponse(self)
 
   def retrieve(
-      self,
-      *,
-      # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-      # The extra values given here take precedence over values defined on the client or passed to this method.
-      extra_headers: Headers | None = None,
-      extra_query: Query | None = None,
-      extra_body: Body | None = None,
-      timeout: float | httpx.Timeout | None | NotGiven = not_given,
+    self,
+    *,
+    # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
+    # The extra values given here take precedence over values defined on the client or passed to this method.
+    extra_headers: Headers | None = None,
+    extra_query: Query | None = None,
+    extra_body: Body | None = None,
+    timeout: float | httpx.Timeout | None | NotGiven = not_given,
   ) -> AccountRetrieveResponse:
     """Returns details about your account."""
     return self._get(
-        "/v1/account",
-        options=make_request_options(
-            extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-        ),
-        cast_to=AccountRetrieveResponse,
+      "/v1/account",
+      options=make_request_options(
+        extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+      ),
+      cast_to=AccountRetrieveResponse,
     )
 
 
@@ -80,22 +80,22 @@ class AsyncAccountsResource(AsyncAPIResource):
     return AsyncAccountsResourceWithStreamingResponse(self)
 
   async def retrieve(
-      self,
-      *,
-      # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-      # The extra values given here take precedence over values defined on the client or passed to this method.
-      extra_headers: Headers | None = None,
-      extra_query: Query | None = None,
-      extra_body: Body | None = None,
-      timeout: float | httpx.Timeout | None | NotGiven = not_given,
+    self,
+    *,
+    # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
+    # The extra values given here take precedence over values defined on the client or passed to this method.
+    extra_headers: Headers | None = None,
+    extra_query: Query | None = None,
+    extra_body: Body | None = None,
+    timeout: float | httpx.Timeout | None | NotGiven = not_given,
   ) -> AccountRetrieveResponse:
     """Returns details about your account."""
     return await self._get(
-        "/v1/account",
-        options=make_request_options(
-            extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-        ),
-        cast_to=AccountRetrieveResponse,
+      "/v1/account",
+      options=make_request_options(
+        extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+      ),
+      cast_to=AccountRetrieveResponse,
     )
 
 
@@ -104,7 +104,7 @@ class AccountsResourceWithRawResponse:
     self._accounts = accounts
 
     self.retrieve = to_raw_response_wrapper(
-        accounts.retrieve,
+      accounts.retrieve,
     )
 
 
@@ -113,7 +113,7 @@ class AsyncAccountsResourceWithRawResponse:
     self._accounts = accounts
 
     self.retrieve = async_to_raw_response_wrapper(
-        accounts.retrieve,
+      accounts.retrieve,
     )
 
 
@@ -122,7 +122,7 @@ class AccountsResourceWithStreamingResponse:
     self._accounts = accounts
 
     self.retrieve = to_streamed_response_wrapper(
-        accounts.retrieve,
+      accounts.retrieve,
     )
 
 
@@ -131,5 +131,5 @@ class AsyncAccountsResourceWithStreamingResponse:
     self._accounts = accounts
 
     self.retrieve = async_to_streamed_response_wrapper(
-        accounts.retrieve,
+      accounts.retrieve,
     )

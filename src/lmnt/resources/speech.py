@@ -13,18 +13,18 @@ from .._compat import cached_property
 from .sessions import AsyncSessionsResource
 from .._resource import SyncAPIResource, AsyncAPIResource
 from .._response import (
-    BinaryAPIResponse,
-    AsyncBinaryAPIResponse,
-    StreamedBinaryAPIResponse,
-    AsyncStreamedBinaryAPIResponse,
-    to_raw_response_wrapper,
-    to_streamed_response_wrapper,
-    async_to_raw_response_wrapper,
-    to_custom_raw_response_wrapper,
-    async_to_streamed_response_wrapper,
-    to_custom_streamed_response_wrapper,
-    async_to_custom_raw_response_wrapper,
-    async_to_custom_streamed_response_wrapper,
+  BinaryAPIResponse,
+  AsyncBinaryAPIResponse,
+  StreamedBinaryAPIResponse,
+  AsyncStreamedBinaryAPIResponse,
+  to_raw_response_wrapper,
+  to_streamed_response_wrapper,
+  async_to_raw_response_wrapper,
+  to_custom_raw_response_wrapper,
+  async_to_streamed_response_wrapper,
+  to_custom_streamed_response_wrapper,
+  async_to_custom_raw_response_wrapper,
+  async_to_custom_streamed_response_wrapper,
 )
 from .._base_client import make_request_options
 from ..types.speech_generate_detailed_response import SpeechGenerateDetailedResponse
@@ -53,57 +53,57 @@ class SpeechResource(SyncAPIResource):
     return SpeechResourceWithStreamingResponse(self)
 
   def generate(
-      self,
-      *,
-      text: str,
-      voice: str,
-      debug: bool | Omit = omit,
-      format: Literal["aac", "mp3", "ulaw", "wav", "webm", "pcm_s16le", "pcm_f32le"] | Omit = omit,
-      language: Literal[
-          "auto",
-          "ar",
-          "as",
-          "bn",
-          "cs",
-          "da",
-          "de",
-          "en",
-          "es",
-          "fi",
-          "fr",
-          "hi",
-          "id",
-          "it",
-          "ja",
-          "ko",
-          "ml",
-          "mr",
-          "nl",
-          "pl",
-          "pt",
-          "ru",
-          "sk",
-          "sv",
-          "ta",
-          "te",
-          "th",
-          "tr",
-          "uk",
-          "ur",
-          "vi",
-          "zh",
-      ]
-      | Omit = omit,
-      model: Literal["blizzard"] | Omit = omit,
-      sample_rate: Literal[8000, 16000, 24000] | Omit = omit,
-      temperature: float | Omit = omit,
-      top_p: float | Omit = omit,
-      # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-      # The extra values given here take precedence over values defined on the client or passed to this method.
-      extra_headers: Headers | None = None,
-      extra_query: Query | None = None,
-      extra_body: Body | None = None,
-      timeout: float | httpx.Timeout | None | NotGiven = not_given,
+    self,
+    *,
+    text: str,
+    voice: str,
+    debug: bool | Omit = omit,
+    format: Literal["aac", "mp3", "ulaw", "wav", "webm", "pcm_s16le", "pcm_f32le"] | Omit = omit,
+    language: Literal[
+      "auto",
+      "ar",
+      "as",
+      "bn",
+      "cs",
+      "da",
+      "de",
+      "en",
+      "es",
+      "fi",
+      "fr",
+      "hi",
+      "id",
+      "it",
+      "ja",
+      "ko",
+      "ml",
+      "mr",
+      "nl",
+      "pl",
+      "pt",
+      "ru",
+      "sk",
+      "sv",
+      "ta",
+      "te",
+      "th",
+      "tr",
+      "uk",
+      "ur",
+      "vi",
+      "zh",
+    ]
+    | Omit = omit,
+    model: Literal["blizzard"] | Omit = omit,
+    sample_rate: Literal[8000, 16000, 24000] | Omit = omit,
+    temperature: float | Omit = omit,
+    top_p: float | Omit = omit,
+    # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
+    # The extra values given here take precedence over values defined on the client or passed to this method.
+    extra_headers: Headers | None = None,
+    extra_query: Query | None = None,
+    extra_body: Body | None = None,
+    timeout: float | httpx.Timeout | None | NotGiven = not_given,
   ) -> BinaryAPIResponse:
     """
     Generates speech from text and streams the audio as binary data chunks in
@@ -169,80 +169,80 @@ class SpeechResource(SyncAPIResource):
     """
     extra_headers = {"Accept": "application/octet-stream", **(extra_headers or {})}
     return self._post(
-        "/v1/ai/speech/bytes",
-        body=maybe_transform(
-            {
-                "text": text,
-                "voice": voice,
-                "debug": debug,
-                "format": format,
-                "language": language,
-                "model": model,
-                "sample_rate": sample_rate,
-                "temperature": temperature,
-                "top_p": top_p,
-            },
-            speech_generate_params.SpeechGenerateParams,
-        ),
-        options=make_request_options(
-            extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-        ),
-        cast_to=BinaryAPIResponse,
+      "/v1/ai/speech/bytes",
+      body=maybe_transform(
+        {
+          "text": text,
+          "voice": voice,
+          "debug": debug,
+          "format": format,
+          "language": language,
+          "model": model,
+          "sample_rate": sample_rate,
+          "temperature": temperature,
+          "top_p": top_p,
+        },
+        speech_generate_params.SpeechGenerateParams,
+      ),
+      options=make_request_options(
+        extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+      ),
+      cast_to=BinaryAPIResponse,
     )
 
   def generate_detailed(
-      self,
-      *,
-      text: str,
-      voice: str,
-      debug: bool | Omit = omit,
-      format: Literal["aac", "mp3", "ulaw", "wav", "webm", "pcm_s16le", "pcm_f32le"] | Omit = omit,
-      language: Literal[
-          "auto",
-          "ar",
-          "as",
-          "bn",
-          "cs",
-          "da",
-          "de",
-          "en",
-          "es",
-          "fi",
-          "fr",
-          "hi",
-          "id",
-          "it",
-          "ja",
-          "ko",
-          "ml",
-          "mr",
-          "nl",
-          "pl",
-          "pt",
-          "ru",
-          "sk",
-          "sv",
-          "ta",
-          "te",
-          "th",
-          "tr",
-          "uk",
-          "ur",
-          "vi",
-          "zh",
-      ]
-      | Omit = omit,
-      model: Literal["blizzard"] | Omit = omit,
-      return_timestamps: bool | Omit = omit,
-      sample_rate: Literal[8000, 16000, 24000] | Omit = omit,
-      temperature: float | Omit = omit,
-      top_p: float | Omit = omit,
-      # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-      # The extra values given here take precedence over values defined on the client or passed to this method.
-      extra_headers: Headers | None = None,
-      extra_query: Query | None = None,
-      extra_body: Body | None = None,
-      timeout: float | httpx.Timeout | None | NotGiven = not_given,
+    self,
+    *,
+    text: str,
+    voice: str,
+    debug: bool | Omit = omit,
+    format: Literal["aac", "mp3", "ulaw", "wav", "webm", "pcm_s16le", "pcm_f32le"] | Omit = omit,
+    language: Literal[
+      "auto",
+      "ar",
+      "as",
+      "bn",
+      "cs",
+      "da",
+      "de",
+      "en",
+      "es",
+      "fi",
+      "fr",
+      "hi",
+      "id",
+      "it",
+      "ja",
+      "ko",
+      "ml",
+      "mr",
+      "nl",
+      "pl",
+      "pt",
+      "ru",
+      "sk",
+      "sv",
+      "ta",
+      "te",
+      "th",
+      "tr",
+      "uk",
+      "ur",
+      "vi",
+      "zh",
+    ]
+    | Omit = omit,
+    model: Literal["blizzard"] | Omit = omit,
+    return_timestamps: bool | Omit = omit,
+    sample_rate: Literal[8000, 16000, 24000] | Omit = omit,
+    temperature: float | Omit = omit,
+    top_p: float | Omit = omit,
+    # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
+    # The extra values given here take precedence over values defined on the client or passed to this method.
+    extra_headers: Headers | None = None,
+    extra_query: Query | None = None,
+    extra_body: Body | None = None,
+    timeout: float | httpx.Timeout | None | NotGiven = not_given,
   ) -> SpeechGenerateDetailedResponse:
     """
     Generates speech from text and returns a JSON object that contains a
@@ -308,26 +308,26 @@ class SpeechResource(SyncAPIResource):
       timeout: Override the client-level default timeout for this request, in seconds
     """
     return self._post(
-        "/v1/ai/speech",
-        body=maybe_transform(
-            {
-                "text": text,
-                "voice": voice,
-                "debug": debug,
-                "format": format,
-                "language": language,
-                "model": model,
-                "return_timestamps": return_timestamps,
-                "sample_rate": sample_rate,
-                "temperature": temperature,
-                "top_p": top_p,
-            },
-            speech_generate_detailed_params.SpeechGenerateDetailedParams,
-        ),
-        options=make_request_options(
-            extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-        ),
-        cast_to=SpeechGenerateDetailedResponse,
+      "/v1/ai/speech",
+      body=maybe_transform(
+        {
+          "text": text,
+          "voice": voice,
+          "debug": debug,
+          "format": format,
+          "language": language,
+          "model": model,
+          "return_timestamps": return_timestamps,
+          "sample_rate": sample_rate,
+          "temperature": temperature,
+          "top_p": top_p,
+        },
+        speech_generate_detailed_params.SpeechGenerateDetailedParams,
+      ),
+      options=make_request_options(
+        extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+      ),
+      cast_to=SpeechGenerateDetailedResponse,
     )
 
 
@@ -356,57 +356,57 @@ class AsyncSpeechResource(AsyncAPIResource):
     return AsyncSpeechResourceWithStreamingResponse(self)
 
   async def generate(
-      self,
-      *,
-      text: str,
-      voice: str,
-      debug: bool | Omit = omit,
-      format: Literal["aac", "mp3", "ulaw", "wav", "webm", "pcm_s16le", "pcm_f32le"] | Omit = omit,
-      language: Literal[
-          "auto",
-          "ar",
-          "as",
-          "bn",
-          "cs",
-          "da",
-          "de",
-          "en",
-          "es",
-          "fi",
-          "fr",
-          "hi",
-          "id",
-          "it",
-          "ja",
-          "ko",
-          "ml",
-          "mr",
-          "nl",
-          "pl",
-          "pt",
-          "ru",
-          "sk",
-          "sv",
-          "ta",
-          "te",
-          "th",
-          "tr",
-          "uk",
-          "ur",
-          "vi",
-          "zh",
-      ]
-      | Omit = omit,
-      model: Literal["blizzard"] | Omit = omit,
-      sample_rate: Literal[8000, 16000, 24000] | Omit = omit,
-      temperature: float | Omit = omit,
-      top_p: float | Omit = omit,
-      # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-      # The extra values given here take precedence over values defined on the client or passed to this method.
-      extra_headers: Headers | None = None,
-      extra_query: Query | None = None,
-      extra_body: Body | None = None,
-      timeout: float | httpx.Timeout | None | NotGiven = not_given,
+    self,
+    *,
+    text: str,
+    voice: str,
+    debug: bool | Omit = omit,
+    format: Literal["aac", "mp3", "ulaw", "wav", "webm", "pcm_s16le", "pcm_f32le"] | Omit = omit,
+    language: Literal[
+      "auto",
+      "ar",
+      "as",
+      "bn",
+      "cs",
+      "da",
+      "de",
+      "en",
+      "es",
+      "fi",
+      "fr",
+      "hi",
+      "id",
+      "it",
+      "ja",
+      "ko",
+      "ml",
+      "mr",
+      "nl",
+      "pl",
+      "pt",
+      "ru",
+      "sk",
+      "sv",
+      "ta",
+      "te",
+      "th",
+      "tr",
+      "uk",
+      "ur",
+      "vi",
+      "zh",
+    ]
+    | Omit = omit,
+    model: Literal["blizzard"] | Omit = omit,
+    sample_rate: Literal[8000, 16000, 24000] | Omit = omit,
+    temperature: float | Omit = omit,
+    top_p: float | Omit = omit,
+    # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
+    # The extra values given here take precedence over values defined on the client or passed to this method.
+    extra_headers: Headers | None = None,
+    extra_query: Query | None = None,
+    extra_body: Body | None = None,
+    timeout: float | httpx.Timeout | None | NotGiven = not_given,
   ) -> AsyncBinaryAPIResponse:
     """
     Generates speech from text and streams the audio as binary data chunks in
@@ -472,80 +472,80 @@ class AsyncSpeechResource(AsyncAPIResource):
     """
     extra_headers = {"Accept": "application/octet-stream", **(extra_headers or {})}
     return await self._post(
-        "/v1/ai/speech/bytes",
-        body=await async_maybe_transform(
-            {
-                "text": text,
-                "voice": voice,
-                "debug": debug,
-                "format": format,
-                "language": language,
-                "model": model,
-                "sample_rate": sample_rate,
-                "temperature": temperature,
-                "top_p": top_p,
-            },
-            speech_generate_params.SpeechGenerateParams,
-        ),
-        options=make_request_options(
-            extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-        ),
-        cast_to=AsyncBinaryAPIResponse,
+      "/v1/ai/speech/bytes",
+      body=await async_maybe_transform(
+        {
+          "text": text,
+          "voice": voice,
+          "debug": debug,
+          "format": format,
+          "language": language,
+          "model": model,
+          "sample_rate": sample_rate,
+          "temperature": temperature,
+          "top_p": top_p,
+        },
+        speech_generate_params.SpeechGenerateParams,
+      ),
+      options=make_request_options(
+        extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+      ),
+      cast_to=AsyncBinaryAPIResponse,
     )
 
   async def generate_detailed(
-      self,
-      *,
-      text: str,
-      voice: str,
-      debug: bool | Omit = omit,
-      format: Literal["aac", "mp3", "ulaw", "wav", "webm", "pcm_s16le", "pcm_f32le"] | Omit = omit,
-      language: Literal[
-          "auto",
-          "ar",
-          "as",
-          "bn",
-          "cs",
-          "da",
-          "de",
-          "en",
-          "es",
-          "fi",
-          "fr",
-          "hi",
-          "id",
-          "it",
-          "ja",
-          "ko",
-          "ml",
-          "mr",
-          "nl",
-          "pl",
-          "pt",
-          "ru",
-          "sk",
-          "sv",
-          "ta",
-          "te",
-          "th",
-          "tr",
-          "uk",
-          "ur",
-          "vi",
-          "zh",
-      ]
-      | Omit = omit,
-      model: Literal["blizzard"] | Omit = omit,
-      return_timestamps: bool | Omit = omit,
-      sample_rate: Literal[8000, 16000, 24000] | Omit = omit,
-      temperature: float | Omit = omit,
-      top_p: float | Omit = omit,
-      # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-      # The extra values given here take precedence over values defined on the client or passed to this method.
-      extra_headers: Headers | None = None,
-      extra_query: Query | None = None,
-      extra_body: Body | None = None,
-      timeout: float | httpx.Timeout | None | NotGiven = not_given,
+    self,
+    *,
+    text: str,
+    voice: str,
+    debug: bool | Omit = omit,
+    format: Literal["aac", "mp3", "ulaw", "wav", "webm", "pcm_s16le", "pcm_f32le"] | Omit = omit,
+    language: Literal[
+      "auto",
+      "ar",
+      "as",
+      "bn",
+      "cs",
+      "da",
+      "de",
+      "en",
+      "es",
+      "fi",
+      "fr",
+      "hi",
+      "id",
+      "it",
+      "ja",
+      "ko",
+      "ml",
+      "mr",
+      "nl",
+      "pl",
+      "pt",
+      "ru",
+      "sk",
+      "sv",
+      "ta",
+      "te",
+      "th",
+      "tr",
+      "uk",
+      "ur",
+      "vi",
+      "zh",
+    ]
+    | Omit = omit,
+    model: Literal["blizzard"] | Omit = omit,
+    return_timestamps: bool | Omit = omit,
+    sample_rate: Literal[8000, 16000, 24000] | Omit = omit,
+    temperature: float | Omit = omit,
+    top_p: float | Omit = omit,
+    # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
+    # The extra values given here take precedence over values defined on the client or passed to this method.
+    extra_headers: Headers | None = None,
+    extra_query: Query | None = None,
+    extra_body: Body | None = None,
+    timeout: float | httpx.Timeout | None | NotGiven = not_given,
   ) -> SpeechGenerateDetailedResponse:
     """
     Generates speech from text and returns a JSON object that contains a
@@ -611,26 +611,26 @@ class AsyncSpeechResource(AsyncAPIResource):
       timeout: Override the client-level default timeout for this request, in seconds
     """
     return await self._post(
-        "/v1/ai/speech",
-        body=await async_maybe_transform(
-            {
-                "text": text,
-                "voice": voice,
-                "debug": debug,
-                "format": format,
-                "language": language,
-                "model": model,
-                "return_timestamps": return_timestamps,
-                "sample_rate": sample_rate,
-                "temperature": temperature,
-                "top_p": top_p,
-            },
-            speech_generate_detailed_params.SpeechGenerateDetailedParams,
-        ),
-        options=make_request_options(
-            extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-        ),
-        cast_to=SpeechGenerateDetailedResponse,
+      "/v1/ai/speech",
+      body=await async_maybe_transform(
+        {
+          "text": text,
+          "voice": voice,
+          "debug": debug,
+          "format": format,
+          "language": language,
+          "model": model,
+          "return_timestamps": return_timestamps,
+          "sample_rate": sample_rate,
+          "temperature": temperature,
+          "top_p": top_p,
+        },
+        speech_generate_detailed_params.SpeechGenerateDetailedParams,
+      ),
+      options=make_request_options(
+        extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+      ),
+      cast_to=SpeechGenerateDetailedResponse,
     )
 
 
@@ -639,11 +639,11 @@ class SpeechResourceWithRawResponse:
     self._speech = speech
 
     self.generate = to_custom_raw_response_wrapper(
-        speech.generate,
-        BinaryAPIResponse,
+      speech.generate,
+      BinaryAPIResponse,
     )
     self.generate_detailed = to_raw_response_wrapper(
-        speech.generate_detailed,
+      speech.generate_detailed,
     )
 
 
@@ -652,11 +652,11 @@ class AsyncSpeechResourceWithRawResponse:
     self._speech = speech
 
     self.generate = async_to_custom_raw_response_wrapper(
-        speech.generate,
-        AsyncBinaryAPIResponse,
+      speech.generate,
+      AsyncBinaryAPIResponse,
     )
     self.generate_detailed = async_to_raw_response_wrapper(
-        speech.generate_detailed,
+      speech.generate_detailed,
     )
 
 
@@ -665,11 +665,11 @@ class SpeechResourceWithStreamingResponse:
     self._speech = speech
 
     self.generate = to_custom_streamed_response_wrapper(
-        speech.generate,
-        StreamedBinaryAPIResponse,
+      speech.generate,
+      StreamedBinaryAPIResponse,
     )
     self.generate_detailed = to_streamed_response_wrapper(
-        speech.generate_detailed,
+      speech.generate_detailed,
     )
 
 
@@ -678,9 +678,9 @@ class AsyncSpeechResourceWithStreamingResponse:
     self._speech = speech
 
     self.generate = async_to_custom_streamed_response_wrapper(
-        speech.generate,
-        AsyncStreamedBinaryAPIResponse,
+      speech.generate,
+      AsyncStreamedBinaryAPIResponse,
     )
     self.generate_detailed = async_to_streamed_response_wrapper(
-        speech.generate_detailed,
+      speech.generate_detailed,
     )

@@ -96,6 +96,11 @@ class BaseModel(pydantic.BaseModel):
             extra="allow", defer_build=coerce_boolean(os.environ.get("DEFER_PYDANTIC_BUILD", "true"))
         )
 
+    # Populated from the `request-id` response header by the response extractor on response
+    # models. Excluded from `model_dump()` and `__repr__` so it doesn't leak into request
+    # bodies or serialization output.
+    request_id: Optional[str] = pydantic.Field(default=None, exclude=True, repr=False)
+
     def to_dict(
         self,
         *,

@@ -39,5 +39,5 @@ class Voice(BaseModel):
   tags: Optional[List[str]] = None
   """Tags attached to this voice."""
 
-  type: Optional[Literal["instant", "professional"]] = None
-  """The method by which this voice was created: `instant` or `professional`."""
+  type: Optional[Literal["instant"]] = None
+  """The method by which this voice was created. Always `instant`."""
