@@ -11,7 +11,7 @@ __all__ = ["SpeechSessionError"]
 class SpeechSessionError(BaseModel):
   error: ErrorBody
 
-  request_id: str
+  request_id: str  # pyright: ignore[reportIncompatibleVariableOverride, reportGeneralTypeIssues]
   """Per-session request ID for log correlation."""
 
   type: Literal["error"] = "error"
