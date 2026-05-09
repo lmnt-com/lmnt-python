@@ -8,7 +8,7 @@ if [[ -n "$1" && "$1" != '--'* ]]; then
   URL="$1"
   shift
 else
-  URL="https://api.lmnt.com/v1/openapi.yaml"
+  URL="https://storage.googleapis.com/lmnt-public/specs/1.1/openapi.yaml"
 fi
 
 echo "==> Starting mock server with URL ${URL}"
