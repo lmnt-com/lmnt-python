@@ -9,9 +9,9 @@ __all__ = ["SpeechSessionReady"]
 
 class SpeechSessionReady(BaseModel):
   request_id: str  # pyright: ignore[reportIncompatibleVariableOverride, reportGeneralTypeIssues]
-  """
-    Per-session request ID — same value as the `request-id` HTTP header on the WS
-    upgrade response. Use it to correlate session activity with server-side logs.
+  """Per-session request ID.
+
+    If you're reporting an issue, include this if possible to make debugging easier.
     """
 
   type: Literal["ready"] = "ready"

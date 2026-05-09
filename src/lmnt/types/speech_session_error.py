@@ -12,7 +12,10 @@ class SpeechSessionError(BaseModel):
   error: ErrorBody
 
   request_id: str  # pyright: ignore[reportIncompatibleVariableOverride, reportGeneralTypeIssues]
-  """Per-session request ID for log correlation."""
+  """Per-session request ID.
+
+    If you're reporting an issue, include this if possible to make debugging easier.
+    """
 
   type: Literal["error"] = "error"
   """Discriminator identifying this message type."""

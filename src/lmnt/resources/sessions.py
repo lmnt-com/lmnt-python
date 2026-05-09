@@ -134,17 +134,17 @@ class SpeechSession:
       await self.websocket.send(json.dumps(init_msg))
 
   async def send_text(self, text: str) -> None:
-    """The text you send can be split at any point."""
+    """Send text to the server to append into the text stream."""
     await self._send_message({"type": "text", "text": text})
 
   async def send_flush(self) -> int:
-    """Each `flush` carries a client-chosen `nonce`. The server replies with a `flush_complete` carrying the matching nonce once it has finished streaming the flushed audio."""
+    """Force the server to generate speech for all buffered text in the stream."""
     self.nonce += 1
     await self._send_message({"type": "flush", "nonce": self.nonce})
     return self.nonce
 
   async def send_reset(self) -> int:
-    """Each `reset` carries a client-chosen `nonce`. The server replies with a `reset_complete` carrying the matching nonce once the buffer has been cleared."""
+    """Drop the server's buffered text without generating speech for it."""
     self.nonce += 1
     await self._send_message({"type": "reset", "nonce": self.nonce})
     return self.nonce
