@@ -7,7 +7,6 @@ import json
 from typing import Any, Dict, Final, Union, Literal, Optional
 
 import websockets
-from pydantic import BaseModel
 
 from .._resource import AsyncAPIResource
 from .._api_version import LMNT_API_VERSION
