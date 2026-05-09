@@ -635,7 +635,7 @@ class BaseClient(Generic[_HttpxClientT, _DefaultStreamT]):
             if isinstance(parsed, BaseModel):
                 parsed.request_id = request_id
             elif isinstance(parsed, list):
-                for item in parsed:
+                for item in cast(list[Any], parsed):
                     if isinstance(item, BaseModel):
                         item.request_id = request_id
 
