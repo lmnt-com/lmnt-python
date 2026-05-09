@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.6.1](https://github.com/lmnt-com/lmnt-python/compare/v2.6.0...v2.6.1) (2026-05-09)
+
+
+### Chores
+
+* regenerate sdk ([e20c385](https://github.com/lmnt-com/lmnt-python/commit/e20c3856d1bd9a8373576df20f1211c2aff3e66a))
+
 ## [2.6.0](https://github.com/lmnt-com/lmnt-python/compare/v2.5.1...v2.6.0) (2026-05-09)
 
 
