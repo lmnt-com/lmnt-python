@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.6.1](https://github.com/lmnt-com/lmnt-python/compare/v2.6.0...v2.6.1) (2026-05-19)
+
+
+### Chores
+
+* regenerate sdk ([e20c385](https://github.com/lmnt-com/lmnt-python/commit/e20c3856d1bd9a8373576df20f1211c2aff3e66a))
+* replace X-Stainless-* request headers with X-Lmnt-* ([7062321](https://github.com/lmnt-com/lmnt-python/commit/70623215c5259739570bcfac100b7572fc602437))
+
 ## [2.6.0](https://github.com/lmnt-com/lmnt-python/compare/v2.5.1...v2.6.0) (2026-05-09)
 
 
