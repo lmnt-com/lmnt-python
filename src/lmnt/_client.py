@@ -117,7 +117,7 @@ class Lmnt(SyncAPIClient):
   def default_headers(self) -> dict[str, str | Omit]:
     return {
       **super().default_headers,
-      "X-Stainless-Async": "false",
+      "X-Lmnt-Async": "false",
       "lmnt-version": LMNT_API_VERSION,
       **self._custom_headers,
     }
@@ -290,7 +290,7 @@ class AsyncLmnt(AsyncAPIClient):
   def default_headers(self) -> dict[str, str | Omit]:
     return {
       **super().default_headers,
-      "X-Stainless-Async": f"async:{get_async_library()}",
+      "X-Lmnt-Async": f"async:{get_async_library()}",
       "lmnt-version": LMNT_API_VERSION,
       **self._custom_headers,
     }

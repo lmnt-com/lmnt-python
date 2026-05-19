@@ -27,7 +27,7 @@ class TestAccounts:
     response = client.accounts.with_raw_response.retrieve()
 
     assert response.is_closed is True
-    assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+    assert response.http_request.headers.get("X-Lmnt-Lang") == "python"
     account = response.parse()
     assert_matches_type(AccountRetrieveResponse, account, path=["response"])
 
@@ -35,7 +35,7 @@ class TestAccounts:
   def test_streaming_response_retrieve(self, client: Lmnt) -> None:
     with client.accounts.with_streaming_response.retrieve() as response:
       assert not response.is_closed
-      assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+      assert response.http_request.headers.get("X-Lmnt-Lang") == "python"
 
       account = response.parse()
       assert_matches_type(AccountRetrieveResponse, account, path=["response"])
@@ -58,7 +58,7 @@ class TestAsyncAccounts:
     response = await async_client.accounts.with_raw_response.retrieve()
 
     assert response.is_closed is True
-    assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+    assert response.http_request.headers.get("X-Lmnt-Lang") == "python"
     account = await response.parse()
     assert_matches_type(AccountRetrieveResponse, account, path=["response"])
 
@@ -66,7 +66,7 @@ class TestAsyncAccounts:
   async def test_streaming_response_retrieve(self, async_client: AsyncLmnt) -> None:
     async with async_client.accounts.with_streaming_response.retrieve() as response:
       assert not response.is_closed
-      assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+      assert response.http_request.headers.get("X-Lmnt-Lang") == "python"
 
       account = await response.parse()
       assert_matches_type(AccountRetrieveResponse, account, path=["response"])
