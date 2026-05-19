@@ -1,4 +1,4 @@
-# File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
+# Vendored runtime. See carbonsteel README for provenance.
 
 from __future__ import annotations
 
@@ -116,13 +116,13 @@ class TestLmnt:
         assert copied.default_headers["X-Foo"] == "bar"
 
         # merges already given headers
-        copied = client.copy(default_headers={"X-Bar": "stainless"})
+        copied = client.copy(default_headers={"X-Bar": "lmnt"})
         assert copied.default_headers["X-Foo"] == "bar"
-        assert copied.default_headers["X-Bar"] == "stainless"
+        assert copied.default_headers["X-Bar"] == "lmnt"
 
         # uses new values for any already given headers
-        copied = client.copy(default_headers={"X-Foo": "stainless"})
-        assert copied.default_headers["X-Foo"] == "stainless"
+        copied = client.copy(default_headers={"X-Foo": "lmnt"})
+        assert copied.default_headers["X-Foo"] == "lmnt"
 
         # set_default_headers
 
@@ -150,14 +150,14 @@ class TestLmnt:
         assert _get_params(copied)["foo"] == "bar"
 
         # merges already given params
-        copied = client.copy(default_query={"bar": "stainless"})
+        copied = client.copy(default_query={"bar": "lmnt"})
         params = _get_params(copied)
         assert params["foo"] == "bar"
-        assert params["bar"] == "stainless"
+        assert params["bar"] == "lmnt"
 
         # uses new values for any already given headers
-        copied = client.copy(default_query={"foo": "stainless"})
-        assert _get_params(copied)["foo"] == "stainless"
+        copied = client.copy(default_query={"foo": "lmnt"})
+        assert _get_params(copied)["foo"] == "lmnt"
 
         # set_default_query
 
@@ -313,20 +313,20 @@ class TestLmnt:
         )
         request = client._build_request(FinalRequestOptions(method="get", url="/foo"))
         assert request.headers.get("x-foo") == "bar"
-        assert request.headers.get("x-stainless-lang") == "python"
+        assert request.headers.get("x-lmnt-lang") == "python"
 
         client2 = Lmnt(
             base_url=base_url,
             api_key=api_key,
             _strict_response_validation=True,
             default_headers={
-                "X-Foo": "stainless",
-                "X-Stainless-Lang": "my-overriding-header",
+                "X-Foo": "lmnt",
+                "X-Lmnt-Lang": "my-overriding-header",
             },
         )
         request = client2._build_request(FinalRequestOptions(method="get", url="/foo"))
-        assert request.headers.get("x-foo") == "stainless"
-        assert request.headers.get("x-stainless-lang") == "my-overriding-header"
+        assert request.headers.get("x-foo") == "lmnt"
+        assert request.headers.get("x-lmnt-lang") == "my-overriding-header"
 
     def test_default_query_option(self) -> None:
         client = Lmnt(
@@ -741,7 +741,7 @@ class TestLmnt:
         response = client.speech.with_raw_response.generate(text="hello world.", voice="leah")
 
         assert response.retries_taken == failures_before_success
-        assert int(response.http_request.headers.get("x-stainless-retry-count")) == failures_before_success
+        assert int(response.http_request.headers.get("x-lmnt-retry-count")) == failures_before_success
 
     @pytest.mark.parametrize("failures_before_success", [0, 2, 4])
     @mock.patch("lmnt._base_client.BaseClient._calculate_retry_timeout", _low_retry_timeout)
@@ -761,10 +761,10 @@ class TestLmnt:
         respx_mock.post("/v1/ai/speech/bytes").mock(side_effect=retry_handler)
 
         response = client.speech.with_raw_response.generate(
-            text="hello world.", voice="leah", extra_headers={"x-stainless-retry-count": Omit()}
+            text="hello world.", voice="leah", extra_headers={"x-lmnt-retry-count": Omit()}
         )
 
-        assert len(response.http_request.headers.get_list("x-stainless-retry-count")) == 0
+        assert len(response.http_request.headers.get_list("x-lmnt-retry-count")) == 0
 
     @pytest.mark.parametrize("failures_before_success", [0, 2, 4])
     @mock.patch("lmnt._base_client.BaseClient._calculate_retry_timeout", _low_retry_timeout)
@@ -786,10 +786,10 @@ class TestLmnt:
         respx_mock.post("/v1/ai/speech/bytes").mock(side_effect=retry_handler)
 
         response = client.speech.with_raw_response.generate(
-            text="hello world.", voice="leah", extra_headers={"x-stainless-retry-count": "42"}
+            text="hello world.", voice="leah", extra_headers={"x-lmnt-retry-count": "42"}
         )
 
-        assert response.http_request.headers.get("x-stainless-retry-count") == "42"
+        assert response.http_request.headers.get("x-lmnt-retry-count") == "42"
 
     def test_proxy_environment_variables(self, monkeypatch: pytest.MonkeyPatch) -> None:
         # Test that the proxy environment variables are set correctly
@@ -901,13 +901,13 @@ class TestAsyncLmnt:
         assert copied.default_headers["X-Foo"] == "bar"
 
         # merges already given headers
-        copied = client.copy(default_headers={"X-Bar": "stainless"})
+        copied = client.copy(default_headers={"X-Bar": "lmnt"})
         assert copied.default_headers["X-Foo"] == "bar"
-        assert copied.default_headers["X-Bar"] == "stainless"
+        assert copied.default_headers["X-Bar"] == "lmnt"
 
         # uses new values for any already given headers
-        copied = client.copy(default_headers={"X-Foo": "stainless"})
-        assert copied.default_headers["X-Foo"] == "stainless"
+        copied = client.copy(default_headers={"X-Foo": "lmnt"})
+        assert copied.default_headers["X-Foo"] == "lmnt"
 
         # set_default_headers
 
@@ -935,14 +935,14 @@ class TestAsyncLmnt:
         assert _get_params(copied)["foo"] == "bar"
 
         # merges already given params
-        copied = client.copy(default_query={"bar": "stainless"})
+        copied = client.copy(default_query={"bar": "lmnt"})
         params = _get_params(copied)
         assert params["foo"] == "bar"
-        assert params["bar"] == "stainless"
+        assert params["bar"] == "lmnt"
 
         # uses new values for any already given headers
-        copied = client.copy(default_query={"foo": "stainless"})
-        assert _get_params(copied)["foo"] == "stainless"
+        copied = client.copy(default_query={"foo": "lmnt"})
+        assert _get_params(copied)["foo"] == "lmnt"
 
         # set_default_query
 
@@ -1106,20 +1106,20 @@ class TestAsyncLmnt:
         )
         request = client._build_request(FinalRequestOptions(method="get", url="/foo"))
         assert request.headers.get("x-foo") == "bar"
-        assert request.headers.get("x-stainless-lang") == "python"
+        assert request.headers.get("x-lmnt-lang") == "python"
 
         client2 = AsyncLmnt(
             base_url=base_url,
             api_key=api_key,
             _strict_response_validation=True,
             default_headers={
-                "X-Foo": "stainless",
-                "X-Stainless-Lang": "my-overriding-header",
+                "X-Foo": "lmnt",
+                "X-Lmnt-Lang": "my-overriding-header",
             },
         )
         request = client2._build_request(FinalRequestOptions(method="get", url="/foo"))
-        assert request.headers.get("x-foo") == "stainless"
-        assert request.headers.get("x-stainless-lang") == "my-overriding-header"
+        assert request.headers.get("x-foo") == "lmnt"
+        assert request.headers.get("x-lmnt-lang") == "my-overriding-header"
 
     def test_default_query_option(self) -> None:
         client = AsyncLmnt(
@@ -1539,7 +1539,7 @@ class TestAsyncLmnt:
         response = await client.speech.with_raw_response.generate(text="hello world.", voice="leah")
 
         assert response.retries_taken == failures_before_success
-        assert int(response.http_request.headers.get("x-stainless-retry-count")) == failures_before_success
+        assert int(response.http_request.headers.get("x-lmnt-retry-count")) == failures_before_success
 
     @pytest.mark.parametrize("failures_before_success", [0, 2, 4])
     @mock.patch("lmnt._base_client.BaseClient._calculate_retry_timeout", _low_retry_timeout)
@@ -1562,10 +1562,10 @@ class TestAsyncLmnt:
         respx_mock.post("/v1/ai/speech/bytes").mock(side_effect=retry_handler)
 
         response = await client.speech.with_raw_response.generate(
-            text="hello world.", voice="leah", extra_headers={"x-stainless-retry-count": Omit()}
+            text="hello world.", voice="leah", extra_headers={"x-lmnt-retry-count": Omit()}
         )
 
-        assert len(response.http_request.headers.get_list("x-stainless-retry-count")) == 0
+        assert len(response.http_request.headers.get_list("x-lmnt-retry-count")) == 0
 
     @pytest.mark.parametrize("failures_before_success", [0, 2, 4])
     @mock.patch("lmnt._base_client.BaseClient._calculate_retry_timeout", _low_retry_timeout)
@@ -1588,10 +1588,10 @@ class TestAsyncLmnt:
         respx_mock.post("/v1/ai/speech/bytes").mock(side_effect=retry_handler)
 
         response = await client.speech.with_raw_response.generate(
-            text="hello world.", voice="leah", extra_headers={"x-stainless-retry-count": "42"}
+            text="hello world.", voice="leah", extra_headers={"x-lmnt-retry-count": "42"}
         )
 
-        assert response.http_request.headers.get("x-stainless-retry-count") == "42"
+        assert response.http_request.headers.get("x-lmnt-retry-count") == "42"
 
     async def test_get_platform(self) -> None:
         platform = await asyncify(get_platform)()

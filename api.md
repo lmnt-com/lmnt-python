@@ -13,6 +13,12 @@ Methods:
 - <code title="post /v1/ai/speech/bytes">client.speech.<a href="./src/lmnt/resources/speech.py">generate</a>(\*\*<a href="src/lmnt/types/speech_generate_params.py">params</a>) -> BinaryAPIResponse</code>
 - <code title="post /v1/ai/speech">client.speech.<a href="./src/lmnt/resources/speech.py">generate_detailed</a>(\*\*<a href="src/lmnt/types/speech_generate_detailed_params.py">params</a>) -> <a href="./src/lmnt/types/speech_generate_detailed_response.py">SpeechGenerateDetailedResponse</a></code>
 
+## Sessions
+
+Methods:
+
+- <code>client.speech.sessions.<a href="./src/lmnt/resources/sessions.py">create</a>(\*\*params) -> SpeechSession</code>
+
 # Voices
 
 Types:

@@ -52,7 +52,7 @@ class TestVoices:
     )
 
     assert response.is_closed is True
-    assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+    assert response.http_request.headers.get("X-Lmnt-Lang") == "python"
     voice = response.parse()
     assert_matches_type(Voice, voice, path=["response"])
 
@@ -64,7 +64,7 @@ class TestVoices:
       name="new-voice",
     ) as response:
       assert not response.is_closed
-      assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+      assert response.http_request.headers.get("X-Lmnt-Lang") == "python"
 
       voice = response.parse()
       assert_matches_type(Voice, voice, path=["response"])
@@ -85,7 +85,7 @@ class TestVoices:
     )
 
     assert response.is_closed is True
-    assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+    assert response.http_request.headers.get("X-Lmnt-Lang") == "python"
     voice = response.parse()
     assert_matches_type(Voice, voice, path=["response"])
 
@@ -95,7 +95,7 @@ class TestVoices:
       "9c4a8f2b3e1d7c40",
     ) as response:
       assert not response.is_closed
-      assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+      assert response.http_request.headers.get("X-Lmnt-Lang") == "python"
 
       voice = response.parse()
       assert_matches_type(Voice, voice, path=["response"])
@@ -135,7 +135,7 @@ class TestVoices:
     )
 
     assert response.is_closed is True
-    assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+    assert response.http_request.headers.get("X-Lmnt-Lang") == "python"
     voice = response.parse()
     assert_matches_type(VoiceUpdateResponse, voice, path=["response"])
 
@@ -145,7 +145,7 @@ class TestVoices:
       id="9c4a8f2b3e1d7c40",
     ) as response:
       assert not response.is_closed
-      assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+      assert response.http_request.headers.get("X-Lmnt-Lang") == "python"
 
       voice = response.parse()
       assert_matches_type(VoiceUpdateResponse, voice, path=["response"])
@@ -173,7 +173,7 @@ class TestVoices:
     )
 
     assert response.is_closed is True
-    assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+    assert response.http_request.headers.get("X-Lmnt-Lang") == "python"
     voice = response.parse()
     assert_matches_type(VoiceDeleteResponse, voice, path=["response"])
 
@@ -183,7 +183,7 @@ class TestVoices:
       "9c4a8f2b3e1d7c40",
     ) as response:
       assert not response.is_closed
-      assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+      assert response.http_request.headers.get("X-Lmnt-Lang") == "python"
 
       voice = response.parse()
       assert_matches_type(VoiceDeleteResponse, voice, path=["response"])
@@ -215,7 +215,7 @@ class TestVoices:
     response = client.voices.with_raw_response.list()
 
     assert response.is_closed is True
-    assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+    assert response.http_request.headers.get("X-Lmnt-Lang") == "python"
     voice = response.parse()
     assert_matches_type(VoiceListResponse, voice, path=["response"])
 
@@ -223,7 +223,7 @@ class TestVoices:
   def test_streaming_response_list(self, client: Lmnt) -> None:
     with client.voices.with_streaming_response.list() as response:
       assert not response.is_closed
-      assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+      assert response.http_request.headers.get("X-Lmnt-Lang") == "python"
 
       voice = response.parse()
       assert_matches_type(VoiceListResponse, voice, path=["response"])
@@ -266,7 +266,7 @@ class TestAsyncVoices:
     )
 
     assert response.is_closed is True
-    assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+    assert response.http_request.headers.get("X-Lmnt-Lang") == "python"
     voice = await response.parse()
     assert_matches_type(Voice, voice, path=["response"])
 
@@ -278,7 +278,7 @@ class TestAsyncVoices:
       name="new-voice",
     ) as response:
       assert not response.is_closed
-      assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+      assert response.http_request.headers.get("X-Lmnt-Lang") == "python"
 
       voice = await response.parse()
       assert_matches_type(Voice, voice, path=["response"])
@@ -299,7 +299,7 @@ class TestAsyncVoices:
     )
 
     assert response.is_closed is True
-    assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+    assert response.http_request.headers.get("X-Lmnt-Lang") == "python"
     voice = await response.parse()
     assert_matches_type(Voice, voice, path=["response"])
 
@@ -309,7 +309,7 @@ class TestAsyncVoices:
       "9c4a8f2b3e1d7c40",
     ) as response:
       assert not response.is_closed
-      assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+      assert response.http_request.headers.get("X-Lmnt-Lang") == "python"
 
       voice = await response.parse()
       assert_matches_type(Voice, voice, path=["response"])
@@ -349,7 +349,7 @@ class TestAsyncVoices:
     )
 
     assert response.is_closed is True
-    assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+    assert response.http_request.headers.get("X-Lmnt-Lang") == "python"
     voice = await response.parse()
     assert_matches_type(VoiceUpdateResponse, voice, path=["response"])
 
@@ -359,7 +359,7 @@ class TestAsyncVoices:
       id="9c4a8f2b3e1d7c40",
     ) as response:
       assert not response.is_closed
-      assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+      assert response.http_request.headers.get("X-Lmnt-Lang") == "python"
 
       voice = await response.parse()
       assert_matches_type(VoiceUpdateResponse, voice, path=["response"])
@@ -387,7 +387,7 @@ class TestAsyncVoices:
     )
 
     assert response.is_closed is True
-    assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+    assert response.http_request.headers.get("X-Lmnt-Lang") == "python"
     voice = await response.parse()
     assert_matches_type(VoiceDeleteResponse, voice, path=["response"])
 
@@ -397,7 +397,7 @@ class TestAsyncVoices:
       "9c4a8f2b3e1d7c40",
     ) as response:
       assert not response.is_closed
-      assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+      assert response.http_request.headers.get("X-Lmnt-Lang") == "python"
 
       voice = await response.parse()
       assert_matches_type(VoiceDeleteResponse, voice, path=["response"])
@@ -429,7 +429,7 @@ class TestAsyncVoices:
     response = await async_client.voices.with_raw_response.list()
 
     assert response.is_closed is True
-    assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+    assert response.http_request.headers.get("X-Lmnt-Lang") == "python"
     voice = await response.parse()
     assert_matches_type(VoiceListResponse, voice, path=["response"])
 
@@ -437,7 +437,7 @@ class TestAsyncVoices:
   async def test_streaming_response_list(self, async_client: AsyncLmnt) -> None:
     async with async_client.voices.with_streaming_response.list() as response:
       assert not response.is_closed
-      assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+      assert response.http_request.headers.get("X-Lmnt-Lang") == "python"
 
       voice = await response.parse()
       assert_matches_type(VoiceListResponse, voice, path=["response"])

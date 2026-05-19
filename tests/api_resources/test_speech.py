@@ -71,7 +71,7 @@ class TestSpeech:
     )
 
     assert speech.is_closed is True
-    assert speech.http_request.headers.get("X-Stainless-Lang") == "python"
+    assert speech.http_request.headers.get("X-Lmnt-Lang") == "python"
     assert speech.json() == {"foo": "bar"}
     assert isinstance(speech, BinaryAPIResponse)
 
@@ -84,7 +84,7 @@ class TestSpeech:
       voice="leah",
     ) as speech:
       assert not speech.is_closed
-      assert speech.http_request.headers.get("X-Stainless-Lang") == "python"
+      assert speech.http_request.headers.get("X-Lmnt-Lang") == "python"
 
       assert speech.json() == {"foo": "bar"}
       assert cast(Any, speech.is_closed) is True
@@ -124,7 +124,7 @@ class TestSpeech:
     )
 
     assert response.is_closed is True
-    assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+    assert response.http_request.headers.get("X-Lmnt-Lang") == "python"
     speech = response.parse()
     assert_matches_type(SpeechGenerateDetailedResponse, speech, path=["response"])
 
@@ -135,7 +135,7 @@ class TestSpeech:
       voice="leah",
     ) as response:
       assert not response.is_closed
-      assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+      assert response.http_request.headers.get("X-Lmnt-Lang") == "python"
 
       speech = response.parse()
       assert_matches_type(SpeechGenerateDetailedResponse, speech, path=["response"])
@@ -192,7 +192,7 @@ class TestAsyncSpeech:
     )
 
     assert speech.is_closed is True
-    assert speech.http_request.headers.get("X-Stainless-Lang") == "python"
+    assert speech.http_request.headers.get("X-Lmnt-Lang") == "python"
     assert await speech.json() == {"foo": "bar"}
     assert isinstance(speech, AsyncBinaryAPIResponse)
 
@@ -205,7 +205,7 @@ class TestAsyncSpeech:
       voice="leah",
     ) as speech:
       assert not speech.is_closed
-      assert speech.http_request.headers.get("X-Stainless-Lang") == "python"
+      assert speech.http_request.headers.get("X-Lmnt-Lang") == "python"
 
       assert await speech.json() == {"foo": "bar"}
       assert cast(Any, speech.is_closed) is True
@@ -245,7 +245,7 @@ class TestAsyncSpeech:
     )
 
     assert response.is_closed is True
-    assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+    assert response.http_request.headers.get("X-Lmnt-Lang") == "python"
     speech = await response.parse()
     assert_matches_type(SpeechGenerateDetailedResponse, speech, path=["response"])
 
@@ -256,7 +256,7 @@ class TestAsyncSpeech:
       voice="leah",
     ) as response:
       assert not response.is_closed
-      assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+      assert response.http_request.headers.get("X-Lmnt-Lang") == "python"
 
       speech = await response.parse()
       assert_matches_type(SpeechGenerateDetailedResponse, speech, path=["response"])
