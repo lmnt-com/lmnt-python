@@ -82,7 +82,7 @@ class TestAsyncSessions:
     assert len(fake.sent) == 1
     sent = json.loads(fake.sent[0])
     assert sent["X-API-Key"] == "test-api-key"
-    assert sent["lmnt-version"] == "1.1"
+    assert sent["lmnt-version"] == "1.2"
     assert sent["voice"] == "voice-id"
 
   @pytest.mark.asyncio

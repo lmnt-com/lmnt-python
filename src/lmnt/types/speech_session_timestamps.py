@@ -16,7 +16,5 @@ class SpeechSessionTimestamps(BaseModel):
   timestamps: Optional[List[Timestamp]] = None
   """Array of timestamp objects, one per generated text token.
 
-    <Warning> The timestamps array resets its start time for each chunk of audio.
-
-    </Warning>
+    Start times are cumulative, and reset to 0.0 after a `flush` or `reset`.
     """
