@@ -1,7 +1,7 @@
 {
-  "version": "1.1",
-  "generated_at": "2026-05-19T21:02:05Z",
-  "spec_sha": "4c822a78c44f68ac:cc7f4554e955f4fe",
+  "version": "1.2",
+  "generated_at": "2026-06-03T23:58:37Z",
+  "spec_sha": "3ac0d7427265f74f:f147e87623a53da9",
   "files": [
     "api.md",
     "src/lmnt/__init__.py",
